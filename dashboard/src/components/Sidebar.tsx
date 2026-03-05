@@ -38,16 +38,6 @@ type Props = {
 };
 
 export default function Sidebar({ connected }: Props) {
-	// const favoriteDrivers = useSettingsStore((state) => state.favoriteDrivers);
-	// const drivers = useDataStore((state) => state.driverList);
-
-	// const driverItems = drivers
-	// 	? favoriteDrivers.map((nr) => ({
-	// 			href: `/dashboard/driver/${nr}`,
-	// 			name: drivers[nr].fullName,
-	// 		}))
-	// 	: null;
-
 	const { opened, pinned } = useSidebarStore();
 	const close = useSidebarStore((state) => state.close);
 	const open = useSidebarStore((state) => state.open);
@@ -122,19 +112,6 @@ export default function Sidebar({ connected }: Props) {
 						))}
 					</div>
 
-					{/* <p className="mt-4 p-2 text-sm text-zinc-500">Favorite Drivers</p>
-
-					<div className="flex flex-col gap-1">
-						{driverItems === null && (
-							<>
-								<div className="h-8 animate-pulse rounded-lg bg-zinc-800" />
-								<div className="h-8 animate-pulse rounded-lg bg-zinc-800" />
-							</>
-						)}
-						{driverItems !== null && driverItems.length === 0 && <div className="p-2">No favorites</div>}
-						{driverItems?.map((item) => <Item key={item.href} item={item} />)}
-					</div> */}
-
 					<p className="mt-4 p-2 text-sm text-zinc-500">General</p>
 
 					<div className="flex flex-col gap-1">
@@ -145,13 +122,11 @@ export default function Sidebar({ connected }: Props) {
 						<Item target="_blank" item={{ href: "/", name: "Home" }} />
 					</div>
 
-					<p className="mt-4 p-2 text-sm text-zinc-500">Links</p>
+					<p className="mt-4 p-2 text-sm text-zinc-500">F1 Naija</p>
 
 					<div className="flex flex-col gap-1">
-						<Item target="_blank" item={{ href: "https://github.com/slowlydev/f1-dash", name: "Github" }} />
-						<Item target="_blank" item={{ href: "https://discord.gg/unJwu66NuB", name: "Discord" }} />
-						<Item target="_blank" item={{ href: "https://buymeacoffee.com/slowlydev", name: "Buy me a coffee" }} />
-						<Item target="_blank" item={{ href: "https://github.com/sponsors/slowlydev", name: "Sponsor me" }} />
+						<Item target="_blank" item={{ href: "https://x.com/f1naija", name: "X (Twitter)" }} />
+						<Item target="_blank" item={{ href: "https://instagram.com/f1naija", name: "Instagram" }} />
 					</div>
 				</nav>
 			</motion.div>
