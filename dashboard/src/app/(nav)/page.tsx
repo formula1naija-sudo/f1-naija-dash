@@ -15,6 +15,10 @@ export default function Home() {
 					telemetry and timing
 				</h1>
 
+				<p className="mb-10 text-center text-xl text-zinc-400 italic">
+					F1 live and direct! 🇳🇬
+				</p>
+
 				<div className="flex flex-wrap gap-4">
 					<Link href="/dashboard">
 						<Button className="rounded-xl! border-2 border-transparent p-4 font-medium">Go to Dashboard</Button>
@@ -55,12 +59,16 @@ export default function Home() {
 
 				<p className="text-md">
 					Follow us on{" "}
-					<a className="text-blue-500" target="_blank" href="https://x.com/f1naija">
+					<a className="text-blue-500" target="_blank" href="https://x.com/f1_naija">
 						X (Twitter)
 					</a>
-					{" "}and{" "}
-					<a className="text-blue-500" target="_blank" href="https://instagram.com/f1naija">
+					{", "}
+					<a className="text-blue-500" target="_blank" href="https://www.instagram.com/f1_naija/">
 						Instagram
+					</a>
+					{" "}and{" "}
+					<a className="text-blue-500" target="_blank" href="https://www.tiktok.com/@f1.naija">
+						TikTok
 					</a>
 					{" "}for race reactions, data breakdowns, and F1 content made for Nigerians.
 				</p>
