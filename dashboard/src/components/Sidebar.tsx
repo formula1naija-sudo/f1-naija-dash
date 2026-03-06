@@ -77,6 +77,8 @@ export default function Sidebar({ connected }: Props) {
             <motion.div
                 className="no-scrollbar fixed top-0 bottom-0 left-0 z-40 flex overflow-y-auto"
                 onHoverStart={!pinned ? () => open() : undefined}
+                onHoverEnd={!pinned ? () => close() : undefined}
+                animate={{ x: !pinned && !opened ? "-100%" : "0%" }}
                 transition={{ type: "spring", bounce: 0.1 }}
             >
                 <nav
@@ -130,8 +132,9 @@ type ItemProps = {
 
 const Item = ({ target, item }: ItemProps) => {
     const active = usePathname() === item.href;
+    const close = useSidebarStore((state) => state.close);
     return (
-        <Link href={item.href} target={target}>
+        <Link href={item.href} target={target} onClick={() => close()}>
             <div
                 className={clsx("rounded-lg p-1 px-2 hover:bg-zinc-900", {
                     "bg-zinc-800!": active,
