@@ -22,6 +22,7 @@ import DelayTimer from '@/components/DelayTimer';
 import ConnectionStatus from '@/components/ConnectionStatus';
 import WhatsAppShare from '@/components/WhatsAppShare';
 import Watermark from '@/components/Watermark';
+import ThemeToggle from '@/components/ThemeToggle';
 
 type Props = {
 	children: ReactNode;
@@ -42,6 +43,7 @@ export default function DashboardLayout({ children }: Props) {
 			<Sidebar key="sidebar" connected={connected} />
 			<WhatsAppShare />
 			<Watermark />
+			<ThemeToggle />
 			<motion.div layout="size" className="flex h-full w-full flex-1 flex-col md:gap-2">
 				<DesktopStaticBar show={!syncing || ended} />
 				<MobileStaticBar show={!syncing || ended} connected={connected} />
