@@ -23,6 +23,7 @@ import ConnectionStatus from '@/components/ConnectionStatus';
 import WhatsAppShare from '@/components/WhatsAppShare';
 import Watermark from '@/components/Watermark';
 import ThemeToggle from '@/components/ThemeToggle';
+import NotificationPrompt from '@/components/NotificationPrompt';
 
 type Props = {
 	children: ReactNode;
@@ -44,12 +45,15 @@ export default function DashboardLayout({ children }: Props) {
 			<WhatsAppShare />
 			<Watermark />
 			<ThemeToggle />
+			<NotificationPrompt />
 			<motion.div layout="size" className="flex h-full w-full flex-1 flex-col md:gap-2">
 				<DesktopStaticBar show={!syncing || ended} />
 				<MobileStaticBar show={!syncing || ended} connected={connected} />
 				<div
 					className={
-						!syncing || ended ? 'no-scrollbar w-full flex-1 overflow-auto md:rounded-lg' : 'hidden'
+						!syncing || ended
+							? 'no-scrollbar w-full flex-1 overflow-auto md:rounded-lg'
+							: 'hidden'
 					}
 				>
 					<MobileDynamicBar />
@@ -86,7 +90,6 @@ function MobileDynamicBar() {
 
 function MobileStaticBar({ show, connected }: { show: boolean; connected: boolean }) {
 	const open = useSidebarStore((state) => state.open);
-
 	return (
 		<div className="flex w-full items-center justify-between overflow-hidden border-b border-zinc-800 p-2 md:hidden">
 			<div className="flex items-center gap-2">
@@ -103,7 +106,6 @@ function MobileStaticBar({ show, connected }: { show: boolean; connected: boolea
 function DesktopStaticBar({ show }: { show: boolean }) {
 	const pinned = useSidebarStore((state) => state.pinned);
 	const pin = useSidebarStore((state) => state.pin);
-
 	return (
 		<div className="hidden w-full flex-row justify-between overflow-hidden rounded-lg border border-zinc-800 p-2 md:flex">
 			<div className="flex items-center gap-2">
