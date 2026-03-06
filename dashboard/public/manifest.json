@@ -1,10 +1,24 @@
 {
-	"name": "F1 Naija",
-	"short_name": "F1 Naija",
-	"start_url": "/",
-	"display": "standalone",
-	"background_color": "#09090b",
-	"theme_color": "#008751",
-	"description": "F1 Naija Live Dashboard - Real-time Formula 1 timing and telemetry",
-	"icons": []
+  "name": "F1 Naija",
+  "short_name": "F1 Naija",
+  "description": "F1 Naija Live Dashboard - Real-time Formula 1 timing and telemetry",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#09090b",
+  "theme_color": "#09090b",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/tag-logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/tag-logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
 }
