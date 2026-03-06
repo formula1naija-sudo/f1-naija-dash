@@ -20,6 +20,7 @@ import TrackInfo from '@/components/TrackInfo';
 import DelayInput from '@/components/DelayInput';
 import DelayTimer from '@/components/DelayTimer';
 import ConnectionStatus from '@/components/ConnectionStatus';
+import WhatsAppShare from '@/components/WhatsAppShare';
 
 type Props = {
 	children: ReactNode;
@@ -40,6 +41,7 @@ export default function DashboardLayout({ children }: Props) {
 	return (
 		<div className="flex h-screen w-full md:pt-2 md:pr-2 md:pb-2">
 			<Sidebar key="sidebar" connected={connected} />
+			<WhatsAppShare />
 
 			<motion.div layout="size" className="flex h-full w-full flex-1 flex-col md:gap-2">
 				<DesktopStaticBar show={!syncing || ended} />
