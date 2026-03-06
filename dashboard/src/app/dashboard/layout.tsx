@@ -21,6 +21,7 @@ import DelayInput from '@/components/DelayInput';
 import DelayTimer from '@/components/DelayTimer';
 import ConnectionStatus from '@/components/ConnectionStatus';
 import WhatsAppShare from '@/components/WhatsAppShare';
+import Watermark from '@/components/Watermark';
 
 type Props = {
 	children: ReactNode;
@@ -30,10 +31,8 @@ export default function DashboardLayout({ children }: Props) {
 	const stores = useStores();
 	const { handleInitial, handleUpdate, maxDelay } = useDataEngine(stores);
 	const { connected } = useSocket({ handleInitial, handleUpdate });
-
 	const delay = useSettingsStore((state) => state.delay);
 	const syncing = delay > maxDelay;
-
 	useWakeLock();
 
 	const ended = useDataStore(({ state }) => state?.SessionStatus?.Status === 'Ends');
@@ -42,11 +41,10 @@ export default function DashboardLayout({ children }: Props) {
 		<div className="flex h-screen w-full md:pt-2 md:pr-2 md:pb-2">
 			<Sidebar key="sidebar" connected={connected} />
 			<WhatsAppShare />
-
+			<Watermark />
 			<motion.div layout="size" className="flex h-full w-full flex-1 flex-col md:gap-2">
 				<DesktopStaticBar show={!syncing || ended} />
 				<MobileStaticBar show={!syncing || ended} connected={connected} />
-
 				<div
 					className={
 						!syncing || ended ? 'no-scrollbar w-full flex-1 overflow-auto md:rounded-lg' : 'hidden'
@@ -55,7 +53,6 @@ export default function DashboardLayout({ children }: Props) {
 					<MobileDynamicBar />
 					{children}
 				</div>
-
 				<div
 					className={
 						syncing && !ended
@@ -92,13 +89,10 @@ function MobileStaticBar({ show, connected }: { show: boolean; connected: boolea
 		<div className="flex w-full items-center justify-between overflow-hidden border-b border-zinc-800 p-2 md:hidden">
 			<div className="flex items-center gap-2">
 				<SidenavButton key="mobile" onClick={() => open()} />
-
 				<DelayInput saveDelay={500} />
 				<DelayTimer />
-
 				<ConnectionStatus connected={connected} />
 			</div>
-
 			{show && <TrackInfo />}
 		</div>
 	);
@@ -113,15 +107,12 @@ function DesktopStaticBar({ show }: { show: boolean }) {
 			<div className="flex items-center gap-2">
 				<AnimatePresence>
 					{!pinned && <SidenavButton key="desktop" className="shrink-0" onClick={() => pin()} />}
-
 					<motion.div key="session-info" layout="position">
 						<SessionInfo />
 					</motion.div>
 				</AnimatePresence>
 			</div>
-
 			<div className="hidden md:items-center lg:flex">{show && <WeatherInfo />}</div>
-
 			<div className="flex justify-end">{show && <TrackInfo />}</div>
 		</div>
 	);
