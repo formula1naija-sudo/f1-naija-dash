@@ -1,0 +1,15 @@
+{
+  "name": "f1-push-service",
+  "version": "1.0.0",
+  "description": "Background push notifications for F1 Naija",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "eventsource": "^3.0.6",
+    "express": "^4.18.2",
+    "web-push": "^3.6.7"
+  }
+}
