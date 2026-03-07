@@ -34,3 +34,16 @@ export default function RootLayout({ children }: Props) {
               src={env.TRACKING_URL}
             />
           </>
+        )}
+      </head>
+      <body className="bg-zinc-950">
+        <OledModeProvider>{children}</OledModeProvider>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/sw.js'); }`,
+          }}
+        />
+      </body>
+    </html>
+  );
+}
