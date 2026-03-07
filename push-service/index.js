@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const webpush = require('web-push');
-const EventSource = require('eventsource');
+const { EventSource } = require('eventsource');
 
 const app = express();
 app.use(cors());
@@ -26,129 +26,151 @@ let lastState = null;
 
 function detectEvents(prevState, newState) {
   const notifications = [];
+
   if (!prevState || !newState) return notifications;
 
   // Track status changes
-  const prevStatus = prevState.trackStatus?.status;
-  const newStatus = newState.trackStatus?.status;
-  if (prevStatus !== newStatus) {
-    if (newStatus === '4') {
-      notifications.push({ title: '\uD83D\uDFE1 Safety Car', body: 'Safety Car deployed on track' });
-    } else if (newStatus === '5') {
-      notifications.push({ title: '\uD83D\uDD34 Red Flag', body: 'Session has been red flagged!' });
-    } else if (newStatus === '6') {
-      notifications.push({ title: '\uD83D\uDFE0 Virtual Safety Car', body: 'VSC deployed on track' });
-    } else if (newStatus === '1' && (prevStatus === '4' || prevStatus === '6' || prevStatus === '5')) {
-      notifications.push({ title: '\uD83D\uDFE2 Green Flag', body: 'Track is clear — racing resumed!' });
+  const prevTrackStatus = prevState.trackStatus?.status;
+  const newTrackStatus = newState.trackStatus?.status;
+  if (prevTrackStatus !== newTrackStatus && newTrackStatus) {
+    const statusMap = {
+      '1': { title: '🟢 Track Clear', body: 'Track is clear — green flag!' },
+      '2': { title: '🟡 Yellow Flag', body: 'Yellow flag conditions on track.' },
+      '4': { title: '🚗 Safety Car', body: 'Safety car deployed on track.' },
+      '5': { title: '🔴 Red Flag', body: 'Session red flagged!' },
+      '6': { title: '🟡 VSC', body: 'Virtual Safety Car (VSC) deployed.' },
+      '7': { title: '🟡 VSC Ending', body: 'Virtual Safety Car period ending.' },
+    };
+    const msg = statusMap[newTrackStatus];
+    if (msg) {
+      notifications.push({ ...msg, url: '/dashboard' });
     }
   }
 
-  // Session status changes
-  const prevSession = prevState.sessionInfo?.status;
-  const newSession = newState.sessionInfo?.status;
-  if (prevSession !== newSession) {
-    const sessionName = newState.sessionInfo?.name || 'Session';
-    if (newSession === 'Started') {
-      notifications.push({ title: '\uD83C\uDFC1 Session Started', body: sessionName + ' is underway!' });
-    } else if (newSession === 'Finished') {
-      notifications.push({ title: '\uD83C\uDFC1 Session Finished', body: sessionName + ' has ended' });
+  // Session state changes
+  const prevSessionStatus = prevState.sessionInfo?.Status;
+  const newSessionStatus = newState.sessionInfo?.Status;
+  if (prevSessionStatus !== newSessionStatus && newSessionStatus) {
+    if (newSessionStatus === 'Started') {
+      const sessionName = newState.sessionInfo?.Name || 'Session';
+      notifications.push({
+        title: '🏁 Session Started',
+        body: `${sessionName} is underway!`,
+        url: '/dashboard',
+      });
+    } else if (newSessionStatus === 'Finished') {
+      notifications.push({
+        title: '🏁 Session Finished',
+        body: 'The session has ended.',
+        url: '/dashboard',
+      });
     }
   }
 
-  // Rain
-  const prevRaining = prevState.weatherData?.isRaining;
-  const newRaining = newState.weatherData?.isRaining;
+  // Rain / weather
+  const prevRaining = prevState.weatherData?.Raining;
+  const newRaining = newState.weatherData?.Raining;
   if (!prevRaining && newRaining) {
-    notifications.push({ title: '\uD83C\uDF27\uFE0F Rain!', body: "It's starting to rain at the circuit" });
+    notifications.push({
+      title: '🌧️ Rain!',
+      body: 'It has started raining at the circuit.',
+      url: '/dashboard',
+    });
+  } else if (prevRaining && !newRaining) {
+    notifications.push({
+      title: '☀️ Rain Stopped',
+      body: 'Rain has stopped at the circuit.',
+      url: '/dashboard',
+    });
   }
 
   // Fastest lap
-  const prevFL = prevState.timingData?.fastestLap?.driverNumber;
-  const newFL = newState.timingData?.fastestLap?.driverNumber;
-  if (newFL && prevFL !== newFL) {
-    const driver = (newState.driverList || {})[newFL];
-    const name = driver ? (driver.firstName + ' ' + driver.lastName) : ('Driver #' + newFL);
-    const lapTime = newState.timingData?.fastestLap?.lapTime || '';
-    notifications.push({ title: '\u26A1 Fastest Lap', body: name + ' sets fastest lap' + (lapTime ? ' — ' + lapTime : '') });
+  const prevFastLap = prevState.timingData?.fastestLap;
+  const newFastLap = newState.timingData?.fastestLap;
+  if (newFastLap && newFastLap !== prevFastLap) {
+    const driver = newFastLap.driver || 'Unknown';
+    const lapTime = newFastLap.time || '';
+    notifications.push({
+      title: '⚡ Fastest Lap',
+      body: `${driver} sets fastest lap${lapTime ? ': ' + lapTime : ''}`,
+      url: '/dashboard',
+    });
   }
 
   return notifications;
 }
 
-async function sendPushToAll(notification) {
-  const payload = JSON.stringify({
-    title: notification.title,
-    body: notification.body,
-    icon: '/pwa-icon.png',
-    badge: '/pwa-icon.png',
-    url: '/dashboard',
-  });
+async function sendNotifications(notifications) {
+  if (notifications.length === 0) return;
 
-  const toRemove = [];
-  for (const [endpoint, subscription] of subscriptions) {
+  const payload = JSON.stringify(notifications[0]); // send first notification
+  const dead = [];
+
+  for (const [endpoint, subscription] of subscriptions.entries()) {
     try {
       await webpush.sendNotification(subscription, payload);
     } catch (err) {
       if (err.statusCode === 410 || err.statusCode === 404) {
-        toRemove.push(endpoint);
+        dead.push(endpoint);
       } else {
-        console.error('Push failed:', err.message);
+        console.error('Push error for', endpoint, err.message);
       }
     }
   }
-  toRemove.forEach(ep => subscriptions.delete(ep));
-  if (toRemove.length) console.log('Removed ' + toRemove.length + ' expired subscriptions');
+
+  // Clean up expired subscriptions
+  for (const endpoint of dead) {
+    subscriptions.delete(endpoint);
+    console.log('Removed expired subscription:', endpoint);
+  }
 }
 
 function connectToRealtime() {
-  const url = REALTIME_URL + '/api/realtime';
-  console.log('Connecting to SSE:', url);
+  const url = `${REALTIME_URL}/api/realtime`;
+  console.log('Connecting to realtime SSE:', url);
+
   const es = new EventSource(url);
 
-  es.addEventListener('initial', (e) => {
+  es.addEventListener('initial', (event) => {
     try {
-      lastState = JSON.parse(e.data);
-      console.log('Initial state received, ' + subscriptions.size + ' subscribers');
-    } catch (err) {
-      console.error('Failed to parse initial:', err.message);
+      lastState = JSON.parse(event.data);
+      console.log('Received initial state');
+    } catch (e) {
+      console.error('Failed to parse initial state:', e.message);
     }
   });
 
-  es.addEventListener('update', async (e) => {
+  es.addEventListener('update', async (event) => {
     try {
-      const update = JSON.parse(e.data);
-      const prevState = lastState ? JSON.parse(JSON.stringify(lastState)) : null;
-      // Merge update into state
-      lastState = Object.assign({}, lastState);
-      for (const key of Object.keys(update)) {
-        if (update[key] !== null && typeof update[key] === 'object' && !Array.isArray(update[key]) && lastState[key] && typeof lastState[key] === 'object') {
-          lastState[key] = Object.assign({}, lastState[key], update[key]);
-        } else {
-          lastState[key] = update[key];
-        }
+      const delta = JSON.parse(event.data);
+      const newState = { ...lastState, ...delta };
+      const notifications = detectEvents(lastState, newState);
+      lastState = newState;
+
+      if (notifications.length > 0) {
+        console.log('Sending notifications:', notifications.map(n => n.title));
+        await sendNotifications(notifications);
       }
-      if (subscriptions.size > 0) {
-        const notifications = detectEvents(prevState, lastState);
-        for (const notif of notifications) {
-          console.log('Sending notification:', notif.title, '— to', subscriptions.size, 'subscribers');
-          await sendPushToAll(notif);
-        }
-      }
-    } catch (err) {
-      console.error('Failed to process update:', err.message);
+    } catch (e) {
+      console.error('Failed to process update:', e.message);
     }
   });
 
-  es.onerror = () => {
-    console.error('SSE connection lost, reconnecting in 5s...');
+  es.onerror = (err) => {
+    console.error('SSE error, reconnecting in 5s...', err.message || '');
     es.close();
     setTimeout(connectToRealtime, 5000);
   };
 }
 
-// Endpoints
+// REST API endpoints
+
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', subscribers: subscriptions.size, hasState: !!lastState });
+  res.json({
+    status: 'ok',
+    subscriptions: subscriptions.size,
+    connected: lastState !== null,
+  });
 });
 
 app.get('/vapid-public-key', (req, res) => {
@@ -158,20 +180,27 @@ app.get('/vapid-public-key', (req, res) => {
 app.post('/subscribe', (req, res) => {
   const subscription = req.body;
   if (!subscription || !subscription.endpoint) {
-    return res.status(400).json({ error: 'Invalid subscription object' });
+    return res.status(400).json({ error: 'Invalid subscription' });
   }
+
   subscriptions.set(subscription.endpoint, subscription);
-  console.log('New subscriber. Total:', subscriptions.size);
+  console.log('New subscription registered. Total:', subscriptions.size);
   res.status(201).json({ message: 'Subscribed successfully' });
 });
 
 app.delete('/subscribe', (req, res) => {
-  const { endpoint } = req.body || {};
-  if (endpoint) subscriptions.delete(endpoint);
-  res.json({ message: 'Unsubscribed' });
+  const { endpoint } = req.body;
+  if (!endpoint) {
+    return res.status(400).json({ error: 'Missing endpoint' });
+  }
+
+  subscriptions.delete(endpoint);
+  console.log('Subscription removed. Total:', subscriptions.size);
+  res.json({ message: 'Unsubscribed successfully' });
 });
 
+// Start server
 app.listen(PORT, () => {
-  console.log('F1 Push Service on port ' + PORT);
+  console.log(`Push service running on port ${PORT}`);
   connectToRealtime();
 });
