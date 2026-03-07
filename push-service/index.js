@@ -182,6 +182,70 @@ app.delete('/subscribe', (req, res) => {
   res.json({ message: 'Unsubscribed successfully' });
 });
 
+// Tweet cache (Nitter RSS - free alternative to Twitter API)
+let tweetCache = { tweets: [], fetchedAt: 0 };
+const TWEET_CACHE_MS = 5 * 60 * 1000; // 5 minutes
+const NITTER_INSTANCES = [
+  'https://nitter.privacydev.net',
+  'https://nitter.poast.org',
+  'https://nitter.cz',
+  'https://nitter.esmailelbob.xyz',
+  'https://nitter.1d4.us',
+];
+
+async function fetchTweetsFromNitter() {
+  for (const instance of NITTER_INSTANCES) {
+    try {
+      const res = await fetch(`${instance}/f1_naija/rss`, {
+        headers: { 'User-Agent': 'Mozilla/5.0' },
+        signal: AbortSignal.timeout(8000),
+      });
+      if (!res.ok) continue;
+      const xml = await res.text();
+      const items = [];
+      const itemRegex = /<item>([sS]*?)</item>/g;
+      let match;
+      while ((match = itemRegex.exec(xml)) !== null) {
+        const itemXml = match[1];
+        const link = itemXml.match(/<link>(.*?)</link>/)?.[1] || '';
+        const pubDate = itemXml.match(/<pubDate>(.*?)</pubDate>/)?.[1] || '';
+        const desc = itemXml.match(/<description><![CDATA[([sS]*?)]]></description>/)?.[1] || '';
+        const idMatch = link.match(//status/(d+)/);
+        if (!idMatch) continue;
+        const text = desc
+          .replace(/<[^>]+>/g, '')
+          .replace(/&amp;/g, '&')
+          .replace(/&lt;/g, '<')
+          .replace(/&gt;/g, '>')
+          .replace(/&nbsp;/g, ' ')
+          .trim();
+        items.push({ id: idMatch[1], text, created_at: new Date(pubDate).toISOString() });
+      }
+      if (items.length > 0) {
+        console.log(`Fetched ${items.length} tweets from ${instance}`);
+        return items;
+      }
+    } catch (e) {
+      console.log(`Nitter ${instance} failed: ${e.message}`);
+    }
+  }
+  return null;
+}
+
+app.get('/tweets', async (req, res) => {
+  const now = Date.now();
+  if (now - tweetCache.fetchedAt < TWEET_CACHE_MS && tweetCache.tweets.length > 0) {
+    return res.json({ tweets: tweetCache.tweets, cached: true });
+  }
+  const tweets = await fetchTweetsFromNitter();
+  if (tweets) {
+    tweetCache = { tweets, fetchedAt: now };
+    res.json({ tweets });
+  } else {
+    res.json({ tweets: tweetCache.tweets, error: 'All Nitter instances failed' });
+  }
+});
+
 // Start server
 app.listen(PORT, () => {
   console.log(`Push service running on port ${PORT}`);
