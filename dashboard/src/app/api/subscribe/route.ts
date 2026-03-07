@@ -2,24 +2,33 @@ import { NextRequest, NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
 
+// Force dynamic rendering — this route uses fs at runtime
+export const dynamic = "force-dynamic";
+
 const SUBS_FILE = path.join("/tmp", "f1-naija-push-subscriptions.json");
 
-function readSubscriptions(): PushSubscriptionJSON[] {
+interface StoredSubscription {
+  endpoint: string;
+  expirationTime?: number | null;
+  keys?: Record<string, string>;
+}
+
+function readSubscriptions(): StoredSubscription[] {
   try {
     if (fs.existsSync(SUBS_FILE)) {
-      return JSON.parse(fs.readFileSync(SUBS_FILE, "utf-8"));
+      return JSON.parse(fs.readFileSync(SUBS_FILE, "utf-8")) as StoredSubscription[];
     }
   } catch {}
   return [];
 }
 
-function writeSubscriptions(subs: PushSubscriptionJSON[]) {
+function writeSubscriptions(subs: StoredSubscription[]) {
   fs.writeFileSync(SUBS_FILE, JSON.stringify(subs, null, 2));
 }
 
 export async function POST(req: NextRequest) {
   try {
-    const subscription = await req.json();
+    const subscription = (await req.json()) as StoredSubscription;
     if (!subscription?.endpoint) {
       return NextResponse.json({ error: "Invalid subscription" }, { status: 400 });
     }
@@ -38,7 +47,7 @@ export async function POST(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   try {
-    const { endpoint } = await req.json();
+    const { endpoint } = (await req.json()) as { endpoint?: string };
     if (!endpoint) {
       return NextResponse.json({ error: "Missing endpoint" }, { status: 400 });
     }
