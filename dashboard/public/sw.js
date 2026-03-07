@@ -1,14 +1,10 @@
 // F1 Naija Service Worker
 
-self.addEventListener('install', () => {
-  self.skipWaiting();
-});
+self.addEventListener('install', () => { self.skipWaiting(); });
 
-self.addEventListener('activate', (e) => {
-  e.waitUntil(clients.claim());
-});
+self.addEventListener('activate', (e) => { e.waitUntil(clients.claim()); });
 
-// Handles both race event alerts (from Railway push-service) and news alerts
+// Handles push notifications on all platforms including iOS PWA (16.4+)
 self.addEventListener('push', (e) => {
   let data = {
     title: '\u{1F3CE}\uFE0F F1 Naija',
@@ -22,6 +18,7 @@ self.addEventListener('push', (e) => {
     try { data = { ...data, ...e.data.json() }; } catch {}
   }
 
+  // vibrate and requireInteraction are ignored on iOS but harmless on Android
   e.waitUntil(
     self.registration.showNotification(data.title, {
       body: data.body,
@@ -45,12 +42,17 @@ self.addEventListener('notificationclick', (e) => {
     clients
       .matchAll({ type: 'window', includeUncontrolled: true })
       .then((clientList) => {
+        // Try to focus an existing window first
         for (const client of clientList) {
           if (client.url.startsWith(self.location.origin) && 'focus' in client) {
-            client.navigate(targetUrl);
+            // client.navigate may not exist on all platforms (e.g. some iOS versions)
+            if ('navigate' in client) {
+              return client.navigate(targetUrl).then((c) => c && c.focus());
+            }
             return client.focus();
           }
         }
+        // No existing window — open a new one
         if (clients.openWindow) return clients.openWindow(targetUrl);
       })
   );
