@@ -218,9 +218,7 @@ export default function NewsPage() {
       {noToken && !error && (
         <div className="rounded-xl border border-zinc-800 p-8 text-center">
           <p className="text-zinc-400 text-sm">
-            News feed coming soon — add your{" "}
-            <span className="text-zinc-300 font-mono">TWITTER_BEARER_TOKEN</span>{" "}
-            to Vercel to activate.
+            Tweets temporarily unavailable — check back shortly.
           </p>
         </div>
       )}
