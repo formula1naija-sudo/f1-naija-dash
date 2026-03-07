@@ -1,36 +1,44 @@
 // F1 Naija Service Worker
-// Required for PWA installability on iOS and Android
 
-self.addEventListener('install', () => {
+const CACHE_NAME = 'f1-naija-v1';
+
+self.addEventListener('install', (e) => {
   self.skipWaiting();
 });
 
 self.addEventListener('activate', (e) => {
-  e.waitUntil(self.clients.claim());
+  e.waitUntil(clients.claim());
 });
 
-// Handle server-sent push events (future use)
+// Push notification handler
 self.addEventListener('push', (e) => {
   const data = e.data ? e.data.json() : {};
-  e.waitUntil(
-    self.registration.showNotification(data.title || 'F1 Naija', {
-      body: data.body || '',
-      icon: '/tag-logo.png',
-      badge: '/tag-logo.png',
-    })
-  );
+  const title = data.title || 'F1 Naija';
+  const options = {
+    body: data.body || '',
+    icon: data.icon || '/pwa-icon.png',
+    badge: data.badge || '/pwa-icon.png',
+    data: { url: data.url || '/dashboard' },
+    vibrate: [200, 100, 200],
+    requireInteraction: false,
+    silent: false,
+  };
+  e.waitUntil(self.registration.showNotification(title, options));
 });
 
-// Handle notification clicks
+// Notification click handler
 self.addEventListener('notificationclick', (e) => {
   e.notification.close();
+  const targetUrl = e.notification.data?.url || '/dashboard';
   e.waitUntil(
-    self.clients.matchAll({ type: 'window' }).then((clients) => {
-      const client = clients.find((c) => c.url.includes('/dashboard'));
-      if (client) {
-        client.focus();
-      } else {
-        self.clients.openWindow('/dashboard');
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+      for (const client of clientList) {
+        if (client.url.includes('/dashboard') && 'focus' in client) {
+          return client.focus();
+        }
+      }
+      if (clients.openWindow) {
+        return clients.openWindow(targetUrl);
       }
     })
   );
