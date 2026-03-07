@@ -186,11 +186,13 @@ app.delete('/subscribe', (req, res) => {
 let tweetCache = { tweets: [], fetchedAt: 0 };
 const TWEET_CACHE_MS = 5 * 60 * 1000; // 5 minutes
 const NITTER_INSTANCES = [
-  'https://nitter.privacydev.net',
+  'https://xcancel.com',
+  'https://nitter.privacyredirect.com',
+  'https://lightbrd.com',
   'https://nitter.poast.org',
-  'https://nitter.cz',
-  'https://nitter.esmailelbob.xyz',
-  'https://nitter.1d4.us',
+  'https://nitter.tiekoetter.com',
+  'https://nitter.catsarch.com',
+  'https://nitter.space',
 ];
 
 async function fetchTweetsFromNitter() {
