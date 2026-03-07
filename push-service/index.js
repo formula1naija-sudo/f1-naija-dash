@@ -13,6 +13,10 @@ const VAPID_EMAIL = process.env.VAPID_EMAIL || 'mailto:admin@f1naija.com';
 const REALTIME_URL = process.env.REALTIME_URL || 'https://realtime.railway.internal';
 const PORT = process.env.PORT || 3001;
 
+// How long to wait after initial state before sending notifications.
+// This prevents flooding from SSE backlog events replayed at startup.
+const WARMUP_MS = 8000;
+
 if (!VAPID_PUBLIC_KEY || !VAPID_PRIVATE_KEY) {
   console.error('Missing VAPID keys! Set VAPID_PUBLIC_KEY and VAPID_PRIVATE_KEY env vars');
   process.exit(1);
@@ -23,10 +27,10 @@ webpush.setVapidDetails(VAPID_EMAIL, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY);
 // In-memory subscription store: endpoint -> subscription
 const subscriptions = new Map();
 let lastState = null;
+let readyToNotify = false; // becomes true after warmup
 
 function detectEvents(prevState, newState) {
   const notifications = [];
-
   if (!prevState || !newState) return notifications;
 
   // Track status changes
@@ -42,9 +46,7 @@ function detectEvents(prevState, newState) {
       '7': { title: '🟡 VSC Ending', body: 'Virtual Safety Car period ending.' },
     };
     const msg = statusMap[newTrackStatus];
-    if (msg) {
-      notifications.push({ ...msg, url: '/dashboard' });
-    }
+    if (msg) { notifications.push({ ...msg, url: '/dashboard' }); }
   }
 
   // Session state changes
@@ -53,17 +55,9 @@ function detectEvents(prevState, newState) {
   if (prevSessionStatus !== newSessionStatus && newSessionStatus) {
     if (newSessionStatus === 'Started') {
       const sessionName = newState.sessionInfo?.Name || 'Session';
-      notifications.push({
-        title: '🏁 Session Started',
-        body: `${sessionName} is underway!`,
-        url: '/dashboard',
-      });
+      notifications.push({ title: '🏁 Session Started', body: `${sessionName} is underway!`, url: '/dashboard' });
     } else if (newSessionStatus === 'Finished') {
-      notifications.push({
-        title: '🏁 Session Finished',
-        body: 'The session has ended.',
-        url: '/dashboard',
-      });
+      notifications.push({ title: '🏁 Session Finished', body: 'The session has ended.', url: '/dashboard' });
     }
   }
 
@@ -71,17 +65,9 @@ function detectEvents(prevState, newState) {
   const prevRaining = prevState.weatherData?.Raining;
   const newRaining = newState.weatherData?.Raining;
   if (!prevRaining && newRaining) {
-    notifications.push({
-      title: '🌧️ Rain!',
-      body: 'It has started raining at the circuit.',
-      url: '/dashboard',
-    });
+    notifications.push({ title: '🌧️ Rain!', body: 'It has started raining at the circuit.', url: '/dashboard' });
   } else if (prevRaining && !newRaining) {
-    notifications.push({
-      title: '☀️ Rain Stopped',
-      body: 'Rain has stopped at the circuit.',
-      url: '/dashboard',
-    });
+    notifications.push({ title: '☀️ Rain Stopped', body: 'Rain has stopped at the circuit.', url: '/dashboard' });
   }
 
   // Fastest lap
@@ -90,11 +76,7 @@ function detectEvents(prevState, newState) {
   if (newFastLap && newFastLap !== prevFastLap) {
     const driver = newFastLap.driver || 'Unknown';
     const lapTime = newFastLap.time || '';
-    notifications.push({
-      title: '⚡ Fastest Lap',
-      body: `${driver} sets fastest lap${lapTime ? ': ' + lapTime : ''}`,
-      url: '/dashboard',
-    });
+    notifications.push({ title: '⚡ Fastest Lap', body: `${driver} sets fastest lap${lapTime ? ': ' + lapTime : ''}`, url: '/dashboard' });
   }
 
   return notifications;
@@ -102,10 +84,8 @@ function detectEvents(prevState, newState) {
 
 async function sendNotifications(notifications) {
   if (notifications.length === 0) return;
-
-  const payload = JSON.stringify(notifications[0]); // send first notification
+  const payload = JSON.stringify(notifications[0]);
   const dead = [];
-
   for (const [endpoint, subscription] of subscriptions.entries()) {
     try {
       await webpush.sendNotification(subscription, payload);
@@ -117,8 +97,6 @@ async function sendNotifications(notifications) {
       }
     }
   }
-
-  // Clean up expired subscriptions
   for (const endpoint of dead) {
     subscriptions.delete(endpoint);
     console.log('Removed expired subscription:', endpoint);
@@ -128,13 +106,18 @@ async function sendNotifications(notifications) {
 function connectToRealtime() {
   const url = `${REALTIME_URL}/api/realtime`;
   console.log('Connecting to realtime SSE:', url);
+  readyToNotify = false;
 
   const es = new EventSource(url);
 
   es.addEventListener('initial', (event) => {
     try {
       lastState = JSON.parse(event.data);
-      console.log('Received initial state');
+      console.log('Received initial state — warmup for', WARMUP_MS, 'ms (suppressing backlog notifications)');
+      setTimeout(() => {
+        readyToNotify = true;
+        console.log('Warmup complete — notifications enabled');
+      }, WARMUP_MS);
     } catch (e) {
       console.error('Failed to parse initial state:', e.message);
     }
@@ -144,6 +127,13 @@ function connectToRealtime() {
     try {
       const delta = JSON.parse(event.data);
       const newState = { ...lastState, ...delta };
+
+      if (!readyToNotify) {
+        // Still warming up — silently apply state updates, no notifications
+        lastState = newState;
+        return;
+      }
+
       const notifications = detectEvents(lastState, newState);
       lastState = newState;
 
@@ -164,13 +154,8 @@ function connectToRealtime() {
 }
 
 // REST API endpoints
-
 app.get('/health', (req, res) => {
-  res.json({
-    status: 'ok',
-    subscriptions: subscriptions.size,
-    connected: lastState !== null,
-  });
+  res.json({ status: 'ok', subscriptions: subscriptions.size, connected: lastState !== null, readyToNotify });
 });
 
 app.get('/vapid-public-key', (req, res) => {
@@ -182,7 +167,6 @@ app.post('/subscribe', (req, res) => {
   if (!subscription || !subscription.endpoint) {
     return res.status(400).json({ error: 'Invalid subscription' });
   }
-
   subscriptions.set(subscription.endpoint, subscription);
   console.log('New subscription registered. Total:', subscriptions.size);
   res.status(201).json({ message: 'Subscribed successfully' });
@@ -193,7 +177,6 @@ app.delete('/subscribe', (req, res) => {
   if (!endpoint) {
     return res.status(400).json({ error: 'Missing endpoint' });
   }
-
   subscriptions.delete(endpoint);
   console.log('Subscription removed. Total:', subscriptions.size);
   res.json({ message: 'Unsubscribed successfully' });
