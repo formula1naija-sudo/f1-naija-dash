@@ -182,9 +182,57 @@ app.delete('/subscribe', (req, res) => {
   res.json({ message: 'Unsubscribed successfully' });
 });
 
-// Tweet cache (Nitter RSS - free alternative to Twitter API)
+// Tweet cache (CDN Syndication + Nitter RSS fallback)
 let tweetCache = { tweets: [], fetchedAt: 0 };
 const TWEET_CACHE_MS = 5 * 60 * 1000; // 5 minutes
+
+// Strategy 1: Twitter CDN Syndication API (powers embedded timeline widgets, no auth needed)
+async function fetchTweetsFromCDN() {
+  try {
+    const url = 'https://cdn.syndication.twimg.com/timeline/profile?screen_name=f1_naija&count=20&dnt=true&lang=en&suppress_response_codes=true';
+    console.log('Trying Twitter CDN Syndication...');
+    const res = await fetch(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
+        'Accept': 'application/json, text/javascript, */*; q=0.01',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Referer': 'https://twitter.com/',
+      },
+      signal: AbortSignal.timeout(10000),
+    });
+    console.log(`CDN status: ${res.status}`);
+    const text = await res.text();
+    console.log(`CDN response preview: ${text.substring(0, 500)}`);
+    if (!res.ok) return null;
+
+    const data = JSON.parse(text);
+    const tweets = [];
+
+    // Handle multiple possible response shapes
+    const entries = data.body || data.timeline?.entries || data.entries || (Array.isArray(data) ? data : []);
+    for (const entry of entries) {
+      const td = entry.data || entry.tweet || entry.content?.tweet || entry;
+      if (!td || !td.id_str) continue;
+      const rawText = td.full_text || td.text || '';
+      tweets.push({
+        id: td.id_str,
+        text: rawText,
+        created_at: new Date(td.created_at).toISOString(),
+      });
+    }
+    if (tweets.length > 0) {
+      console.log(`CDN: fetched ${tweets.length} tweets`);
+      return tweets;
+    }
+    console.log('CDN: 0 parseable tweets from response');
+    return null;
+  } catch (e) {
+    console.log(`CDN fetch error: ${e.message}`);
+    return null;
+  }
+}
+
+// Strategy 2: Nitter RSS (fallback — public instances may block cloud IPs)
 const NITTER_INSTANCES = [
   'https://xcancel.com',
   'https://nitter.privacyredirect.com',
@@ -202,7 +250,7 @@ async function fetchTweetsFromNitter() {
         headers: { 'User-Agent': 'Mozilla/5.0' },
         signal: AbortSignal.timeout(8000),
       });
-      if (!res.ok) continue;
+      if (!res.ok) { console.log(`Nitter ${instance} HTTP ${res.status}`); continue; }
       const xml = await res.text();
       const items = [];
       const itemRegex = new RegExp('<item>([\s\S]*?)<\/item>', 'g');
@@ -216,15 +264,12 @@ async function fetchTweetsFromNitter() {
         if (!idMatch) continue;
         const text = desc
           .replace(new RegExp('<[^>]+>', 'g'), '')
-          .replace(/&amp;/g, '&')
-          .replace(/&lt;/g, '<')
-          .replace(/&gt;/g, '>')
-          .replace(/&nbsp;/g, ' ')
+          .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&nbsp;/g, ' ')
           .trim();
         items.push({ id: idMatch[1], text, created_at: new Date(pubDate).toISOString() });
       }
       if (items.length > 0) {
-        console.log(`Fetched ${items.length} tweets from ${instance}`);
+        console.log(`Nitter ${instance}: fetched ${items.length} tweets`);
         return items;
       }
     } catch (e) {
@@ -239,12 +284,13 @@ app.get('/tweets', async (req, res) => {
   if (now - tweetCache.fetchedAt < TWEET_CACHE_MS && tweetCache.tweets.length > 0) {
     return res.json({ tweets: tweetCache.tweets, cached: true });
   }
-  const tweets = await fetchTweetsFromNitter();
+  // Try CDN first, then Nitter
+  const tweets = (await fetchTweetsFromCDN()) || (await fetchTweetsFromNitter());
   if (tweets) {
     tweetCache = { tweets, fetchedAt: now };
     res.json({ tweets });
   } else {
-    res.json({ tweets: tweetCache.tweets, error: 'All Nitter instances failed' });
+    res.json({ tweets: tweetCache.tweets, error: 'All tweet sources failed' });
   }
 });
 
