@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useNotifications } from "@/hooks/useNotifications";
 
 type BannerType = "permission" | "ios-install" | null;
 
@@ -22,13 +21,11 @@ export default function NotificationPrompt() {
   const [showBanner, setShowBanner] = useState(false);
   const [dismissed, setDismissed] = useState(false);
   const [bannerType, setBannerType] = useState<BannerType>(null);
-  useNotifications();
 
   useEffect(() => {
     const { isIOS, isStandalone, supportsNotifications } = getDeviceInfo();
 
     if (isIOS && !isStandalone) {
-      // iOS Safari regular tab — prompt to add to Home Screen
       const timer = setTimeout(() => {
         setBannerType("ios-install");
         setShowBanner(true);
@@ -36,7 +33,6 @@ export default function NotificationPrompt() {
       return () => clearTimeout(timer);
     }
 
-    // iOS PWA (standalone), Android, or desktop — use standard Notification API
     if (!supportsNotifications) return;
     if (Notification.permission !== "default") return;
 
@@ -65,7 +61,6 @@ export default function NotificationPrompt() {
 
   if (!showBanner || dismissed) return null;
 
-  // iOS: show "Add to Home Screen" instructions
   if (bannerType === "ios-install") {
     return (
       <div className="fixed bottom-6 left-1/2 z-50 w-[calc(100%-2rem)] max-w-sm -translate-x-1/2 rounded-xl border border-zinc-700 bg-zinc-900 p-4 shadow-xl">
@@ -90,7 +85,6 @@ export default function NotificationPrompt() {
     );
   }
 
-  // Web / Android / iOS PWA: standard permission banner
   return (
     <div className="fixed top-16 left-1/2 z-50 flex -translate-x-1/2 items-center gap-3 rounded-xl border border-zinc-700 bg-zinc-900 px-4 py-3 shadow-lg">
       <span className="text-sm text-zinc-300">🔔 Get alerts for overtakes, red flags &amp; more</span>
