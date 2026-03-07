@@ -203,17 +203,17 @@ async function fetchTweetsFromNitter() {
       if (!res.ok) continue;
       const xml = await res.text();
       const items = [];
-      const itemRegex = /<item>([sS]*?)</item>/g;
+      const itemRegex = new RegExp('<item>([\s\S]*?)<\/item>', 'g');
       let match;
       while ((match = itemRegex.exec(xml)) !== null) {
         const itemXml = match[1];
-        const link = itemXml.match(/<link>(.*?)</link>/)?.[1] || '';
-        const pubDate = itemXml.match(/<pubDate>(.*?)</pubDate>/)?.[1] || '';
-        const desc = itemXml.match(/<description><![CDATA[([sS]*?)]]></description>/)?.[1] || '';
-        const idMatch = link.match(//status/(d+)/);
+        const link = (itemXml.match(new RegExp('<link>(.*?)<\/link>')) || [])[1] || '';
+        const pubDate = (itemXml.match(new RegExp('<pubDate>(.*?)<\/pubDate>')) || [])[1] || '';
+        const desc = (itemXml.match(new RegExp('<description><!\[CDATA\[([\s\S]*?)\]\]><\/description>')) || [])[1] || '';
+        const idMatch = link.match(new RegExp('\/status\/(\d+)'));
         if (!idMatch) continue;
         const text = desc
-          .replace(/<[^>]+>/g, '')
+          .replace(new RegExp('<[^>]+>', 'g'), '')
           .replace(/&amp;/g, '&')
           .replace(/&lt;/g, '<')
           .replace(/&gt;/g, '>')
