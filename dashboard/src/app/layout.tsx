@@ -25,7 +25,7 @@ export default function RootLayout({ children }: Props) {
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="F1 Naija" />
-        <link rel="apple-touch-icon" href="/tag-logo.png" />
+        <link rel="apple-touch-icon" href="/pwa-icon.png" />
         {env.TRACKING_ID && env.TRACKING_URL && (
           <>
             <Script
@@ -34,25 +34,3 @@ export default function RootLayout({ children }: Props) {
               src={env.TRACKING_URL}
             />
           </>
-        )}
-        {/* Register service worker */}
-        <Script
-          id="register-sw"
-          strategy="afterInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `
-              if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('/sw.js').catch(function(err) {
-                  console.warn('SW registration failed:', err);
-                });
-              }
-            `,
-          }}
-        />
-      </head>
-      <body>
-        <OledModeProvider>{children}</OledModeProvider>
-      </body>
-    </html>
-  );
-}
