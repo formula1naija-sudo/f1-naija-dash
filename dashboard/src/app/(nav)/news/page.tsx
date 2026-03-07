@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useState, useCallback } from "react";
 
 type Tweet = {
@@ -19,14 +18,8 @@ function timeAgo(dateStr: string): string {
 function TweetCard({ tweet }: { tweet: Tweet }) {
   const isPhoto = tweet.text.startsWith("📸");
   const tweetUrl = `https://twitter.com/f1_naija/status/${tweet.id}`;
-
   return (
-    <a
-      href={tweetUrl}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="block"
-    >
+    <a href={tweetUrl} target="_blank" rel="noopener noreferrer" className="block">
       <div className="rounded-xl border border-zinc-800 p-4 transition-all hover:border-zinc-600 hover:bg-zinc-900">
         <div className="flex items-start gap-3">
           <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-zinc-800 text-sm font-bold text-green-400">
@@ -70,7 +63,7 @@ function SkeletonCard() {
   );
 }
 
-type NotifStatus = "idle" | "subscribed" | "denied" | "unsupported";
+type NotifStatus = "idle" | "subscribed" | "denied" | "unsupported" | "ios-pwa-required";
 
 export default function NewsPage() {
   const [tweets, setTweets] = useState<Tweet[]>([]);
@@ -98,28 +91,23 @@ export default function NewsPage() {
       setNotifStatus("unsupported");
       return;
     }
-
     const permission = await Notification.requestPermission();
     if (permission !== "granted") {
       setNotifStatus("denied");
       return;
     }
-
     try {
       const reg = await navigator.serviceWorker.ready;
       const vapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!;
-
       const sub = await reg.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: vapidKey,
       });
-
       await fetch("/api/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(sub),
       });
-
       setNotifStatus("subscribed");
     } catch (err) {
       console.error("Push subscribe error:", err);
@@ -152,6 +140,16 @@ export default function NewsPage() {
   }, [fetchTweets]);
 
   useEffect(() => {
+    const isIOS =
+      /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+      (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+    const isStandalone =
+      window.matchMedia("(display-mode: standalone)").matches ||
+      (navigator as Navigator & { standalone?: boolean }).standalone === true;
+    if (isIOS && !isStandalone) {
+      setNotifStatus("ios-pwa-required");
+      return;
+    }
     if (!("Notification" in window)) {
       setNotifStatus("unsupported");
     } else if (Notification.permission === "granted") {
@@ -170,62 +168,53 @@ export default function NewsPage() {
           <h1 className="text-3xl text-white">News</h1>
           <p className="mt-0.5 text-sm text-zinc-500">
             Live F1 updates from{" "}
-            <a
-              href="https://twitter.com/f1_naija"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-zinc-400 hover:text-white transition-colors"
-            >
+            <a href="https://twitter.com/f1_naija" target="_blank" rel="noopener noreferrer" className="text-zinc-400 hover:text-white transition-colors">
               @f1_naija
             </a>
           </p>
         </div>
-
         {notifStatus === "idle" && (
-          <button
-            onClick={subscribeToNotifications}
-            className="rounded-lg bg-green-500 px-4 py-2 text-sm font-semibold text-black transition-colors hover:bg-green-400"
-          >
+          <button onClick={subscribeToNotifications} className="rounded-lg bg-green-500 px-4 py-2 text-sm font-semibold text-black transition-colors hover:bg-green-400">
             Enable Alerts
           </button>
         )}
         {notifStatus === "subscribed" && (
-          <button
-            onClick={unsubscribeFromNotifications}
-            className="text-sm font-medium text-green-400 transition-colors hover:text-zinc-400"
-            title="Click to turn off notifications"
-          >
+          <button onClick={unsubscribeFromNotifications} className="text-sm font-medium text-green-400 transition-colors hover:text-zinc-400" title="Click to turn off notifications">
             ✓ Alerts on
           </button>
         )}
-        {notifStatus === "denied" && (
-          <span className="text-sm text-zinc-500">Notifications blocked</span>
-        )}
-        {notifStatus === "unsupported" && (
-          <span className="text-sm text-zinc-500">Push not supported</span>
+        {notifStatus === "denied" && <span className="text-sm text-zinc-500">Notifications blocked</span>}
+        {notifStatus === "unsupported" && <span className="text-sm text-zinc-500">Push not supported</span>}
+        {notifStatus === "ios-pwa-required" && (
+          <span className="text-xs text-zinc-400 text-right max-w-[140px] leading-tight">
+            Add to Home Screen for alerts
+          </span>
         )}
       </div>
 
-      {loading && (
-        <div className="flex flex-col gap-3">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <SkeletonCard key={i} />
-          ))}
+      {notifStatus === "ios-pwa-required" && (
+        <div className="rounded-xl border border-zinc-700 bg-zinc-900/60 p-4">
+          <p className="text-sm font-semibold text-white mb-2">📱 Get alerts on iPhone / iPad</p>
+          <p className="text-xs text-zinc-400 leading-relaxed">
+            iOS only supports push notifications for apps added to your home screen.
+            In Safari, tap the <span className="font-semibold text-zinc-300">Share</span> button
+            {" (⬆)"}, then choose <span className="font-semibold text-zinc-300">&quot;Add to Home Screen&quot;</span>.
+            Open the app from your home screen — alerts will work automatically.
+          </p>
         </div>
       )}
 
+      {loading && (
+        <div className="flex flex-col gap-3">
+          {Array.from({ length: 4 }).map((_, i) => (<SkeletonCard key={i} />))}
+        </div>
+      )}
       {!loading && error && (
         <div className="py-12 text-center text-zinc-500">
           <p>{error}</p>
-          <button
-            onClick={fetchTweets}
-            className="mt-3 text-sm text-green-400 hover:underline"
-          >
-            Retry
-          </button>
+          <button onClick={fetchTweets} className="mt-3 text-sm text-green-400 hover:underline">Retry</button>
         </div>
       )}
-
       {noToken && !error && (
         <div className="rounded-xl border border-zinc-800 p-8 text-center">
           <p className="text-zinc-400 text-sm">
@@ -235,18 +224,12 @@ export default function NewsPage() {
           </p>
         </div>
       )}
-
       {!loading && !error && tweets.length > 0 && (
         <div className="flex flex-col gap-3">
-          {tweets.map((tweet) => (
-            <TweetCard key={tweet.id} tweet={tweet} />
-          ))}
+          {tweets.map((tweet) => (<TweetCard key={tweet.id} tweet={tweet} />))}
         </div>
       )}
-
-      <p className="pb-4 text-center text-xs text-zinc-700">
-        Auto-refreshes every 60s · Powered by F1 Naija
-      </p>
+      <p className="pb-4 text-center text-xs text-zinc-700">Auto-refreshes every 60s · Powered by F1 Naija</p>
     </div>
   );
 }
