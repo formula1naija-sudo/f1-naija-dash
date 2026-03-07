@@ -28,14 +28,17 @@ interface TwitterResponse {
 }
 
 export async function GET() {
-  const token = process.env.TWITTER_BEARER_TOKEN;
-
-  if (!token) {
+  const rawToken = process.env.TWITTER_BEARER_TOKEN;
+  if (!rawToken) {
     return NextResponse.json(
       { error: "Twitter bearer token not configured", tweets: [] },
       { status: 200 }
     );
   }
+
+  // URL-decode the token in case it was stored with percent-encoded chars
+  // (e.g. %2F -> /, %3D -> =)
+  const token = rawToken.includes("%") ? decodeURIComponent(rawToken) : rawToken;
 
   try {
     const url = new URL(
@@ -47,7 +50,6 @@ export async function GET() {
 
     const res = await fetch(url.toString(), {
       headers: { Authorization: `Bearer ${token}` },
-      // Revalidate every 60 seconds
       next: { revalidate: 60 },
     });
 
@@ -55,7 +57,7 @@ export async function GET() {
       const errText = await res.text();
       console.error("Twitter API error:", res.status, errText);
       return NextResponse.json(
-        { error: "Failed to fetch tweets", tweets: [] },
+        { error: `Twitter API ${res.status}`, detail: errText, tweets: [] },
         { status: 200 }
       );
     }
@@ -63,7 +65,6 @@ export async function GET() {
     const data = (await res.json()) as TwitterResponse;
     const allTweets: TwitterTweet[] = data.data ?? [];
     const newsTweets = allTweets.filter((t) => isNewsTweet(t.text));
-
     return NextResponse.json({ tweets: newsTweets });
   } catch (err) {
     console.error("Tweets route error:", err);
