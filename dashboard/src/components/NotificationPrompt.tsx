@@ -2,105 +2,138 @@
 
 import { useEffect, useState } from "react";
 
-type BannerType = "permission" | "ios-install" | null;
+const PUSH_SERVICE_URL = process.env.NEXT_PUBLIC_PUSH_SERVICE_URL || "";
 
-function getDeviceInfo() {
-  if (typeof window === "undefined") {
-    return { isIOS: false, isStandalone: false, supportsNotifications: false };
+async function subscribeToPush(): Promise<void> {
+  if (!PUSH_SERVICE_URL) {
+    console.warn("NEXT_PUBLIC_PUSH_SERVICE_URL not set, skipping push subscription");
+    return;
   }
-  const ua = navigator.userAgent;
-  const isIOS = /iPad|iPhone|iPod/.test(ua) && !(window as any).MSStream;
-  const isStandalone =
-    window.matchMedia("(display-mode: standalone)").matches ||
-    (navigator as any).standalone === true;
-  const supportsNotifications = "Notification" in window;
-  return { isIOS, isStandalone, supportsNotifications };
+  try {
+    const reg = await navigator.serviceWorker.ready;
+    const res = await fetch(`${PUSH_SERVICE_URL}/vapid-public-key`);
+    if (!res.ok) throw new Error("Failed to fetch VAPID key");
+    const { publicKey } = await res.json();
+    const existing = await reg.pushManager.getSubscription();
+    if (existing) {
+      await fetch(`${PUSH_SERVICE_URL}/subscribe`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(existing),
+      });
+      return;
+    }
+    const subscription = await reg.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: publicKey,
+    });
+    await fetch(`${PUSH_SERVICE_URL}/subscribe`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(subscription),
+    });
+    console.log("Push subscription registered");
+  } catch (err) {
+    console.error("Push subscription failed:", err);
+  }
 }
 
 export default function NotificationPrompt() {
-  const [showBanner, setShowBanner] = useState(false);
-  const [dismissed, setDismissed] = useState(false);
-  const [bannerType, setBannerType] = useState<BannerType>(null);
+  const [show, setShow] = useState(false);
+  const [isIos, setIsIos] = useState(false);
+  const [isStandalone, setIsStandalone] = useState(false);
 
   useEffect(() => {
-    const { isIOS, isStandalone, supportsNotifications } = getDeviceInfo();
+    const ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    const standalone =
+      window.matchMedia("(display-mode: standalone)").matches ||
+      (window.navigator as { standalone?: boolean }).standalone === true;
+    setIsIos(ios);
+    setIsStandalone(standalone);
 
-    if (isIOS && !isStandalone) {
-      const timer = setTimeout(() => {
-        setBannerType("ios-install");
-        setShowBanner(true);
-      }, 3000);
-      return () => clearTimeout(timer);
+    // Already granted — subscribe silently (re-registers if needed)
+    if (Notification.permission === "granted" && PUSH_SERVICE_URL) {
+      subscribeToPush();
     }
 
-    if (!supportsNotifications) return;
-    if (Notification.permission !== "default") return;
-
+    const delay = ios && !standalone ? 3000 : 5000;
     const timer = setTimeout(() => {
-      setBannerType("permission");
-      setShowBanner(true);
-    }, 5000);
+      if (Notification.permission === "default" || (ios && !standalone)) {
+        setShow(true);
+      }
+    }, delay);
     return () => clearTimeout(timer);
   }, []);
 
-  const handleEnable = async () => {
-    const result = await Notification.requestPermission();
-    if (result === "granted") {
-      new Notification("🏎️ F1 Naija Notifications Active!", {
-        body: "You'll get alerts for overtakes, red flags, fastest laps and more.",
-        icon: "/tag-logo.png",
-      });
+  const handleRequestPermission = async () => {
+    const permission = await Notification.requestPermission();
+    if (permission === "granted") {
+      await subscribeToPush();
     }
-    setShowBanner(false);
+    setShow(false);
   };
 
-  const handleDismiss = () => {
-    setDismissed(true);
-    setShowBanner(false);
-  };
+  if (!show) return null;
 
-  if (!showBanner || dismissed) return null;
-
-  if (bannerType === "ios-install") {
+  // iOS not in standalone: prompt to add to Home Screen
+  if (isIos && !isStandalone) {
     return (
-      <div className="fixed bottom-6 left-1/2 z-50 w-[calc(100%-2rem)] max-w-sm -translate-x-1/2 rounded-xl border border-zinc-700 bg-zinc-900 p-4 shadow-xl">
-        <button
-          onClick={handleDismiss}
-          className="absolute right-3 top-3 text-zinc-500 transition hover:text-zinc-300"
-          aria-label="Dismiss"
-        >
-          ✕
-        </button>
-        <p className="mb-1 pr-4 text-sm font-semibold text-white">
-          📲 Enable F1 Notifications on iPhone
-        </p>
-        <p className="text-xs leading-relaxed text-zinc-400">
-          Tap the{" "}
-          <span className="font-medium text-zinc-200">Share</span>{" "}
-          <span className="text-zinc-500">(□↑)</span> button, then{" "}
-          <span className="font-medium text-zinc-200">Add to Home Screen</span>{" "}
-          to get overtake, red flag &amp; fastest lap alerts.
-        </p>
+      <div className="fixed bottom-4 left-4 right-4 z-50 rounded-xl bg-zinc-900 border border-zinc-700 p-4 shadow-2xl">
+        <div className="flex items-start gap-3">
+          <span className="text-2xl">📲</span>
+          <div className="flex-1">
+            <p className="text-sm font-semibold text-white">Add to Home Screen</p>
+            <p className="text-xs text-zinc-400 mt-1">
+              Tap <strong>Share</strong> then <strong>Add to Home Screen</strong> to get live F1 push notifications.
+            </p>
+          </div>
+          <button
+            onClick={() => setShow(false)}
+            className="text-zinc-500 hover:text-zinc-300 text-lg leading-none"
+          >
+            ×
+          </button>
+        </div>
       </div>
     );
   }
 
-  return (
-    <div className="fixed top-16 left-1/2 z-50 flex -translate-x-1/2 items-center gap-3 rounded-xl border border-zinc-700 bg-zinc-900 px-4 py-3 shadow-lg">
-      <span className="text-sm text-zinc-300">🔔 Get alerts for overtakes, red flags &amp; more</span>
-      <button
-        onClick={handleEnable}
-        className="rounded-lg bg-emerald-600 px-3 py-1 text-sm font-medium text-white transition hover:bg-emerald-500"
-      >
-        Enable
-      </button>
-      <button
-        onClick={handleDismiss}
-        className="text-sm text-zinc-500 transition hover:text-zinc-300"
-        aria-label="Dismiss"
-      >
-        ✕
-      </button>
-    </div>
-  );
+  // Standard browser: request notification permission
+  if ("Notification" in window && Notification.permission === "default") {
+    return (
+      <div className="fixed bottom-4 left-4 right-4 z-50 rounded-xl bg-zinc-900 border border-zinc-700 p-4 shadow-2xl">
+        <div className="flex items-start gap-3">
+          <span className="text-2xl">🔔</span>
+          <div className="flex-1">
+            <p className="text-sm font-semibold text-white">Enable Notifications</p>
+            <p className="text-xs text-zinc-400 mt-1">
+              Get live alerts for Safety Cars, Red Flags, and key race moments.
+            </p>
+          </div>
+          <button
+            onClick={() => setShow(false)}
+            className="text-zinc-500 hover:text-zinc-300 text-lg leading-none"
+          >
+            ×
+          </button>
+        </div>
+        <div className="flex gap-2 mt-3">
+          <button
+            onClick={handleRequestPermission}
+            className="flex-1 rounded-lg bg-red-600 hover:bg-red-500 text-white text-sm font-medium py-2"
+          >
+            Allow Notifications
+          </button>
+          <button
+            onClick={() => setShow(false)}
+            className="rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-sm py-2 px-3"
+          >
+            Not now
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return null;
 }
