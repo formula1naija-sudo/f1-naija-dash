@@ -42,7 +42,7 @@ export default function DashboardLayout({ children }: Props) {
 
   return (
     <>
-      <div className="flex h-screen w-full md:pt-2 md:pr-2 md:pb-2">
+      <div className="flex h-dvh w-full md:pt-2 md:pr-2 md:pb-2">
         <Sidebar key="sidebar" connected={connected} />
         <WhatsAppShare />
         <Watermark />
