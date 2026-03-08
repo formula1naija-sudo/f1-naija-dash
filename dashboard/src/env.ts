@@ -12,7 +12,7 @@ const server = z.object({
 });
 
 const client = z.object({
-	NEXT_PUBLIC_LIVE_URL: z.string().min(1).includes("http"),
+	NEXT_PUBLIC_LIVE_URL: z.string(),
 });
 
 const processEnv = {
