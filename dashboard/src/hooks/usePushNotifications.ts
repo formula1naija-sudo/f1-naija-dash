@@ -24,8 +24,8 @@ function notify(title: string, body: string, icon = "/pwa-icon.png") {
   }
 }
 
-export function usePushNotifications()
-    const liveData = useDataStore((s) => s.state);
+export function usePushNotifications() {
+  const liveData = useDataStore((s) => s.state);
   const prev = useRef<PreviousState>({
     initialized: false,
     trackStatus: null,
@@ -73,7 +73,7 @@ export function usePushNotifications()
           if (line.BestLapTime?.OverallFastest) p.fastestLapDriver = num;
         }
       }
-      p.segmentIndex = (TimingData as any)?.SessionPart ?? -1;
+      p.segmentIndex = TimingData?.SessionPart ?? -1;
       p.initialized = true;
       return;
     }
@@ -151,7 +151,7 @@ export function usePushNotifications()
 
     // ── Qualifying segments (Q1 / Q2 / Q3) ───────────────────────────────
     if (SessionInfo?.Type === "Qualifying") {
-      const segIdx: number = (TimingData as any)?.SessionPart ?? -1;
+      const segIdx: number = TimingData?.SessionPart ?? -1;
       if (segIdx > 0 && segIdx !== p.segmentIndex && p.segmentIndex !== -1) {
         const partNames: Record<number, string> = { 1: "Q1", 2: "Q2", 3: "Q3" };
         const part = partNames[segIdx] ?? `Part ${segIdx}`;
