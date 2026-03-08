@@ -94,14 +94,14 @@ function SkeletonCard() {
     </div>
   );
 }
-
 function NewsTicker({ items }: { items: NewsItem[] }) {
   if (!items.length) return null;
   const tickerItems = [...items, ...items];
 
-  // Speed-based duration: ~0.9 s per item keeps a brisk but readable scroll.
-  // translateX(-50%) covers exactly one full copy, so N items × 0.9 s = total.
-  const duration = Math.max(18, items.length * 0.9);
+  // Character-based duration: 0.045 s per char gives a consistent TV-ticker
+  // reading pace regardless of headline count. translateX(-50%) covers one copy.
+  const totalChars = items.reduce((sum, item) => sum + item.title.length, 0);
+  const duration = Math.max(12, totalChars * 0.045);
 
   return (
     <div className="relative overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950 py-3 mb-6">
@@ -169,14 +169,12 @@ function ProfileCard({ profile }: { profile: Profile }) {
 }
 
 const PAGE_SIZE = 10;
-
 export default function NewsPage() {
   const [newsItems, setNewsItems] = useState<NewsItem[]>([]);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [notifStatus, setNotifStatus] = useState<NotifStatus>("idle");
-  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
   const fetchData = useCallback(async () => {
@@ -191,7 +189,6 @@ export default function NewsPage() {
         if (Array.isArray(data.items) && data.items.length > 0) {
           setNewsItems(data.items);
           setError(null);
-          setLastUpdated(new Date());
           // Reset to first page on fresh data
           setVisibleCount(PAGE_SIZE);
         }
@@ -332,14 +329,8 @@ export default function NewsPage() {
           )}
         </div>
 
-        {/* Footer */}
-        <p className="mt-6 text-center text-xs text-zinc-700">
-          {lastUpdated
-            ? `Updated ${timeAgo(lastUpdated.toISOString())} · Auto-refreshes every 5 min`
-            : "Auto-refreshes every 5 min"}
-          {newsItems.length > 0 && ` · ${newsItems.length} stories`}
-        </p>
       </div>
     </div>
   );
 }
+
