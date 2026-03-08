@@ -94,6 +94,7 @@ const teamColors: { [key: string]: string } = {
 function getTeamColor(constructorId: string): string {
 	return teamColors[constructorId] || "#666666";
 }
+
 export default function StandingsPage() {
 	const [drivers, setDrivers] = useState<DriverStanding[]>([]);
 	const [constructors, setConstructors] = useState<ConstructorStanding[]>([]);
@@ -161,6 +162,7 @@ export default function StandingsPage() {
 
 	const maxDriverPoints = parseFloat(drivers[0]?.points || "1");
 	const maxConstructorPoints = parseFloat(constructors[0]?.points || "1");
+
 	return (
 		<div className="mx-auto max-w-2xl py-10">
 			{/* Header */}
@@ -269,6 +271,7 @@ export default function StandingsPage() {
 					</div>
 				</div>
 			)}
+
 			{/* Constructor Standings */}
 			{activeTab === "constructors" && (
 				<div>
@@ -354,7 +357,7 @@ export default function StandingsPage() {
 									</div>
 									<div className="text-right flex-shrink-0">
 										<p className="text-xs text-zinc-600">{d.seasons}</p>
-										<p className="text-xs text-zinc-500">{d.wins} wins</p>
+										<p className="text-xs text-zinc-500">{d.wins} {d.wins === 1 ? 'win' : 'wins'}</p>
 									</div>
 								</div>
 							))}
@@ -391,4 +394,3 @@ export default function StandingsPage() {
 		</div>
 	);
 }
-
