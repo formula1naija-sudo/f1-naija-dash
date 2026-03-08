@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect } from "react";
 
 declare global {
@@ -21,8 +20,10 @@ export default function OneSignalInit() {
     const appId = process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID;
     if (!appId) return;
 
-    window.OneSignalDeferred = window.OneSignalDeferred ?? [];
+    // Prevent double-load in React Strict Mode / hot reload
+    if (document.querySelector('script[src*="OneSignalSDK.page.js"]')) return;
 
+    window.OneSignalDeferred = window.OneSignalDeferred ?? [];
     window.OneSignalDeferred.push(async (OneSignal: OneSignalType) => {
       await OneSignal.init({
         appId,
@@ -37,7 +38,8 @@ export default function OneSignalInit() {
     document.head.appendChild(script);
 
     return () => {
-      document.head.removeChild(script);
+      // Guard against NotFoundError if script was removed already
+      if (document.head.contains(script)) document.head.removeChild(script);
     };
   }, []);
 
