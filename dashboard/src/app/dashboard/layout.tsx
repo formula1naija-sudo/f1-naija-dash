@@ -42,8 +42,6 @@ export default function DashboardLayout({ children }: Props) {
 
   return (
     <>
-      <link rel="preconnect" href="https://f1-dash-realtime-production.up.railway.app" />
-      <link rel="preconnect" href="https://f1-dash-api-production-77f4.up.railway.app" />
       <div className="flex h-screen w-full md:pt-2 md:pr-2 md:pb-2">
         <Sidebar key="sidebar" connected={connected} />
         <WhatsAppShare />
