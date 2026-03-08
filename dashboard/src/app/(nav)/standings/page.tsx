@@ -31,30 +31,74 @@ type ConstructorStanding = {
 	};
 };
 
+type RetiredDriver = {
+	name: string;
+	nationality: string;
+	seasons: string;
+	championships: number;
+	wins: number;
+	note?: string;
+};
+
+type RetiredTeam = {
+	name: string;
+	country: string;
+	activePeriod: string;
+	championships: number;
+	note?: string;
+};
+
+const RETIRED_DRIVERS: RetiredDriver[] = [
+	{ name: "Sebastian Vettel",    nationality: "🇩🇪", seasons: "2007–2022", championships: 4, wins: 53, note: "4× World Champion (2010–2013)" },
+	{ name: "Kimi Räikkönen",      nationality: "🇫🇮", seasons: "2001–2021", championships: 1, wins: 21, note: "2007 World Champion" },
+	{ name: "Daniel Ricciardo",    nationality: "🇦🇺", seasons: "2011–2024", championships: 0, wins: 8,  note: "8 race victories" },
+	{ name: "Valtteri Bottas",     nationality: "🇫🇮", seasons: "2013–2024", championships: 0, wins: 10, note: "10 race victories" },
+	{ name: "Mick Schumacher",     nationality: "🇩🇪", seasons: "2021–2022", championships: 0, wins: 0  },
+	{ name: "Antonio Giovinazzi",  nationality: "🇮🇹", seasons: "2019–2021", championships: 0, wins: 0  },
+	{ name: "Nikita Mazepin",      nationality: "🇷🇺", seasons: "2021",      championships: 0, wins: 0  },
+	{ name: "Nicholas Latifi",     nationality: "🇨🇦", seasons: "2020–2022", championships: 0, wins: 0  },
+	{ name: "Robert Kubica",       nationality: "🇵🇱", seasons: "2006–2021", championships: 0, wins: 1, note: "Comeback driver after 2011 injury" },
+	{ name: "Romain Grosjean",     nationality: "🇫🇷", seasons: "2009–2020", championships: 0, wins: 0  },
+	{ name: "Kevin Magnussen",     nationality: "🇩🇰", seasons: "2014–2023", championships: 0, wins: 0  },
+];
+
+const RETIRED_TEAMS: RetiredTeam[] = [
+	{ name: "Lotus F1 Team",     country: "🇬🇧", activePeriod: "2010–2015", championships: 0, note: "Became Renault in 2016" },
+	{ name: "Force India",       country: "🇮🇳", activePeriod: "2008–2018", championships: 0, note: "Became Racing Point in 2018" },
+	{ name: "Racing Point",      country: "🇬🇧", activePeriod: "2019–2020", championships: 0, note: "Became Aston Martin in 2021" },
+	{ name: "Toro Rosso",        country: "🇮🇹", activePeriod: "2006–2019", championships: 0, note: "Became AlphaTauri in 2020" },
+	{ name: "AlphaTauri",        country: "🇮🇹", activePeriod: "2020–2023", championships: 0, note: "Became RB / Racing Bulls in 2024" },
+	{ name: "Renault F1 Team",   country: "🇫🇷", activePeriod: "2016–2020", championships: 0, note: "Became Alpine in 2021" },
+	{ name: "Alfa Romeo Racing", country: "🇨🇭", activePeriod: "2019–2023", championships: 0, note: "Became Kick Sauber in 2024" },
+	{ name: "Manor / MRT",       country: "🇬🇧", activePeriod: "2010–2016", championships: 0, note: "Folded after 2016 season" },
+	{ name: "HRT",               country: "🇪🇸", activePeriod: "2010–2012", championships: 0, note: "Folded after 2012 season" },
+	{ name: "Caterham",          country: "🇬🇧", activePeriod: "2010–2014", championships: 0, note: "Folded during 2014 season" },
+];
+
 const teamColors: { [key: string]: string } = {
-	red_bull: "#3671C6",
-	mclaren: "#FF8700",
-	ferrari: "#E8002D",
-	mercedes: "#27F4D2",
-	aston_martin: "#229971",
-	alpine: "#0093CC",
-	rb: "#6692FF",
-	haas: "#B6BABD",
-	williams: "#64C4FF",
-	sauber: "#52E252",
-	kick_sauber: "#52E252",
-	racing_bulls: "#6692FF",
+	red_bull:      "#3671C6",
+	mclaren:       "#FF8700",
+	ferrari:       "#E8002D",
+	mercedes:      "#27F4D2",
+	aston_martin:  "#229971",
+	alpine:        "#0093CC",
+	rb:            "#6692FF",
+	racing_bulls:  "#6692FF",
+	haas:          "#B6BABD",
+	williams:      "#64C4FF",
+	sauber:        "#52E252",
+	kick_sauber:   "#52E252",
+	cadillac:      "#C8102E",
 };
 
 function getTeamColor(constructorId: string): string {
 	return teamColors[constructorId] || "#666666";
 }
-
 export default function StandingsPage() {
 	const [drivers, setDrivers] = useState<DriverStanding[]>([]);
 	const [constructors, setConstructors] = useState<ConstructorStanding[]>([]);
 	const [loading, setLoading] = useState(true);
-	const [activeTab, setActiveTab] = useState<"drivers" | "constructors">("drivers");
+	const [activeTab, setActiveTab] = useState<"drivers" | "constructors" | "retired">("drivers");
 	const [season, setSeason] = useState<string>("");
 	const [round, setRound] = useState<string>("");
 
@@ -106,7 +150,7 @@ export default function StandingsPage() {
 		);
 	}
 
-	if (drivers.length === 0 && constructors.length === 0) {
+	if (drivers.length === 0 && constructors.length === 0 && activeTab !== "retired") {
 		return (
 			<div className="flex h-64 flex-col items-center justify-center">
 				<p className="text-lg">Championship standings unavailable</p>
@@ -117,13 +161,12 @@ export default function StandingsPage() {
 
 	const maxDriverPoints = parseFloat(drivers[0]?.points || "1");
 	const maxConstructorPoints = parseFloat(constructors[0]?.points || "1");
-
 	return (
 		<div className="mx-auto max-w-2xl py-10">
 			{/* Header */}
 			<div className="mb-8">
 				<p className="mb-2 text-xs font-semibold uppercase tracking-widest text-emerald-500">
-					{season} Season{round ? ` — After Round ${round}` : ""}
+					{season ? `${season} Season${round ? ` — After Round ${round}` : ""}` : "Championship"}
 				</p>
 				<h1 className="text-3xl font-bold">Championship Standings</h1>
 				<p className="mt-2 text-sm text-zinc-500">
@@ -132,7 +175,7 @@ export default function StandingsPage() {
 			</div>
 
 			{/* Tabs */}
-			<div className="mb-6 flex gap-2">
+			<div className="mb-6 flex gap-2 flex-wrap">
 				<button
 					onClick={() => setActiveTab("drivers")}
 					className={`rounded-lg px-4 py-2 text-sm font-semibold transition ${
@@ -152,6 +195,16 @@ export default function StandingsPage() {
 					}`}
 				>
 					Constructors
+				</button>
+				<button
+					onClick={() => setActiveTab("retired")}
+					className={`rounded-lg px-4 py-2 text-sm font-semibold transition ${
+						activeTab === "retired"
+							? "bg-zinc-600 text-white"
+							: "bg-zinc-800 text-zinc-400 hover:text-zinc-200"
+					}`}
+				>
+					Retired
 				</button>
 			</div>
 
@@ -216,7 +269,6 @@ export default function StandingsPage() {
 					</div>
 				</div>
 			)}
-
 			{/* Constructor Standings */}
 			{activeTab === "constructors" && (
 				<div>
@@ -272,9 +324,71 @@ export default function StandingsPage() {
 				</div>
 			)}
 
-			<p className="mt-8 text-center text-xs text-zinc-600">
-				Data provided by Jolpica F1 API. Updated after each Grand Prix.
-			</p>
+			{/* Retired Tab */}
+			{activeTab === "retired" && (
+				<div className="space-y-8">
+					{/* Retired Drivers */}
+					<div>
+						<h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-zinc-500">
+							Retired Drivers
+						</h2>
+						<div className="flex flex-col gap-1.5">
+							{RETIRED_DRIVERS.map((d) => (
+								<div
+									key={d.name}
+									className="flex items-center justify-between gap-3 rounded-lg border border-white/5 bg-white/[0.025] px-3 py-3"
+								>
+									<div className="min-w-0 flex-1">
+										<div className="flex items-center gap-2">
+											<span className="text-base">{d.nationality}</span>
+											<span className="text-sm font-bold text-white">{d.name}</span>
+											{d.championships > 0 && (
+												<span className="rounded-full bg-yellow-900/60 px-2 py-0.5 text-[10px] font-semibold text-yellow-400">
+													{d.championships}× WDC
+												</span>
+											)}
+										</div>
+										{d.note && (
+											<p className="mt-0.5 text-xs text-zinc-600">{d.note}</p>
+										)}
+									</div>
+									<div className="text-right flex-shrink-0">
+										<p className="text-xs text-zinc-600">{d.seasons}</p>
+										<p className="text-xs text-zinc-500">{d.wins} wins</p>
+									</div>
+								</div>
+							))}
+						</div>
+					</div>
+
+					{/* Retired / Rebranded Teams */}
+					<div>
+						<h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-zinc-500">
+							Retired &amp; Rebranded Teams
+						</h2>
+						<div className="flex flex-col gap-1.5">
+							{RETIRED_TEAMS.map((t) => (
+								<div
+									key={t.name}
+									className="flex items-center justify-between gap-3 rounded-lg border border-white/5 bg-white/[0.025] px-3 py-3"
+								>
+									<div className="min-w-0 flex-1">
+										<div className="flex items-center gap-2">
+											<span className="text-base">{t.country}</span>
+											<span className="text-sm font-bold text-white">{t.name}</span>
+										</div>
+										{t.note && (
+											<p className="mt-0.5 text-xs text-zinc-600">{t.note}</p>
+										)}
+									</div>
+									<p className="flex-shrink-0 text-xs text-zinc-600">{t.activePeriod}</p>
+								</div>
+							))}
+						</div>
+					</div>
+				</div>
+			)}
 		</div>
 	);
 }
+
