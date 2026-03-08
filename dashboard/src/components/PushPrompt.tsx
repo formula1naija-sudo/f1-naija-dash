@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useState } from "react";
 
 declare global {
@@ -18,12 +17,10 @@ export default function PushPrompt() {
   useEffect(() => {
     if (typeof window === "undefined") return;
     if (localStorage.getItem("pushPromptDismissed")) return;
-
     const timer = setTimeout(() => {
       const optedIn = window.OneSignal?.User?.PushSubscription?.optedIn;
       if (!optedIn) setVisible(true);
     }, 5000);
-
     return () => clearTimeout(timer);
   }, []);
 
@@ -31,6 +28,7 @@ export default function PushPrompt() {
 
   const handleEnable = () => {
     window.OneSignal?.Slidedown?.promptPush();
+    localStorage.setItem("pushPromptDismissed", "1");
     setDismissed(true);
   };
 
