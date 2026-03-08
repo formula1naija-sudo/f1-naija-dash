@@ -65,16 +65,17 @@ const countryCodeMap: Record<string, string> = {
 
 export default function Round({ round, nextName }: Props) {
   const countryCode = countryCodeMap[round.countryName];
-  const [activeTZ, setActiveTZ] = useState(0);
-
-  useEffect(() => {
+  const [activeTZ, setActiveTZ] = useState<number>(() => {
+    if (typeof window === "undefined") return 0;
     const saved = localStorage.getItem(TZ_STORAGE_KEY);
     if (saved !== null) {
       const idx = parseInt(saved);
-      if (!isNaN(idx) && idx >= 0 && idx < TIMEZONES.length) {
-        setActiveTZ(idx);
-      }
+      if (!isNaN(idx) && idx >= 0 && idx < TIMEZONES.length) return idx;
     }
+    return 0;
+  });
+
+  useEffect(() => {
     const handler = (e: Event) => {
       const detail = (e as CustomEvent<number>).detail;
       if (typeof detail === "number") setActiveTZ(detail);
