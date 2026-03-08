@@ -30,7 +30,6 @@ const RSS_FEEDS = [
 	{ url: "https://www.formule1.nl/feeds/rss/news",                       source: "Formule1.nl" },
 	{ url: "https://www.autoracer.it/feed/",                               source: "AutoRacer IT" },
 ];
-
 type NewsItem = {
 	title: string;
 	description: string;
@@ -87,7 +86,6 @@ function parseRSS(xml: string, source: string): NewsItem[] {
 	}
 	return items;
 }
-
 // ---------------------------------------------------------------------------
 // Title-based deduplication — strips punctuation, stop words, and word order
 // so "Hamilton wins the Australian GP" and "HAMILTON WINS AUSTRALIAN GP!"
@@ -120,6 +118,18 @@ function deduplicateByTitle(items: NewsItem[]): NewsItem[] {
 	});
 }
 
+// ---------------------------------------------------------------------------
+// F1-only filter — drop stories that are clearly about other series.
+// We check the title and description for non-F1 motorsport keywords.
+// ---------------------------------------------------------------------------
+const NON_F1_PATTERN =
+	/\b(indycar|indy\s?500|motogp|moto\s?gp|moto2|moto3|formula\s?[23e]|f2\b|f3\b|formula\s?e\b|formula\s?2\b|formula\s?3\b|wec\b|dtm\b|nascar|supercars|supercup|btcc|wrc\b|rally\b|rallycross|dakar|le\s?mans|24h\s?race|daytona\s?500|imsa|superbike|fia\s+fe|endurance\s+championship)\b/i;
+
+function isF1Relevant(item: NewsItem): boolean {
+	const text = `${item.title} ${item.description}`;
+	return !NON_F1_PATTERN.test(text);
+}
+
 async function fetchFeed(feedUrl: string, source: string): Promise<NewsItem[]> {
 	try {
 		const res = await fetch(feedUrl, {
@@ -150,8 +160,11 @@ export async function GET() {
 	// Deduplicate stories with near-identical titles across sources
 	const dedupedItems = deduplicateByTitle(allItems);
 
+	// Keep F1-only stories — filter out IndyCar, MotoGP, F2, F3, etc.
+	const f1Items = dedupedItems.filter(isF1Relevant);
+
 	// Sort newest first
-	dedupedItems.sort((a, b) => {
+	f1Items.sort((a, b) => {
 		const da = a.pubDate ? new Date(a.pubDate).getTime() : 0;
 		const db = b.pubDate ? new Date(b.pubDate).getTime() : 0;
 		return db - da;
@@ -159,10 +172,11 @@ export async function GET() {
 
 	// Prefer last 12 h; fall back to latest 50 if nothing recent
 	const twelveHoursAgo = Date.now() - 12 * 60 * 60 * 1000;
-	const recent = dedupedItems.filter(
+	const recent = f1Items.filter(
 		(item) => !item.pubDate || new Date(item.pubDate).getTime() > twelveHoursAgo
 	);
-	const finalItems = recent.length >= 3 ? recent : dedupedItems.slice(0, 50);
+	const finalItems = recent.length >= 3 ? recent : f1Items.slice(0, 50);
 
 	return NextResponse.json({ items: finalItems });
 }
+
