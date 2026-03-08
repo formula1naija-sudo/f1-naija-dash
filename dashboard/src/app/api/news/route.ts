@@ -39,18 +39,14 @@ type NewsItem = {
 };
 
 function extractTag(xml: string, tag: string): string {
-	// CDATA content  e.g.  <title><![CDATA[...]]></title>
 	const cdataMatch = new RegExp(
 		"<" + tag + "[^>]*><!\\[CDATA\\[([\\s\\S]*?)\\]\\]><\\/" + tag + ">"
 	).exec(xml);
 	if (cdataMatch) return cdataMatch[1].trim();
-
-	// Plain text content  e.g.  <title>...</title>
 	const plainMatch = new RegExp(
 		"<" + tag + "[^>]*>([\\s\\S]*?)<\\/" + tag + ">"
 	).exec(xml);
 	if (plainMatch) return plainMatch[1].trim();
-
 	return "";
 }
 
@@ -61,13 +57,8 @@ function parseRSS(xml: string, source: string): NewsItem[] {
 	while ((match = itemRegex.exec(xml)) !== null) {
 		const itemXml = match[1];
 		const title = extractTag(itemXml, "title");
-
-		// <link> is sometimes empty (Atom) - fall back to <guid>
 		let link = extractTag(itemXml, "link");
-		if (!link) {
-			link = extractTag(itemXml, "guid");
-		}
-
+		if (!link) link = extractTag(itemXml, "guid");
 		const description = extractTag(itemXml, "description")
 			.replace(new RegExp("<[^>]+>", "g"), "")
 			.replace(/&amp;/g, "&")
@@ -77,20 +68,12 @@ function parseRSS(xml: string, source: string): NewsItem[] {
 			.replace(/&#039;/g, "'")
 			.trim()
 			.substring(0, 220);
-
 		const pubDate = extractTag(itemXml, "pubDate");
-
-		if (title && link) {
-			items.push({ title, description, link, pubDate, source });
-		}
+		if (title && link) items.push({ title, description, link, pubDate, source });
 	}
 	return items;
 }
-// ---------------------------------------------------------------------------
-// Title-based deduplication — strips punctuation, stop words, and word order
-// so "Hamilton wins the Australian GP" and "HAMILTON WINS AUSTRALIAN GP!"
-// collapse to the same key; only the first (earliest-in-list) entry is kept.
-// ---------------------------------------------------------------------------
+
 const STOP_WORDS = new Set([
 	"a", "an", "the", "in", "on", "at", "to", "for", "of", "and", "or", "but",
 	"is", "was", "are", "were", "has", "have", "with", "by", "from", "up", "as",
@@ -117,17 +100,22 @@ function deduplicateByTitle(items: NewsItem[]): NewsItem[] {
 		return true;
 	});
 }
-
 // ---------------------------------------------------------------------------
-// F1-only filter — drop stories that are clearly about other series.
-// We check the title and description for non-F1 motorsport keywords.
+// F1 relevance filter — two-stage:
+//   1. Block stories that are clearly about other racing series (denylist)
+//   2. Require at least one positive F1 keyword (allowlist)
+// This catches generic automotive articles from mixed-content feeds.
 // ---------------------------------------------------------------------------
 const NON_F1_PATTERN =
-	/\b(indycar|indy\s?500|motogp|moto\s?gp|moto2|moto3|formula\s?[23e]|f2\b|f3\b|formula\s?e\b|formula\s?2\b|formula\s?3\b|wec\b|dtm\b|nascar|supercars|supercup|btcc|wrc\b|rally\b|rallycross|dakar|le\s?mans|24h\s?race|daytona\s?500|imsa|superbike|fia\s+fe|endurance\s+championship)\b/i;
+	/\b(indycar|indy\s?500|motogp|moto\s?gp|moto2|moto3|formula\s?[23e]|f2\b|f3\b|formula\s?e\b|formula\s?2\b|formula\s?3\b|wec\b|dtm\b|nascar|supercars|supercup|btcc|wrc\b|rally\b|rallycross|dakar|le\s?mans|24h\s?race|daytona\s?500|imsa|superbike|worldsbk|wsbk\b|world\s?superbike|fia\s+fe|endurance\s+championship)\b/i;
+
+const F1_POSITIVE_PATTERN =
+	/\b(f1|formula\s?1|formula\s?one|grand\s?prix|\bgp\b|verstappen|hamilton|leclerc|norris|piastri|sainz|russell|alonso|stroll|hulkenberg|gasly|ocon|albon|tsunoda|zhou|bearman|hadjar|doohan|antonelli|bortoleto|colapinto|lawson|perez|ferrari|red\s?bull|mclaren|mercedes|aston\s?martin|alpine|williams|haas|sauber|cadillac|racing\s?bulls|\bfia\b|pit\s?stop|pit\s?lane|qualifying|pole\s?position|fastest\s?lap|safety\s?car|\bdrs\b|paddock|podium|constructor|formel\s?1|f.rmula\s?1|formule\s?1|formula\s?uno|gran\s?premio|formel|lando|carlos|george|charles|max\s?verstappen)\b/i;
 
 function isF1Relevant(item: NewsItem): boolean {
 	const text = `${item.title} ${item.description}`;
-	return !NON_F1_PATTERN.test(text);
+	if (NON_F1_PATTERN.test(text)) return false;
+	return F1_POSITIVE_PATTERN.test(text);
 }
 
 async function fetchFeed(feedUrl: string, source: string): Promise<NewsItem[]> {
@@ -152,25 +140,19 @@ export async function GET() {
 	const allItems: NewsItem[] = [];
 	for (const result of results) {
 		if (result.status === "fulfilled") {
-			// Take up to 5 items per feed so no single source dominates
 			allItems.push(...result.value.slice(0, 5));
 		}
 	}
 
-	// Deduplicate stories with near-identical titles across sources
 	const dedupedItems = deduplicateByTitle(allItems);
-
-	// Keep F1-only stories — filter out IndyCar, MotoGP, F2, F3, etc.
 	const f1Items = dedupedItems.filter(isF1Relevant);
 
-	// Sort newest first
 	f1Items.sort((a, b) => {
 		const da = a.pubDate ? new Date(a.pubDate).getTime() : 0;
 		const db = b.pubDate ? new Date(b.pubDate).getTime() : 0;
 		return db - da;
 	});
 
-	// Prefer last 12 h; fall back to latest 50 if nothing recent
 	const twelveHoursAgo = Date.now() - 12 * 60 * 60 * 1000;
 	const recent = f1Items.filter(
 		(item) => !item.pubDate || new Date(item.pubDate).getTime() > twelveHoursAgo
