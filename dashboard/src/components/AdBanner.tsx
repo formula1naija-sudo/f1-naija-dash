@@ -9,7 +9,6 @@ export default function AdBanner() {
   const [fading, setFading] = useState(false);
 
   useEffect(() => {
-    // Start fade-out a little before full dismiss for a smooth exit
     const fadeTimer = setTimeout(() => setFading(true), AUTO_DISMISS_MS - 600);
     const dismissTimer = setTimeout(() => setDismissed(true), AUTO_DISMISS_MS);
     return () => {
@@ -22,7 +21,7 @@ export default function AdBanner() {
 
   return (
     <div
-      className="sticky top-0 left-0 z-50 flex w-full items-center justify-center gap-4 bg-gradient-to-r from-emerald-700 via-emerald-600 to-emerald-700 px-4 py-2.5 transition-opacity duration-500"
+      className="flex w-full items-center justify-center gap-4 bg-gradient-to-r from-emerald-700 via-emerald-600 to-emerald-700 px-4 py-2.5 transition-opacity duration-500"
       style={{ opacity: fading ? 0 : 1 }}
     >
       <span className="text-sm font-semibold text-white">
