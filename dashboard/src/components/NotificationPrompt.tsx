@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useState } from "react";
 
 const PUSH_SERVICE_URL = process.env.NEXT_PUBLIC_PUSH_SERVICE_URL || "";
@@ -41,7 +40,9 @@ async function subscribeToPush(): Promise<void> {
 export default function NotificationPrompt() {
   const [show, setShow] = useState(false);
   const [isIos] = useState<boolean>(() =>
-    typeof window !== "undefined" ? /iphone|ipad|ipod/i.test(navigator.userAgent) : false
+    typeof window !== "undefined"
+      ? /iphone|ipad|ipod/i.test(navigator.userAgent)
+      : false
   );
   const [isStandalone] = useState<boolean>(() => {
     if (typeof window === "undefined") return false;
@@ -52,14 +53,18 @@ export default function NotificationPrompt() {
   });
 
   useEffect(() => {
+    // Guard: iOS Safari < 16.4 has no Notification API — accessing it throws ReferenceError
+    const hasNotification = typeof Notification !== "undefined";
+
     // Already granted — subscribe silently (re-registers if needed)
-    if (Notification.permission === "granted" && PUSH_SERVICE_URL) {
+    if (hasNotification && Notification.permission === "granted" && PUSH_SERVICE_URL) {
       subscribeToPush();
     }
 
     const delay = isIos && !isStandalone ? 3000 : 5000;
     const timer = setTimeout(() => {
-      if (Notification.permission === "default" || (isIos && !isStandalone)) {
+      const notifDefault = hasNotification && Notification.permission === "default";
+      if (notifDefault || (isIos && !isStandalone)) {
         setShow(true);
       }
     }, delay);
@@ -67,6 +72,7 @@ export default function NotificationPrompt() {
   }, [isIos, isStandalone]);
 
   const handleRequestPermission = async () => {
+    if (typeof Notification === "undefined") { setShow(false); return; }
     const permission = await Notification.requestPermission();
     if (permission === "granted") {
       await subscribeToPush();
