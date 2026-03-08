@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import Flag from "@/components/Flag";
 
 type Session = {
   kind: string;
@@ -21,6 +22,34 @@ type TZConfig = {
   label: string;
   flag: string;
   abbr: string;
+};
+
+const COUNTRY_CODE_MAP: Record<string, string> = {
+  Australia: "aus",
+  Austria: "aut",
+  Azerbaijan: "aze",
+  Bahrain: "brn",
+  Belgium: "bel",
+  Brazil: "bra",
+  Canada: "can",
+  China: "chn",
+  Spain: "esp",
+  France: "fra",
+  "Great Britain": "gbr",
+  "United Kingdom": "gbr",
+  Germany: "ger",
+  Hungary: "hun",
+  Italy: "ita",
+  Japan: "jpn",
+  "Saudi Arabia": "ksa",
+  Mexico: "mex",
+  Monaco: "mon",
+  Netherlands: "ned",
+  Portugal: "por",
+  Qatar: "qat",
+  Singapore: "sgp",
+  "United Arab Emirates": "uae",
+  "United States": "usa",
 };
 
 const TIMEZONES: TZConfig[] = [
@@ -153,6 +182,8 @@ export default function RaceCountdown() {
     return null;
   }
 
+  const countryCode = COUNTRY_CODE_MAP[nextRace.countryName];
+
   return (
     <div className="mx-auto mb-10 w-full max-w-lg rounded-2xl border border-zinc-800 bg-gradient-to-b from-white/[0.02] to-transparent p-6 sm:p-8">
       <div className="mb-6">
@@ -162,7 +193,10 @@ export default function RaceCountdown() {
         <h3 className="text-xl font-bold text-white sm:text-2xl">
           {nextRace.name}
         </h3>
-        <p className="mt-1 text-sm text-zinc-500">{nextRace.countryName}</p>
+        <div className="mt-2 flex items-center gap-2">
+          <Flag countryCode={countryCode} className="h-5 w-7" />
+          <p className="text-sm text-zinc-500">{nextRace.countryName}</p>
+        </div>
       </div>
 
       <div className="mb-7 flex justify-center gap-2 sm:gap-3">
@@ -232,4 +266,4 @@ export default function RaceCountdown() {
       </div>
     </div>
   );
-			}
+}
