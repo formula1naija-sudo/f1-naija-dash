@@ -10,7 +10,7 @@ app.use(express.json());
 const VAPID_PUBLIC_KEY = process.env.VAPID_PUBLIC_KEY;
 const VAPID_PRIVATE_KEY = process.env.VAPID_PRIVATE_KEY;
 const VAPID_EMAIL = process.env.VAPID_EMAIL || 'mailto:admin@f1naija.com';
-const REALTIME_URL = process.env.REALTIME_URL || 'https://realtime.railway.internal';
+const REALTIME_URL = process.env.REALTIME_URL || 'https://rt-api.f1-dash.com';
 const PORT = process.env.PORT || 3001;
 
 // How long to wait after initial state before sending notifications.
