@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 type NewsItem = {
   title: string;
@@ -34,12 +34,29 @@ function fmt(n: number): string {
   return n.toString();
 }
 
+// Source badge colour map — unknown sources fall back to zinc
 const SOURCE_COLORS: Record<string, string> = {
-  "BBC Sport": "bg-red-900 text-red-300",
-  "RaceFans": "bg-blue-900 text-blue-300",
-  "The Race": "bg-yellow-900 text-yellow-300",
-  "Motorsport.com": "bg-purple-900 text-purple-300",
-  "Autosport": "bg-orange-900 text-orange-300",
+  "BBC Sport":       "bg-red-900 text-red-300",
+  "RaceFans":        "bg-blue-900 text-blue-300",
+  "The Race":        "bg-yellow-900 text-yellow-300",
+  "Motorsport.com":  "bg-purple-900 text-purple-300",
+  "Autosport":       "bg-orange-900 text-orange-300",
+  "Planet F1":       "bg-green-900 text-green-300",
+  "Motorsport Week": "bg-teal-900 text-teal-300",
+  "ESPN F1":         "bg-red-950 text-red-400",
+  "GPblog":          "bg-indigo-900 text-indigo-300",
+  "GPfans":          "bg-sky-900 text-sky-300",
+  "RacingNews365":   "bg-amber-900 text-amber-300",
+  "Speedcafe":       "bg-lime-900 text-lime-300",
+  "Crash.net":       "bg-rose-900 text-rose-300",
+  "Formu1a.uno":     "bg-violet-900 text-violet-300",
+  "Formula Passion": "bg-pink-900 text-pink-300",
+  "AMUS":            "bg-gray-800 text-gray-300",
+  "Motorsport Total":"bg-cyan-900 text-cyan-300",
+  "Soymotor":        "bg-yellow-950 text-yellow-400",
+  "F1i":             "bg-blue-950 text-blue-400",
+  "Formule1.nl":     "bg-orange-950 text-orange-400",
+  "AutoRacer IT":    "bg-emerald-900 text-emerald-300",
 };
 
 function NewsCard({ item }: { item: NewsItem }) {
@@ -79,9 +96,13 @@ function SkeletonCard() {
 }
 
 function NewsTicker({ items }: { items: NewsItem[] }) {
-  const tickerRef = useRef<HTMLDivElement>(null);
   if (!items.length) return null;
   const tickerItems = [...items, ...items];
+
+  // Speed-based duration: ~0.9 s per item keeps a brisk but readable scroll.
+  // translateX(-50%) covers exactly one full copy, so N items × 0.9 s = total.
+  const duration = Math.max(18, items.length * 0.9);
+
   return (
     <div className="relative overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950 py-3 mb-6">
       <div className="flex items-center">
@@ -90,9 +111,8 @@ function NewsTicker({ items }: { items: NewsItem[] }) {
         </div>
         <div className="overflow-hidden flex-1">
           <div
-            ref={tickerRef}
-            className="flex gap-8 animate-marquee whitespace-nowrap"
-            style={{ animation: "marquee 60s linear infinite" }}
+            className="flex gap-8 whitespace-nowrap"
+            style={{ animation: `marquee ${duration}s linear infinite` }}
           >
             {tickerItems.map((item, i) => (
               <a
@@ -111,7 +131,7 @@ function NewsTicker({ items }: { items: NewsItem[] }) {
       </div>
       <style>{`
         @keyframes marquee {
-          0% { transform: translateX(0); }
+          0%   { transform: translateX(0); }
           100% { transform: translateX(-50%); }
         }
       `}</style>
@@ -148,6 +168,8 @@ function ProfileCard({ profile }: { profile: Profile }) {
   );
 }
 
+const PAGE_SIZE = 10;
+
 export default function NewsPage() {
   const [newsItems, setNewsItems] = useState<NewsItem[]>([]);
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -155,6 +177,7 @@ export default function NewsPage() {
   const [error, setError] = useState<string | null>(null);
   const [notifStatus, setNotifStatus] = useState<NotifStatus>("idle");
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
   const fetchData = useCallback(async () => {
     try {
@@ -169,6 +192,8 @@ export default function NewsPage() {
           setNewsItems(data.items);
           setError(null);
           setLastUpdated(new Date());
+          // Reset to first page on fresh data
+          setVisibleCount(PAGE_SIZE);
         }
       }
 
@@ -232,6 +257,9 @@ export default function NewsPage() {
     } catch (e) { console.error("Push subscription error:", e); }
   };
 
+  const visibleItems = newsItems.slice(0, visibleCount);
+  const hasMore = visibleCount < newsItems.length;
+
   return (
     <div className="min-h-screen bg-black text-white">
       <div className="mx-auto max-w-2xl px-4 py-8">
@@ -240,7 +268,7 @@ export default function NewsPage() {
           <div>
             <h1 className="text-2xl font-bold text-white">F1 News</h1>
             <p className="text-sm text-zinc-500 mt-0.5">
-              Latest from BBC Sport, The Race, Autosport &amp; more
+              Latest from BBC, Autosport, The Race, Planet F1 &amp; more
             </p>
           </div>
           {notifStatus !== "unsupported" && notifStatus !== "ios-pwa-required" && (
@@ -260,23 +288,43 @@ export default function NewsPage() {
           )}
         </div>
 
-        {/* Ticker */}
+        {/* Ticker — fed all items so it shows maximum variety */}
         {!loading && newsItems.length > 0 && <NewsTicker items={newsItems} />}
 
         {/* F1 Naija Profile Card */}
         {profile && <ProfileCard profile={profile} />}
 
-        {/* News Cards */}
+        {/* News Cards — top 10 shown initially */}
         <div className="space-y-3">
           {loading ? (
-            Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
+            Array.from({ length: PAGE_SIZE }).map((_, i) => <SkeletonCard key={i} />)
           ) : error ? (
             <div className="rounded-xl border border-zinc-800 p-6 text-center text-zinc-500">
               <p>{error}</p>
               <button onClick={fetchData} className="mt-3 text-sm text-green-400 hover:underline">Try again</button>
             </div>
-          ) : newsItems.length > 0 ? (
-            newsItems.map((item, i) => <NewsCard key={i} item={item} />)
+          ) : visibleItems.length > 0 ? (
+            <>
+              {visibleItems.map((item, i) => <NewsCard key={i} item={item} />)}
+
+              {/* Show-more / show-less controls */}
+              {hasMore && (
+                <button
+                  onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
+                  className="mt-2 w-full rounded-xl border border-zinc-800 py-3 text-sm text-zinc-400 hover:border-zinc-600 hover:text-white transition-colors"
+                >
+                  Show {Math.min(PAGE_SIZE, newsItems.length - visibleCount)} more stories
+                </button>
+              )}
+              {visibleCount > PAGE_SIZE && (
+                <button
+                  onClick={() => setVisibleCount(PAGE_SIZE)}
+                  className="w-full rounded-xl border border-zinc-800 py-2 text-xs text-zinc-600 hover:text-zinc-400 transition-colors"
+                >
+                  ↑ Collapse
+                </button>
+              )}
+            </>
           ) : (
             <div className="rounded-xl border border-zinc-800 p-6 text-center text-zinc-500">
               No news available right now.
@@ -287,8 +335,9 @@ export default function NewsPage() {
         {/* Footer */}
         <p className="mt-6 text-center text-xs text-zinc-700">
           {lastUpdated
-            ? `Updated ${timeAgo(lastUpdated.toISOString())} · Auto-refreshes every 5min`
-            : "Auto-refreshes every 5min"}
+            ? `Updated ${timeAgo(lastUpdated.toISOString())} · Auto-refreshes every 5 min`
+            : "Auto-refreshes every 5 min"}
+          {newsItems.length > 0 && ` · ${newsItems.length} stories`}
         </p>
       </div>
     </div>
