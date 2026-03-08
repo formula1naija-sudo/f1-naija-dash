@@ -24,8 +24,8 @@ function notify(title: string, body: string, icon = "/pwa-icon.png") {
   }
 }
 
-export function usePushNotifications() {
-  const liveData = useDataStore((s) => s.liveData);
+export function usePushNotifications()
+    const liveData = useDataStore((s) => s.state);
   const prev = useRef<PreviousState>({
     initialized: false,
     trackStatus: null,
