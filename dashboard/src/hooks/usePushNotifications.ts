@@ -16,6 +16,7 @@ interface PreviousState {
 
 function notify(title: string, body: string, icon = "/pwa-icon.png") {
   if (typeof window === "undefined") return;
+  if (!("Notification" in window)) return; // iOS Safari < 16.4 has no Notification API
   if (Notification.permission !== "granted") return;
   try {
     new Notification(title, { body, icon });
@@ -41,7 +42,6 @@ export function usePushNotifications() {
 
   useEffect(() => {
     if (!liveData) return;
-
     const p = prev.current;
     const {
       TrackStatus,
@@ -78,7 +78,7 @@ export function usePushNotifications() {
       return;
     }
 
-    // ── Track status ──────────────────────────────────────────────────────
+    // ── Track status ─────────────────────────────────────────────────────
     const trackStatus = TrackStatus?.Status ?? null;
     if (trackStatus && trackStatus !== p.trackStatus) {
       if (trackStatus === "4") notify("🟡 Safety Car", "Safety Car has been deployed");
@@ -115,7 +115,10 @@ export function usePushNotifications() {
     if (TimingData?.Lines) {
       const lines = TimingData.Lines as Record<string, any>;
       for (const [num, line] of Object.entries(lines)) {
-        if (line.BestLapTime?.OverallFastest && num !== p.fastestLapDriver) {
+        if (
+          line.BestLapTime?.OverallFastest &&
+          num !== p.fastestLapDriver
+        ) {
           const name = DriverList?.[num]?.FullName ?? `Car #${num}`;
           notify("⚡ Fastest Lap", `${name} sets the fastest lap`);
           p.fastestLapDriver = num;
