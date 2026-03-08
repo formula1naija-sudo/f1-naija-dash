@@ -19,6 +19,7 @@ const ICON_PATH = "/tag-logo.png";
 
 function sendNotification(title: string, body: string) {
 	if (typeof window === "undefined") return;
+	if (!("Notification" in window)) return; // iOS < 16.4 has no Notification API
 	if (Notification.permission !== "granted") return;
 
 	try {
