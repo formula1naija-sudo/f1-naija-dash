@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 const TIMEZONES = [
   { zone: "Africa/Lagos",        flag: "🇳🇬", abbr: "WAT",  label: "Nigeria"      },
@@ -12,17 +12,15 @@ const TZ_STORAGE_KEY = "f1_schedule_tz";
 const TZ_EVENT = "f1-tz-change";
 
 export default function ScheduleTZPicker() {
-  const [activeTZ, setActiveTZ] = useState(0);
-
-  useEffect(() => {
+  const [activeTZ, setActiveTZ] = useState<number>(() => {
+    if (typeof window === "undefined") return 0;
     const saved = localStorage.getItem(TZ_STORAGE_KEY);
     if (saved !== null) {
       const idx = parseInt(saved);
-      if (!isNaN(idx) && idx >= 0 && idx < TIMEZONES.length) {
-        setActiveTZ(idx);
-      }
+      if (!isNaN(idx) && idx >= 0 && idx < TIMEZONES.length) return idx;
     }
-  }, []);
+    return 0;
+  });
 
   const selectTZ = (i: number) => {
     setActiveTZ(i);
