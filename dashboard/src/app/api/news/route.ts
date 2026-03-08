@@ -3,11 +3,32 @@ import { NextResponse } from "next/server";
 export const dynamic = "force-dynamic";
 
 const RSS_FEEDS = [
-  { url: "https://feeds.bbci.co.uk/sport/formula1/rss.xml", source: "BBC Sport" },
-  { url: "https://www.racefans.net/feed/", source: "RaceFans" },
-  { url: "https://the-race.com/feed/", source: "The Race" },
-  { url: "https://www.motorsport.com/rss/f1/news/", source: "Motorsport.com" },
-  { url: "https://www.autosport.com/rss/feed/f1", source: "Autosport" },
+  // English (existing)
+  { url: "https://feeds.bbci.co.uk/sport/formula1/rss.xml",        source: "BBC Sport" },
+  { url: "https://www.racefans.net/feed/",                          source: "RaceFans" },
+  { url: "https://the-race.com/feed/",                              source: "The Race" },
+  { url: "https://www.motorsport.com/rss/f1/news/",                 source: "Motorsport.com" },
+  { url: "https://www.autosport.com/rss/feed/f1",                   source: "Autosport" },
+
+  // English (new)
+  { url: "https://www.planetf1.com/feed/",                          source: "Planet F1" },
+  { url: "https://motorsportweek.com/feed/",                        source: "Motorsport Week" },
+  { url: "https://www.espn.com/espn/rss/f1/news",                   source: "ESPN F1" },
+  { url: "https://www.gpblog.com/en/rss.xml",                       source: "GPblog" },
+  { url: "https://www.gpfans.com/en/rss/",                          source: "GPfans" },
+  { url: "https://racingnews365.com/feed/",                         source: "RacingNews365" },
+  { url: "https://www.speedcafe.com/feed/",                         source: "Speedcafe" },
+  { url: "https://www.crash.net/rss/f1/news",                       source: "Crash.net" },
+
+  // Multilingual
+  { url: "https://www.formu1a.uno/en/rss.xml",                      source: "Formu1a.uno" },
+  { url: "https://www.formulapassion.it/feed/",                     source: "Formula Passion" },
+  { url: "https://www.auto-motor-und-sport.de/rss/feed/thema/formel-1/", source: "AMUS" },
+  { url: "https://www.motorsport-total.com/rss/news.xml",           source: "Motorsport Total" },
+  { url: "https://www.soymotor.com/feed/",                          source: "Soymotor" },
+  { url: "https://f1i.com/feed",                                    source: "F1i" },
+  { url: "https://www.formule1.nl/feeds/rss/news",                  source: "Formule1.nl" },
+  { url: "https://www.autoracer.it/feed/",                          source: "AutoRacer IT" },
 ];
 
 type NewsItem = {
@@ -36,14 +57,13 @@ function extractTag(xml: string, tag: string): string {
 
 function parseRSS(xml: string, source: string): NewsItem[] {
   const items: NewsItem[] = [];
-  // NOTE: double-escaped \s \S so new RegExp gets [sS] (matches any char incl newlines)
   const itemRegex = new RegExp("<item>([\\s\\S]*?)<\\/item>", "g");
   let match;
   while ((match = itemRegex.exec(xml)) !== null) {
     const itemXml = match[1];
     const title = extractTag(itemXml, "title");
 
-    // <link> is sometimes empty (Atom) — fall back to <guid>
+    // <link> is sometimes empty (Atom) - fall back to <guid>
     let link = extractTag(itemXml, "link");
     if (!link) {
       link = extractTag(itemXml, "guid");
@@ -90,7 +110,8 @@ export async function GET() {
   const allItems: NewsItem[] = [];
   for (const result of results) {
     if (result.status === "fulfilled") {
-      allItems.push(...result.value.slice(0, 10));
+      // Take up to 5 items per feed so no single source dominates
+      allItems.push(...result.value.slice(0, 5));
     }
   }
 
@@ -101,12 +122,12 @@ export async function GET() {
     return db - da;
   });
 
-  // Prefer last 12 h; fall back to latest 30 if nothing recent
+  // Prefer last 12 h; fall back to latest 50 if nothing recent
   const twelveHoursAgo = Date.now() - 12 * 60 * 60 * 1000;
   const recent = allItems.filter(
     (item) => !item.pubDate || new Date(item.pubDate).getTime() > twelveHoursAgo
   );
-  const finalItems = recent.length >= 3 ? recent : allItems.slice(0, 30);
+  const finalItems = recent.length >= 3 ? recent : allItems.slice(0, 50);
 
   return NextResponse.json({ items: finalItems });
 }
