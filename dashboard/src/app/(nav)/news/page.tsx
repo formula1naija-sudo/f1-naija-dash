@@ -94,14 +94,16 @@ function SkeletonCard() {
     </div>
   );
 }
+
 function NewsTicker({ items }: { items: NewsItem[] }) {
   if (!items.length) return null;
-  const tickerItems = [...items, ...items];
+  // Only use top 12 headlines — keeps cycle time short and snappy
+  const tickerSource = items.slice(0, 12);
+  const tickerItems = [...tickerSource, ...tickerSource];
 
-  // Character-based duration: 0.045 s per char gives a consistent TV-ticker
-  // reading pace regardless of headline count. translateX(-50%) covers one copy.
-  const totalChars = items.reduce((sum, item) => sum + item.title.length, 0);
-  const duration = Math.max(12, totalChars * 0.045);
+  // 0.018 s/char → ~38s for 12 typical headlines at ~175px/s pixel speed
+  const totalChars = tickerSource.reduce((sum, item) => sum + item.title.length, 0);
+  const duration = Math.max(10, totalChars * 0.018);
 
   return (
     <div className="relative overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950 py-3 mb-6">
@@ -169,6 +171,7 @@ function ProfileCard({ profile }: { profile: Profile }) {
 }
 
 const PAGE_SIZE = 10;
+
 export default function NewsPage() {
   const [newsItems, setNewsItems] = useState<NewsItem[]>([]);
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -189,7 +192,6 @@ export default function NewsPage() {
         if (Array.isArray(data.items) && data.items.length > 0) {
           setNewsItems(data.items);
           setError(null);
-          // Reset to first page on fresh data
           setVisibleCount(PAGE_SIZE);
         }
       }
@@ -258,7 +260,7 @@ export default function NewsPage() {
   const hasMore = visibleCount < newsItems.length;
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="pb-8 text-white">
       <div className="mx-auto max-w-2xl px-4 py-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
@@ -285,13 +287,13 @@ export default function NewsPage() {
           )}
         </div>
 
-        {/* Ticker — fed all items so it shows maximum variety */}
+        {/* Ticker — top 12 headlines only for snappy cycling */}
         {!loading && newsItems.length > 0 && <NewsTicker items={newsItems} />}
 
         {/* F1 Naija Profile Card */}
         {profile && <ProfileCard profile={profile} />}
 
-        {/* News Cards — top 10 shown initially */}
+        {/* News Cards */}
         <div className="space-y-3">
           {loading ? (
             Array.from({ length: PAGE_SIZE }).map((_, i) => <SkeletonCard key={i} />)
@@ -304,7 +306,6 @@ export default function NewsPage() {
             <>
               {visibleItems.map((item, i) => <NewsCard key={i} item={item} />)}
 
-              {/* Show-more / show-less controls */}
               {hasMore && (
                 <button
                   onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
@@ -333,4 +334,3 @@ export default function NewsPage() {
     </div>
   );
 }
-
