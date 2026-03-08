@@ -24,17 +24,17 @@ function applyMode(mode: BrightnessMode) {
 }
 
 export default function ThemeToggle() {
-	const [mode, setMode] = useState<BrightnessMode>('system');
+	const [mode, setMode] = useState<BrightnessMode>(() => {
+		if (typeof window === 'undefined') return 'system';
+		return (localStorage.getItem(STORAGE_KEY) as BrightnessMode) ?? 'system';
+	});
 	const [mounted, setMounted] = useState(false);
 
 	useEffect(() => {
-		const saved = localStorage.getItem(STORAGE_KEY) as BrightnessMode | null;
-		const initial = saved ?? 'system';
-		setMode(initial);
-		applyMode(initial);
+		// Apply saved mode to DOM on mount and watch for system preference changes
+		applyMode(mode);
 		setMounted(true);
 
-		// Listen for system preference changes when in system mode
 		const mq = window.matchMedia('(prefers-color-scheme: dark)');
 		const handler = () => {
 			const current = (localStorage.getItem(STORAGE_KEY) as BrightnessMode) ?? 'system';
@@ -42,6 +42,7 @@ export default function ThemeToggle() {
 		};
 		mq.addEventListener('change', handler);
 		return () => mq.removeEventListener('change', handler);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const cycleMode = () => {
