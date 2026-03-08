@@ -184,53 +184,93 @@ app.delete('/subscribe', (req, res) => {
 
 // Tweet cache (CDN Syndication + Nitter RSS fallback)
 let tweetCache = { tweets: [], fetchedAt: 0 };
-const TWEET_CACHE_MS = 5 * 60 * 1000; // 5 minutes
+const TWEET_CACHE_MS = 30 * 60 * 1000; // 30 minutes
 
-// Strategy 1: Twitter CDN Syndication API (powers embedded timeline widgets, no auth needed)
-async function fetchTweetsFromCDN() {
-  const ENDPOINTS = [
-    'https://cdn.syndication.twimg.com/timeline/profile?screen_name=f1_naija&count=20&dnt=true&lang=en',
-    'https://syndication.twitter.com/srv/timeline-profile/screen-name/f1_naija?dnt=true&lang=en',
-  ];
-  for (const url of ENDPOINTS) {
-    try {
-      const base = url.split('?')[0].split('/').slice(-2).join('/');
-      console.log(`Trying CDN: ${base}`);
-      const res = await fetch(url, {
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-          'Accept': 'application/json, text/javascript, */*; q=0.01',
-          'Accept-Language': 'en-US,en;q=0.9',
-          'Accept-Encoding': 'identity',
-          'Referer': 'https://twitter.com/',
-          'Origin': 'https://twitter.com',
-        },
-        signal: AbortSignal.timeout(10000),
-      });
-      const ct = res.headers.get('content-type') || '';
-      const cl = res.headers.get('content-length') || '?';
-      const body = await res.text();
-      console.log(`CDN ${base}: status=${res.status} ct=${ct.substring(0,30)} cl=${cl} bodyLen=${body.length}`);
-      if (!body || body.trim() === '') { console.log(`CDN ${base}: empty body`); continue; }
-      if (!res.ok) { console.log(`CDN ${base}: HTTP ${res.status} body=${body.substring(0,200)}`); continue; }
-      const data = JSON.parse(body);
-      const tweets = [];
-      const entries = data.body || data.timeline?.entries || data.entries || (Array.isArray(data) ? data : []);
-      for (const entry of entries) {
-        const td = entry.data || entry.tweet || entry.content?.tweet || entry;
-        if (!td || !td.id_str) continue;
-        tweets.push({ id: td.id_str, text: td.full_text || td.text || '', created_at: new Date(td.created_at).toISOString() });
-      }
-      if (tweets.length > 0) { console.log(`CDN ${base}: got ${tweets.length} tweets`); return tweets; }
-      console.log(`CDN ${base}: 0 tweets, keys=${Object.keys(data).slice(0,8).join(',')}`);
-    } catch (e) {
-      console.log(`CDN error: ${e.message}`);
-    }
+//// Strategy 1: Twitter CDN Syndication API — JSONP format, returns HTML tweet body
+function parseTweetsFromHtml(html) {
+  const tweets = [];
+  const itemRe = /<li[^>]+data-tweet-id="(\d+)"[^>]*>([\s\S]*?)<\/li>/g;
+  let m;
+  while ((m = itemRe.exec(html)) !== null) {
+    const id = m[1];
+    const inner = m[2];
+    const textMatch = /<p[^>]*class="[^"]*timeline-Tweet-text[^"]*"[^>]*>([\s\S]*?)<\/p>/.exec(inner);
+    const rawText = textMatch
+      ? textMatch[1].replace(/<[^>]+>/g,'').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&#39;/g,"'").replace(/&quot;/g,'"').trim()
+      : '';
+    const timeMatch = /<time[^>]+datetime="([^"]+)"/.exec(inner) || /data-datetime="([^"]+)"/.exec(inner);
+    const created_at = timeMatch ? new Date(timeMatch[1]).toISOString() : new Date().toISOString();
+    if (rawText) tweets.push({ id, text: rawText, created_at });
   }
+  return tweets;
+}
+
+async function fetchTweetsFromCDN() {
+  // cdn.syndication.twimg.com is a JSONP endpoint — needs callback param to return data
+  const cdnUrl = 'https://cdn.syndication.twimg.com/timeline/profile?screen_name=f1_naija&count=20&lang=en&callback=f1nCallback';
+  try {
+    console.log('Trying CDN JSONP: timeline/profile');
+    const res = await fetch(cdnUrl, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept': 'text/javascript, application/javascript, */*',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Referer': 'https://twitter.com/',
+        'Origin': 'https://twitter.com',
+      },
+      signal: AbortSignal.timeout(10000),
+    });
+    const body = await res.text();
+    console.log(`CDN JSONP: status=${res.status} bodyLen=${body.length}`);
+    if (body && body.trim()) {
+      // Strip JSONP wrapper: f1nCallback({...}) -> {...}
+      const match = body.match(/^[^(]+\(([\s\S]*)\)\s*;?\s*$/);
+      const jsonStr = match ? match[1] : body;
+      const data = JSON.parse(jsonStr);
+      console.log(`CDN JSONP: parsed, htmlLen=${data.body?.length}, status=${data.headers?.status}`);
+      const html = data.body || '';
+      if (html) {
+        const tweets = parseTweetsFromHtml(html);
+        if (tweets.length > 0) { console.log(`CDN JSONP: got ${tweets.length} tweets`); return tweets; }
+        console.log('CDN JSONP: 0 tweets parsed from HTML');
+      }
+    } else {
+      console.log('CDN JSONP: empty body (IP may be blocked by CDN)');
+    }
+  } catch (e) {
+    console.log(`CDN JSONP error: ${e.message}`);
+  }
+
+  // Fallback: syndication.twitter.com (rate-limited at 429, try when cache expired)
+  const synUrl = 'https://syndication.twitter.com/srv/timeline-profile/screen-name/f1_naija?lang=en';
+  try {
+    console.log('Trying syndication.twitter.com');
+    const res = await fetch(synUrl, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,*/*',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Referer': 'https://twitter.com/',
+      },
+      signal: AbortSignal.timeout(10000),
+    });
+    const body = await res.text();
+    console.log(`Syndication: status=${res.status} bodyLen=${body.length}`);
+    if (res.ok && body) {
+      const tweets = parseTweetsFromHtml(body);
+      if (tweets.length > 0) { console.log(`Syndication: got ${tweets.length} tweets`); return tweets; }
+      console.log(`Syndication: 0 tweets parsed, preview=${body.substring(0,150)}`);
+    } else {
+      console.log(`Syndication: HTTP ${res.status} body=${body.substring(0,200)}`);
+    }
+  } catch (e) {
+    console.log(`Syndication error: ${e.message}`);
+  }
+
   return null;
 }
 
-// Strategy 2: Nitter RSS (fallback — public instances may block cloud IPs)
+ Strategy 2: Nitter RSS (fallback — public instances may block cloud IPs)
 const NITTER_INSTANCES = [
   'https://xcancel.com',
   'https://nitter.privacyredirect.com',
