@@ -15,7 +15,8 @@ const PORT = process.env.PORT || 3001;
 
 // How long to wait after initial state before sending notifications.
 // This prevents flooding from SSE backlog events replayed at startup.
-const WARMUP_MS = 8000;
+// 45s gives enough time for the initial state to stabilise after reconnection.
+const WARMUP_MS = 45000;
 
 if (!VAPID_PUBLIC_KEY || !VAPID_PRIVATE_KEY) {
   console.error('Missing VAPID keys! Set VAPID_PUBLIC_KEY and VAPID_PRIVATE_KEY env vars');
