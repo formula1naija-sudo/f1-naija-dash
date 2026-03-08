@@ -2,14 +2,16 @@ import { useEffect, useRef } from "react";
 import { useDataStore } from "@/stores/useDataStore";
 
 interface PreviousState {
+  initialized: boolean;
   trackStatus: string | null;
   sessionName: string | null;
   sessionActive: boolean;
   fastestLapDriver: string | null;
   positions: Record<string, number>;
   retired: Set<string>;
-  knockedOut: Set<string>;
   segmentIndex: number;
+  rainfall: string | boolean | undefined;
+  lastRCM: string | undefined;
 }
 
 function notify(title: string, body: string, icon = "/pwa-icon.png") {
@@ -25,14 +27,16 @@ function notify(title: string, body: string, icon = "/pwa-icon.png") {
 export function usePushNotifications() {
   const liveData = useDataStore((s) => s.liveData);
   const prev = useRef<PreviousState>({
+    initialized: false,
     trackStatus: null,
     sessionName: null,
     sessionActive: false,
     fastestLapDriver: null,
     positions: {},
     retired: new Set(),
-    knockedOut: new Set(),
     segmentIndex: -1,
+    rainfall: undefined,
+    lastRCM: undefined,
   });
 
   useEffect(() => {
@@ -49,7 +53,32 @@ export function usePushNotifications() {
       RaceControlMessages,
     } = liveData;
 
-    // ── Track status ──────────────────────────────────────────────
+    // ── First run: silently snapshot state, fire no notifications ────────
+    if (!p.initialized) {
+      p.trackStatus = TrackStatus?.Status ?? null;
+      p.sessionName = SessionInfo?.Name ?? null;
+      p.sessionActive = SessionStatus?.Status === "Started";
+      p.rainfall = WeatherData?.Rainfall;
+      if (RaceControlMessages?.Messages) {
+        const msgs = RaceControlMessages.Messages as any[];
+        const last = msgs[msgs.length - 1];
+        if (last) p.lastRCM = last.Utc;
+      }
+      if (TimingData?.Lines) {
+        const lines = TimingData.Lines as Record<string, any>;
+        for (const [num, line] of Object.entries(lines)) {
+          const pos = Number(line.Position ?? 0);
+          if (pos > 0) p.positions[num] = pos;
+          if (line.Retired) p.retired.add(num);
+          if (line.BestLapTime?.OverallFastest) p.fastestLapDriver = num;
+        }
+      }
+      p.segmentIndex = (TimingData as any)?.SessionPart ?? -1;
+      p.initialized = true;
+      return;
+    }
+
+    // ── Track status ──────────────────────────────────────────────────────
     const trackStatus = TrackStatus?.Status ?? null;
     if (trackStatus && trackStatus !== p.trackStatus) {
       if (trackStatus === "4") notify("🟡 Safety Car", "Safety Car has been deployed");
@@ -60,7 +89,7 @@ export function usePushNotifications() {
       p.trackStatus = trackStatus;
     }
 
-    // ── Session start / end ───────────────────────────────────────
+    // ── Session start / end ───────────────────────────────────────────────
     const sessionName = SessionInfo?.Name ?? null;
     const sessionActive = SessionStatus?.Status === "Started";
     if (sessionName !== p.sessionName && sessionName) {
@@ -75,13 +104,14 @@ export function usePushNotifications() {
     }
     p.sessionActive = sessionActive;
 
-    // ── Rainfall ──────────────────────────────────────────────────
-    if (WeatherData?.Rainfall === "1" && WeatherData?.Rainfall !== (p as any).rainfall) {
+    // ── Rainfall ──────────────────────────────────────────────────────────
+    const rainfall = WeatherData?.Rainfall;
+    if (rainfall && rainfall !== p.rainfall) {
       notify("🌧️ Rain!", "Rain detected at the circuit");
     }
-    (p as any).rainfall = WeatherData?.Rainfall;
+    p.rainfall = rainfall;
 
-    // ── Fastest lap ───────────────────────────────────────────────
+    // ── Fastest lap ───────────────────────────────────────────────────────
     if (TimingData?.Lines) {
       const lines = TimingData.Lines as Record<string, any>;
       for (const [num, line] of Object.entries(lines)) {
@@ -93,7 +123,7 @@ export function usePushNotifications() {
       }
     }
 
-    // ── Position changes & retirements ────────────────────────────
+    // ── Position changes & retirements ────────────────────────────────────
     if (TimingData?.Lines && DriverList) {
       const lines = TimingData.Lines as Record<string, any>;
       for (const [num, line] of Object.entries(lines)) {
@@ -119,29 +149,27 @@ export function usePushNotifications() {
       }
     }
 
-    // ── Qualifying knockouts (segment change) ─────────────────────
-    if (TimingData?.NumPitStops !== undefined) {
-      // Use segment index as proxy for Q1/Q2/Q3 boundary
-      const segIdx: number = (liveData as any).SessionData?.StatusSeries?.length ?? -1;
-      if (segIdx !== p.segmentIndex && p.segmentIndex !== -1) {
-        const partNames = ["Q1", "Q2", "Q3"];
-        const part = partNames[segIdx] ?? `Part ${segIdx + 1}`;
+    // ── Qualifying segments (Q1 / Q2 / Q3) ───────────────────────────────
+    if (SessionInfo?.Type === "Qualifying") {
+      const segIdx: number = (TimingData as any)?.SessionPart ?? -1;
+      if (segIdx > 0 && segIdx !== p.segmentIndex && p.segmentIndex !== -1) {
+        const partNames: Record<number, string> = { 1: "Q1", 2: "Q2", 3: "Q3" };
+        const part = partNames[segIdx] ?? `Part ${segIdx}`;
         notify("🏎️ Qualifying", `${part} is now underway`);
       }
       p.segmentIndex = segIdx;
     }
 
-    // ── Race control — rain / safety car messages ─────────────────
+    // ── Race control — SC / red flag / rain messages ──────────────────────
     if (RaceControlMessages?.Messages) {
       const msgs = RaceControlMessages.Messages as any[];
       const lastMsg = msgs[msgs.length - 1];
-      const lastSeen = (p as any).lastRCM;
-      if (lastMsg && lastMsg.Utc !== lastSeen) {
+      if (lastMsg && lastMsg.Utc !== p.lastRCM) {
         const txt: string = lastMsg.Message ?? "";
         if (/safety car/i.test(txt) || /red flag/i.test(txt) || /rain/i.test(txt)) {
           notify("📻 Race Control", txt.slice(0, 80));
         }
-        (p as any).lastRCM = lastMsg.Utc;
+        p.lastRCM = lastMsg.Utc;
       }
     }
   }, [liveData]);
