@@ -19,23 +19,27 @@ type NewsItem = {
 };
 
 function extractTag(xml: string, tag: string): string {
-  const cdataMatch = new RegExp(`<${tag}[^>]*><!\\[CDATA\\[([\\s\\S]*?)\\]\\]><\/${tag}>`).exec(xml);
+  const cdataMatch = new RegExp(
+    "<" + tag + "[^>]*><!\[CDATA\[([\s\S]*?)\]\]><\/" + tag + ">"
+  ).exec(xml);
   if (cdataMatch) return cdataMatch[1].trim();
-  const plainMatch = new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\/${tag}>`).exec(xml);
+  const plainMatch = new RegExp(
+    "<" + tag + "[^>]*>([\s\S]*?)<\/" + tag + ">"
+  ).exec(xml);
   if (plainMatch) return plainMatch[1].trim();
   return "";
 }
 
 function parseRSS(xml: string, source: string): NewsItem[] {
   const items: NewsItem[] = [];
-  const itemRegex = /<item>([sS]*?)</item>/g;
+  const itemRegex = new RegExp("<item>([\s\S]*?)<\/item>", "g");
   let match;
   while ((match = itemRegex.exec(xml)) !== null) {
     const itemXml = match[1];
     const title = extractTag(itemXml, "title");
     const link = extractTag(itemXml, "link") || extractTag(itemXml, "guid");
     const description = extractTag(itemXml, "description")
-      .replace(/<[^>]+>/g, "")
+      .replace(new RegExp("<[^>]+>", "g"), "")
       .replace(/&amp;/g, "&")
       .replace(/&lt;/g, "<")
       .replace(/&gt;/g, ">")
@@ -76,7 +80,6 @@ export async function GET() {
     }
   }
 
-  // Sort by date, newest first
   allItems.sort((a, b) => {
     const da = a.pubDate ? new Date(a.pubDate).getTime() : 0;
     const db = b.pubDate ? new Date(b.pubDate).getTime() : 0;
