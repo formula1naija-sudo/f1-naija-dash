@@ -2,50 +2,68 @@ import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
-const PUSH_URL = (process.env.NEXT_PUBLIC_PUSH_SERVICE_URL ?? "").replace(/\/$/, "");
+const BEARER_TOKEN = process.env.TWITTER_BEARER_TOKEN;
 
-interface Tweet {
-  id: string;
-  text: string;
-  created_at: string;
-}
+// Module-level cache for the resolved user ID (survives across requests in same serverless instance)
+let cachedUserId: string | null = (() => {
+  const env = process.env.TWITTER_USER_ID;
+  return env && env !== "REPLACE_WITH_USER_ID" ? env : null;
+})();
 
-function isNewsTweet(text: string): boolean {
-  const startsWithReply = text.startsWith("@");
-  const isNewsFormat =
-    text.startsWith("\u{1F4F0}") ||
-    text.startsWith("\u{1F4F8}") ||
-    text.includes("#F1") ||
-    text.includes("#AusGP") ||
-    text.includes("#F1Naija");
-  return isNewsFormat && !startsWithReply;
+async function resolveUserId(token: string): Promise<string | null> {
+  if (cachedUserId) return cachedUserId;
+
+  try {
+    const res = await fetch("https://api.twitter.com/2/users/by/username/f1_naija", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) {
+      console.error("User lookup failed:", res.status, await res.text());
+      return null;
+    }
+    const data = await res.json();
+    cachedUserId = data.data?.id ?? null;
+    console.log("Resolved @f1_naija user ID:", cachedUserId);
+    return cachedUserId;
+  } catch (err) {
+    console.error("User ID lookup error:", err);
+    return null;
+  }
 }
 
 export async function GET() {
-  if (!PUSH_URL) {
-    return NextResponse.json(
-      { error: "Push service not configured", tweets: [] },
-      { status: 200 },
-    );
+  if (!BEARER_TOKEN) {
+    return NextResponse.json({ tweets: [], error: "Twitter bearer token not configured" });
   }
 
   try {
-    const res = await fetch(`${PUSH_URL}/tweets`, {
-      next: { revalidate: 300 },
+    const userId = await resolveUserId(BEARER_TOKEN);
+    if (!userId) {
+      return NextResponse.json({ tweets: [], error: "Could not resolve @f1_naija user ID" });
+    }
+
+    const url = new URL(`https://api.twitter.com/2/users/${userId}/tweets`);
+    url.searchParams.set("max_results", "20");
+    url.searchParams.set("tweet.fields", "created_at,text");
+    url.searchParams.set("exclude", "retweets,replies");
+
+    const res = await fetch(url.toString(), {
+      headers: { Authorization: `Bearer ${BEARER_TOKEN}` },
+      next: { revalidate: 60 },
     });
 
     if (!res.ok) {
-      return NextResponse.json({ error: `Push service ${res.status}`, tweets: [] }, { status: 200 });
+      const errorText = await res.text();
+      console.error("Twitter API error:", res.status, errorText);
+      return NextResponse.json({ tweets: [], error: `Twitter API error: ${res.status}` });
     }
 
-    const data = (await res.json()) as { tweets: Tweet[]; cached?: boolean; error?: string };
-    const tweets = (data.tweets ?? []).filter((t) => !isNewsTweet || t);
+    const data = await res.json();
+    const tweets: { id: string; text: string; created_at: string }[] = data.data ?? [];
 
-    return NextResponse.json({ tweets, cached: data.cached ?? false });
+    return NextResponse.json({ tweets });
   } catch (err) {
-    return NextResponse.json(
-      { error: String(err), tweets: [] },
-      { status: 200 },
-    );
+    console.error("Tweets route error:", err);
+    return NextResponse.json({ tweets: [], error: "Internal server error" });
   }
 }
