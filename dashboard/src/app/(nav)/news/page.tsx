@@ -1,38 +1,154 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+
+type Tweet = {
+	id: string;
+	text: string;
+	created_at: string;
+};
+
+type Profile = {
+	name: string;
+	screen_name: string;
+	description: string;
+	followers: number;
+	tweets: number;
+};
 
 type NotifStatus = "idle" | "subscribed" | "denied" | "unsupported" | "ios-pwa-required";
 
-declare global {
-	interface Window {
-		twttr?: { widgets: { load: (el?: Element | null) => void } };
-	}
+function timeAgo(dateStr: string): string {
+	const diff = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000);
+	if (diff < 60) return `${diff}s ago`;
+	if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+	if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+	return `${Math.floor(diff / 86400)}d ago`;
+}
+
+function fmt(n: number): string {
+	if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + "M";
+	if (n >= 1_000) return (n / 1_000).toFixed(1) + "K";
+	return n.toString();
+}
+
+function TweetCard({ tweet }: { tweet: Tweet }) {
+	const url = `https://twitter.com/f1_naija/status/${tweet.id}`;
+	return (
+		<a href={url} target="_blank" rel="noopener noreferrer" className="block">
+			<div className="rounded-xl border border-zinc-800 p-4 transition-all hover:border-zinc-600 hover:bg-zinc-900">
+				<div className="flex items-start gap-3">
+					<div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-zinc-800 text-sm font-bold text-green-400">
+						F1
+					</div>
+					<div className="min-w-0 flex-1">
+						<div className="mb-1 flex items-center gap-2">
+							<span className="text-sm font-semibold text-white">F1 Naija</span>
+							<span className="text-xs text-zinc-500">@f1_naija</span>
+							<span className="ml-auto text-xs text-zinc-600">{timeAgo(tweet.created_at)}</span>
+						</div>
+						<p className="break-words text-sm leading-relaxed text-zinc-200 whitespace-pre-wrap">{tweet.text}</p>
+					</div>
+				</div>
+			</div>
+		</a>
+	);
+}
+
+function ProfileCard({ profile }: { profile: Profile }) {
+	return (
+		<div className="rounded-xl border border-zinc-800 p-6">
+			<div className="flex items-start gap-4">
+				<div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-green-600 to-green-400 text-xl font-bold text-black">
+					F1
+				</div>
+				<div className="min-w-0 flex-1">
+					<div className="flex items-center gap-2">
+						<span className="text-base font-bold text-white">{profile.name}</span>
+					</div>
+					<p className="text-sm text-zinc-500 mb-2">@{profile.screen_name}</p>
+					<p className="text-sm leading-relaxed text-zinc-300">{profile.description}</p>
+					<div className="mt-3 flex gap-4 text-sm text-zinc-500">
+						<span><strong className="text-white">{fmt(profile.followers)}</strong> followers</span>
+						<span><strong className="text-white">{fmt(profile.tweets)}</strong> posts</span>
+					</div>
+				</div>
+			</div>
+			<a
+				href="https://twitter.com/f1_naija"
+				target="_blank"
+				rel="noopener noreferrer"
+				className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg bg-zinc-900 border border-zinc-700 py-3 text-sm font-semibold text-white transition-colors hover:border-zinc-500 hover:bg-zinc-800"
+			>
+				Open @f1_naija on X →
+			</a>
+		</div>
+	);
+}
+
+function SkeletonCard() {
+	return (
+		<div className="animate-pulse rounded-xl border border-zinc-800 p-4">
+			<div className="flex gap-3">
+				<div className="h-9 w-9 rounded-full bg-zinc-800" />
+				<div className="flex-1 space-y-2">
+					<div className="h-3 w-1/3 rounded bg-zinc-800" />
+					<div className="h-3 w-full rounded bg-zinc-800" />
+					<div className="h-3 w-2/3 rounded bg-zinc-800" />
+				</div>
+			</div>
+		</div>
+	);
 }
 
 export default function NewsPage() {
+	const [tweets, setTweets] = useState<Tweet[]>([]);
+	const [profile, setProfile] = useState<Profile | null>(null);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState<string | null>(null);
 	const [notifStatus, setNotifStatus] = useState<NotifStatus>("idle");
-	const containerRef = useRef<HTMLDivElement>(null);
 
-	useEffect(() => {
-		const load = () => {
-			if (window.twttr?.widgets && containerRef.current) {
-				window.twttr.widgets.load(containerRef.current);
+	const fetchData = useCallback(async () => {
+		// Try tweets API first
+		try {
+			const res = await fetch("/api/tweets");
+			const data = await res.json();
+			if (Array.isArray(data.tweets) && data.tweets.length > 0) {
+				setTweets(data.tweets);
+				setError(null);
+				setLoading(false);
+				return;
 			}
-		};
-		if (window.twttr?.widgets) {
-			load();
-		} else if (!document.getElementById("twitter-wjs")) {
-			const s = document.createElement("script");
-			s.id = "twitter-wjs";
-			s.src = "https://platform.twitter.com/widgets.js";
-			s.async = true;
-			s.onload = load;
-			document.head.appendChild(s);
+		} catch {
+			// fall through
+		}
+
+		// Fallback: load profile card from fxtwitter (CORS-enabled, always works)
+		try {
+			const res = await fetch("https://api.fxtwitter.com/f1_naija");
+			const data = await res.json();
+			if (data.user) {
+				setProfile({
+					name: data.user.name,
+					screen_name: data.user.screen_name,
+					description: data.user.description,
+					followers: data.user.followers,
+					tweets: data.user.tweets,
+				});
+			}
+		} catch {
+			setError("Could not load news. Check back shortly.");
+		} finally {
+			setLoading(false);
 		}
 	}, []);
 
-	// Notification status detection
+	useEffect(() => {
+		fetchData();
+		const interval = setInterval(fetchData, 60_000);
+		return () => clearInterval(interval);
+	}, [fetchData]);
+
 	useEffect(() => {
 		const isIOS =
 			/iPad|iPhone|iPod/.test(navigator.userAgent) ||
@@ -40,14 +156,25 @@ export default function NewsPage() {
 		const isStandalone =
 			window.matchMedia("(display-mode: standalone)").matches ||
 			(navigator as Navigator & { standalone?: boolean }).standalone === true;
-		if (isIOS && !isStandalone) { setNotifStatus("ios-pwa-required"); return; }
-		if (!("Notification" in window)) setNotifStatus("unsupported");
-		else if (Notification.permission === "granted") setNotifStatus("subscribed");
-		else if (Notification.permission === "denied") setNotifStatus("denied");
+
+		if (isIOS && !isStandalone) {
+			setNotifStatus("ios-pwa-required");
+			return;
+		}
+		if (!("Notification" in window)) {
+			setNotifStatus("unsupported");
+		} else if (Notification.permission === "granted") {
+			setNotifStatus("subscribed");
+		} else if (Notification.permission === "denied") {
+			setNotifStatus("denied");
+		}
 	}, []);
 
 	async function subscribeToNotifications() {
-		if (!("Notification" in window) || !("serviceWorker" in navigator)) { setNotifStatus("unsupported"); return; }
+		if (!("Notification" in window) || !("serviceWorker" in navigator)) {
+			setNotifStatus("unsupported");
+			return;
+		}
 		const permission = await Notification.requestPermission();
 		if (permission !== "granted") { setNotifStatus("denied"); return; }
 		try {
@@ -56,9 +183,16 @@ export default function NewsPage() {
 				userVisibleOnly: true,
 				applicationServerKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
 			});
-			await fetch("/api/subscribe", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(sub) });
+			await fetch("/api/subscribe", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(sub),
+			});
 			setNotifStatus("subscribed");
-		} catch { setNotifStatus("denied"); }
+		} catch (err) {
+			console.error("Push subscribe error:", err);
+			setNotifStatus("denied");
+		}
 	}
 
 	async function unsubscribeFromNotifications() {
@@ -70,7 +204,9 @@ export default function NewsPage() {
 				await sub.unsubscribe();
 			}
 			setNotifStatus("idle");
-		} catch { /* ignore */ }
+		} catch (err) {
+			console.error("Unsubscribe error:", err);
+		}
 	}
 
 	return (
@@ -115,22 +251,34 @@ export default function NewsPage() {
 				</div>
 			)}
 
-			{/* Twitter Timeline — rendered by widgets.js in user's browser */}
-			<div ref={containerRef}>
-				<a
-					className="twitter-timeline"
-					data-theme="dark"
-					data-dnt="true"
-					href="https://twitter.com/f1_naija"
-				>
-					Tweets by @f1_naija
-				</a>
-			</div>
+			{loading && (
+				<div className="flex flex-col gap-3">
+					{Array.from({ length: 3 }).map((_, i) => <SkeletonCard key={i} />)}
+				</div>
+			)}
+			{!loading && error && (
+				<div className="py-12 text-center text-zinc-500">
+					<p>{error}</p>
+					<button onClick={fetchData} className="mt-3 text-sm text-green-400 hover:underline">Retry</button>
+				</div>
+			)}
+			{!loading && !error && tweets.length > 0 && (
+				<div className="flex flex-col gap-3">
+					{tweets.map((tweet) => <TweetCard key={tweet.id} tweet={tweet} />)}
+				</div>
+			)}
+			{!loading && !error && tweets.length === 0 && profile && <ProfileCard profile={profile} />}
+			{!loading && !error && tweets.length === 0 && !profile && (
+				<div className="rounded-xl border border-zinc-800 p-8 text-center">
+					<p className="text-sm text-zinc-400">
+						Follow <a href="https://twitter.com/f1_naija" target="_blank" rel="noopener noreferrer" className="text-green-400 hover:underline">@f1_naija on X</a> for live F1 updates.
+					</p>
+				</div>
+			)}
 
 			<p className="pb-4 text-center text-xs text-zinc-700">
-				Powered by F1 Naija ·{" "}
-				<a href="https://twitter.com/f1_naija" target="_blank" rel="noopener noreferrer" className="hover:text-zinc-500">@f1_naija</a>
+				Auto-refreshes every 60s · Powered by F1 Naija
 			</p>
 		</div>
 	);
-}
+			}
