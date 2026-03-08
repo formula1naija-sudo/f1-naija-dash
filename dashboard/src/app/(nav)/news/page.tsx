@@ -144,7 +144,7 @@ export default function NewsPage() {
 						className="text-sm font-medium text-green-400 transition-colors hover:text-zinc-400"
 						title="Click to turn off notifications"
 					>
-						\u2713 Alerts on
+						{"✓"} Alerts on
 					</button>
 				)}
 				{notifStatus === "denied" && (
@@ -162,12 +162,12 @@ export default function NewsPage() {
 
 			{notifStatus === "ios-pwa-required" && (
 				<div className="rounded-xl border border-zinc-700 bg-zinc-900/60 p-4">
-					<p className="text-sm font-semibold text-white mb-2">\u{1F4F1} Get alerts on iPhone / iPad</p>
+					<p className="text-sm font-semibold text-white mb-2">{"📱"} Get alerts on iPhone / iPad</p>
 					<p className="text-xs text-zinc-400 leading-relaxed">
 						iOS only supports push notifications for apps added to your home screen. In Safari, tap the{" "}
-						<span className="font-semibold text-zinc-300">Share</span> button (\u2B06\uFE0F), then choose{" "}
+						<span className="font-semibold text-zinc-300">Share</span> button {"⬆️"}, then choose{" "}
 						<span className="font-semibold text-zinc-300">&quot;Add to Home Screen&quot;</span>. Open the app from
-						your home screen \u2014 alerts will work automatically.
+						your home screen {"—"} alerts will work automatically.
 					</p>
 				</div>
 			)}
