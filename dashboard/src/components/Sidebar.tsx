@@ -109,6 +109,7 @@ export default function Sidebar({ connected }: Props) {
 					<div className="flex flex-col gap-1">
 						<Item item={{ href: "/dashboard/settings", name: "Settings" }} />
 						<Item target="_blank" item={{ href: "/schedule", name: "Schedule" }} />
+          <Item target="_blank" item={{ href: "/news", name: "News" }} />
 						<Item target="_blank" item={{ href: "/help", name: "Help" }} />
 						<Item target="_blank" item={{ href: "/", name: "Home" }} />
 					</div>
