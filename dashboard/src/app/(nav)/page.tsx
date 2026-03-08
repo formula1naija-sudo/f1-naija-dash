@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import Button from "@/components/ui/Button";
 import ScrollHint from "@/components/ScrollHint";
+import RaceCountdown from "@/components/RaceCountdown";
 
 export default function Home() {
 	return (
@@ -34,6 +35,8 @@ export default function Home() {
 				<ScrollHint />
 			</section>
 
+			<RaceCountdown />
+
 			<section className="pb-20">
 				<h2 className="mb-4 text-2xl">What&apos;s F1 Naija?</h2>
 
@@ -59,16 +62,12 @@ export default function Home() {
 
 				<p className="text-md">
 					Follow us on{" "}
-					<a className="text-blue-500" target="_blank" href="https://x.com/f1_naija">
+					<a className="text-blue-500" target="_blank" href="https://x.com/f1naija">
 						X (Twitter)
 					</a>
-					{", "}
-					<a className="text-blue-500" target="_blank" href="https://www.instagram.com/f1_naija/">
-						Instagram
-					</a>
 					{" "}and{" "}
-					<a className="text-blue-500" target="_blank" href="https://www.tiktok.com/@f1.naija">
-						TikTok
+					<a className="text-blue-500" target="_blank" href="https://instagram.com/f1naija">
+						Instagram
 					</a>
 					{" "}for race reactions, data breakdowns, and F1 content made for Nigerians.
 				</p>
