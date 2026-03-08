@@ -188,48 +188,46 @@ const TWEET_CACHE_MS = 5 * 60 * 1000; // 5 minutes
 
 // Strategy 1: Twitter CDN Syndication API (powers embedded timeline widgets, no auth needed)
 async function fetchTweetsFromCDN() {
-  try {
-    const url = 'https://cdn.syndication.twimg.com/timeline/profile?screen_name=f1_naija&count=20&dnt=true&lang=en&suppress_response_codes=true';
-    console.log('Trying Twitter CDN Syndication...');
-    const res = await fetch(url, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
-        'Accept': 'application/json, text/javascript, */*; q=0.01',
-        'Accept-Language': 'en-US,en;q=0.9',
-        'Referer': 'https://twitter.com/',
-      },
-      signal: AbortSignal.timeout(10000),
-    });
-    console.log(`CDN status: ${res.status}`);
-    const text = await res.text();
-    console.log(`CDN response preview: ${text.substring(0, 500)}`);
-    if (!res.ok) return null;
-
-    const data = JSON.parse(text);
-    const tweets = [];
-
-    // Handle multiple possible response shapes
-    const entries = data.body || data.timeline?.entries || data.entries || (Array.isArray(data) ? data : []);
-    for (const entry of entries) {
-      const td = entry.data || entry.tweet || entry.content?.tweet || entry;
-      if (!td || !td.id_str) continue;
-      const rawText = td.full_text || td.text || '';
-      tweets.push({
-        id: td.id_str,
-        text: rawText,
-        created_at: new Date(td.created_at).toISOString(),
+  const ENDPOINTS = [
+    'https://cdn.syndication.twimg.com/timeline/profile?screen_name=f1_naija&count=20&dnt=true&lang=en',
+    'https://syndication.twitter.com/srv/timeline-profile/screen-name/f1_naija?dnt=true&lang=en',
+  ];
+  for (const url of ENDPOINTS) {
+    try {
+      const base = url.split('?')[0].split('/').slice(-2).join('/');
+      console.log(`Trying CDN: ${base}`);
+      const res = await fetch(url, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+          'Accept': 'application/json, text/javascript, */*; q=0.01',
+          'Accept-Language': 'en-US,en;q=0.9',
+          'Accept-Encoding': 'identity',
+          'Referer': 'https://twitter.com/',
+          'Origin': 'https://twitter.com',
+        },
+        signal: AbortSignal.timeout(10000),
       });
+      const ct = res.headers.get('content-type') || '';
+      const cl = res.headers.get('content-length') || '?';
+      const body = await res.text();
+      console.log(`CDN ${base}: status=${res.status} ct=${ct.substring(0,30)} cl=${cl} bodyLen=${body.length}`);
+      if (!body || body.trim() === '') { console.log(`CDN ${base}: empty body`); continue; }
+      if (!res.ok) { console.log(`CDN ${base}: HTTP ${res.status} body=${body.substring(0,200)}`); continue; }
+      const data = JSON.parse(body);
+      const tweets = [];
+      const entries = data.body || data.timeline?.entries || data.entries || (Array.isArray(data) ? data : []);
+      for (const entry of entries) {
+        const td = entry.data || entry.tweet || entry.content?.tweet || entry;
+        if (!td || !td.id_str) continue;
+        tweets.push({ id: td.id_str, text: td.full_text || td.text || '', created_at: new Date(td.created_at).toISOString() });
+      }
+      if (tweets.length > 0) { console.log(`CDN ${base}: got ${tweets.length} tweets`); return tweets; }
+      console.log(`CDN ${base}: 0 tweets, keys=${Object.keys(data).slice(0,8).join(',')}`);
+    } catch (e) {
+      console.log(`CDN error: ${e.message}`);
     }
-    if (tweets.length > 0) {
-      console.log(`CDN: fetched ${tweets.length} tweets`);
-      return tweets;
-    }
-    console.log('CDN: 0 parseable tweets from response');
-    return null;
-  } catch (e) {
-    console.log(`CDN fetch error: ${e.message}`);
-    return null;
   }
+  return null;
 }
 
 // Strategy 2: Nitter RSS (fallback — public instances may block cloud IPs)
