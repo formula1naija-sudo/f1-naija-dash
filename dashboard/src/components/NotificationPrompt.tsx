@@ -40,30 +40,31 @@ async function subscribeToPush(): Promise<void> {
 
 export default function NotificationPrompt() {
   const [show, setShow] = useState(false);
-  const [isIos, setIsIos] = useState(false);
-  const [isStandalone, setIsStandalone] = useState(false);
+  const [isIos] = useState<boolean>(() =>
+    typeof window !== "undefined" ? /iphone|ipad|ipod/i.test(navigator.userAgent) : false
+  );
+  const [isStandalone] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    return (
+      window.matchMedia("(display-mode: standalone)").matches ||
+      (window.navigator as { standalone?: boolean }).standalone === true
+    );
+  });
 
   useEffect(() => {
-    const ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
-    const standalone =
-      window.matchMedia("(display-mode: standalone)").matches ||
-      (window.navigator as { standalone?: boolean }).standalone === true;
-    setIsIos(ios);
-    setIsStandalone(standalone);
-
     // Already granted — subscribe silently (re-registers if needed)
     if (Notification.permission === "granted" && PUSH_SERVICE_URL) {
       subscribeToPush();
     }
 
-    const delay = ios && !standalone ? 3000 : 5000;
+    const delay = isIos && !isStandalone ? 3000 : 5000;
     const timer = setTimeout(() => {
-      if (Notification.permission === "default" || (ios && !standalone)) {
+      if (Notification.permission === "default" || (isIos && !isStandalone)) {
         setShow(true);
       }
     }, delay);
     return () => clearTimeout(timer);
-  }, []);
+  }, [isIos, isStandalone]);
 
   const handleRequestPermission = async () => {
     const permission = await Notification.requestPermission();
