@@ -39,13 +39,16 @@ export default function DashboardLayout({ children }: Props) {
   const delay = useSettingsStore((state) => state.delay);
   const syncing = delay > maxDelay;
   useWakeLock();
-  useNotifications(); // Run immediately — not lazy-loaded, fires on every WebSocket update
-
+  useNotifications();
+  // Run immediately — not lazy-loaded, fires on every WebSocket update
   const ended = useDataStore(({ state }) => state?.SessionStatus?.Status === 'Ends');
 
   return (
     <>
-      <div className="flex h-dvh w-full md:pt-2 md:pr-2 md:pb-2">
+      {/* h-screen (100vh) instead of h-dvh (100dvh): 100dvh is unsupported on
+          iOS Safari < 15.4 and falls back to height:auto, collapsing the flex
+          container to 0px. h-screen renders on all iOS versions. */}
+      <div className="flex h-screen w-full md:pt-2 md:pr-2 md:pb-2">
         <Sidebar key="sidebar" connected={connected} />
         <WhatsAppShare />
         <Watermark />
@@ -54,13 +57,15 @@ export default function DashboardLayout({ children }: Props) {
         <OneSignalInit />
         <PushPrompt />
         <PushNotificationActivator />
-        <motion.div layout="size" className="flex h-full w-full flex-1 flex-col md:gap-2">
+        {/* min-h-0: iOS Safari flex bug — without it, flex children can't shrink
+            below their content size, breaking the overflow-auto scroll region */}
+        <motion.div layout="size" className="flex h-full min-h-0 w-full flex-1 flex-col md:gap-2">
           <DesktopStaticBar show={!syncing || ended} />
           <MobileStaticBar show={!syncing || ended} connected={connected} />
           <div
             className={
               !syncing || ended
-                ? 'no-scrollbar w-full flex-1 overflow-auto md:rounded-lg'
+                ? 'no-scrollbar min-h-0 w-full flex-1 overflow-auto md:rounded-lg'
                 : 'hidden'
             }
           >
@@ -70,7 +75,7 @@ export default function DashboardLayout({ children }: Props) {
           <div
             className={
               syncing && !ended
-                ? 'flex h-full flex-1 flex-col items-center justify-center gap-2 border-zinc-800 md:rounded-lg md:border'
+                ? 'flex min-h-0 h-full flex-1 flex-col items-center justify-center gap-2 border-zinc-800 md:rounded-lg md:border'
                 : 'hidden'
             }
           >
