@@ -34,7 +34,6 @@ function fmt(n: number): string {
   return n.toString();
 }
 
-// Source badge colour map — unknown sources fall back to zinc
 const SOURCE_COLORS: Record<string, string> = {
   "BBC Sport":       "bg-red-900 text-red-300",
   "RaceFans":        "bg-blue-900 text-blue-300",
@@ -97,13 +96,10 @@ function SkeletonCard() {
 
 function NewsTicker({ items }: { items: NewsItem[] }) {
   if (!items.length) return null;
-  // Only use top 12 headlines — keeps cycle time short and snappy
-  const tickerSource = items.slice(0, 12);
+  // Top 8 headlines only — fixed 6s cycle for maximum speed
+  const tickerSource = items.slice(0, 8);
   const tickerItems = [...tickerSource, ...tickerSource];
-
-  // 0.018 s/char → ~38s for 12 typical headlines at ~175px/s pixel speed
-  const totalChars = tickerSource.reduce((sum, item) => sum + item.title.length, 0);
-  const duration = Math.max(10, totalChars * 0.018);
+  const duration = 6; // fixed 6s — ~800px/s fast live-ticker feel
 
   return (
     <div className="relative overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950 py-3 mb-6">
@@ -186,7 +182,6 @@ export default function NewsPage() {
         fetch("/api/news"),
         fetch("https://api.fxtwitter.com/f1_naija"),
       ]);
-
       if (newsRes.status === "fulfilled" && newsRes.value.ok) {
         const data = await newsRes.value.json();
         if (Array.isArray(data.items) && data.items.length > 0) {
@@ -195,7 +190,6 @@ export default function NewsPage() {
           setVisibleCount(PAGE_SIZE);
         }
       }
-
       if (profileRes.status === "fulfilled" && profileRes.value.ok) {
         const data = await profileRes.value.json();
         if (data.user) {
@@ -262,7 +256,6 @@ export default function NewsPage() {
   return (
     <div className="pb-8 text-white">
       <div className="mx-auto max-w-2xl px-4 py-8">
-        {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-2xl font-bold text-white">F1 News</h1>
@@ -287,13 +280,9 @@ export default function NewsPage() {
           )}
         </div>
 
-        {/* Ticker — top 12 headlines only for snappy cycling */}
         {!loading && newsItems.length > 0 && <NewsTicker items={newsItems} />}
-
-        {/* F1 Naija Profile Card */}
         {profile && <ProfileCard profile={profile} />}
 
-        {/* News Cards */}
         <div className="space-y-3">
           {loading ? (
             Array.from({ length: PAGE_SIZE }).map((_, i) => <SkeletonCard key={i} />)
@@ -305,7 +294,6 @@ export default function NewsPage() {
           ) : visibleItems.length > 0 ? (
             <>
               {visibleItems.map((item, i) => <NewsCard key={i} item={item} />)}
-
               {hasMore && (
                 <button
                   onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
@@ -329,8 +317,7 @@ export default function NewsPage() {
             </div>
           )}
         </div>
-
       </div>
     </div>
   );
-}
+                          }
