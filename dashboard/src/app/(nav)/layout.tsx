@@ -28,12 +28,37 @@ export default function Layout({ children }: Props) {
 						News
 					</Link>
 					<Link className="transition duration-100 active:scale-95" href="/standings">
-					Standings
-				</Link>
-				<Link className="transition duration-100 active:scale-95" href="/help">
+						Standings
+					</Link>
+					<Link className="transition duration-100 active:scale-95" href="/help">
 						Help
 					</Link>
 				</div>
 
 				<div className="hidden items-center gap-4 pr-2 sm:flex">
 					<Link
+						className="flex items-center gap-2 transition duration-100 active:scale-95"
+						href="https://x.com/f1naija"
+						target="_blank"
+					>
+						<span>X / Twitter</span>
+					</Link>
+
+					<Link
+						className="flex items-center gap-2 transition duration-100 active:scale-95"
+						href="https://instagram.com/f1naija"
+						target="_blank"
+					>
+						<span>Instagram</span>
+					</Link>
+				</div>
+			</nav>
+
+			<main className="container mx-auto max-w-(--breakpoint-lg) px-4">
+				{children}
+
+				<Footer />
+			</main>
+		</>
+	);
+}
