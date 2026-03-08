@@ -22,7 +22,7 @@ export default function AdBanner() {
 
   return (
     <div
-      className="fixed top-0 left-0 z-50 flex w-full items-center justify-center gap-4 bg-gradient-to-r from-emerald-700 via-emerald-600 to-emerald-700 px-4 py-2.5 transition-opacity duration-500"
+      className="sticky top-0 left-0 z-50 flex w-full items-center justify-center gap-4 bg-gradient-to-r from-emerald-700 via-emerald-600 to-emerald-700 px-4 py-2.5 transition-opacity duration-500"
       style={{ opacity: fading ? 0 : 1 }}
     >
       <span className="text-sm font-semibold text-white">
