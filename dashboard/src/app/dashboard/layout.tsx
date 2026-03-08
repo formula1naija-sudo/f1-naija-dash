@@ -22,6 +22,9 @@ import ConnectionStatus from '@/components/ConnectionStatus';
 import WhatsAppShare from '@/components/WhatsAppShare';
 import Watermark from '@/components/Watermark';
 import ThemeToggle from '@/components/ThemeToggle';
+import OneSignalInit from '@/components/OneSignalInit';
+import PushPrompt from '@/components/PushPrompt';
+import PushNotificationActivator from '@/components/PushNotificationActivator';
 
 const NotificationPrompt = dynamic(() => import('@/components/NotificationPrompt'), { ssr: false });
 
@@ -48,6 +51,9 @@ export default function DashboardLayout({ children }: Props) {
         <Watermark />
         <ThemeToggle />
         <NotificationPrompt />
+        <OneSignalInit />
+        <PushPrompt />
+        <PushNotificationActivator />
         <motion.div layout="size" className="flex h-full w-full flex-1 flex-col md:gap-2">
           <DesktopStaticBar show={!syncing || ended} />
           <MobileStaticBar show={!syncing || ended} connected={connected} />
