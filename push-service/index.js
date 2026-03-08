@@ -34,8 +34,8 @@ function detectEvents(prevState, newState) {
   if (!prevState || !newState) return notifications;
 
   // Track status changes
-  const prevTrackStatus = prevState.trackStatus?.status;
-  const newTrackStatus = newState.trackStatus?.status;
+  const prevTrackStatus = prevState.trackStatus && prevState.trackStatus.status;
+  const newTrackStatus = newState.trackStatus && newState.trackStatus.status;
   if (prevTrackStatus !== newTrackStatus && newTrackStatus) {
     const statusMap = {
       '1': { title: '🟢 Track Clear', body: 'Track is clear — green flag!' },
@@ -50,20 +50,20 @@ function detectEvents(prevState, newState) {
   }
 
   // Session state changes
-  const prevSessionStatus = prevState.sessionInfo?.Status;
-  const newSessionStatus = newState.sessionInfo?.Status;
+  const prevSessionStatus = prevState.sessionInfo && prevState.sessionInfo.Status;
+  const newSessionStatus = newState.sessionInfo && newState.sessionInfo.Status;
   if (prevSessionStatus !== newSessionStatus && newSessionStatus) {
     if (newSessionStatus === 'Started') {
-      const sessionName = newState.sessionInfo?.Name || 'Session';
-      notifications.push({ title: '🏁 Session Started', body: `${sessionName} is underway!`, url: '/dashboard' });
+      const sessionName = (newState.sessionInfo && newState.sessionInfo.Name) || 'Session';
+      notifications.push({ title: '🏁 Session Started', body: sessionName + ' is underway!', url: '/dashboard' });
     } else if (newSessionStatus === 'Finished') {
       notifications.push({ title: '🏁 Session Finished', body: 'The session has ended.', url: '/dashboard' });
     }
   }
 
   // Rain / weather
-  const prevRaining = prevState.weatherData?.Raining;
-  const newRaining = newState.weatherData?.Raining;
+  const prevRaining = prevState.weatherData && prevState.weatherData.Raining;
+  const newRaining = newState.weatherData && newState.weatherData.Raining;
   if (!prevRaining && newRaining) {
     notifications.push({ title: '🌧️ Rain!', body: 'It has started raining at the circuit.', url: '/dashboard' });
   } else if (prevRaining && !newRaining) {
@@ -71,12 +71,12 @@ function detectEvents(prevState, newState) {
   }
 
   // Fastest lap
-  const prevFastLap = prevState.timingData?.fastestLap;
-  const newFastLap = newState.timingData?.fastestLap;
+  const prevFastLap = prevState.timingData && prevState.timingData.fastestLap;
+  const newFastLap = newState.timingData && newState.timingData.fastestLap;
   if (newFastLap && newFastLap !== prevFastLap) {
     const driver = newFastLap.driver || 'Unknown';
     const lapTime = newFastLap.time || '';
-    notifications.push({ title: '⚡ Fastest Lap', body: `${driver} sets fastest lap${lapTime ? ': ' + lapTime : ''}`, url: '/dashboard' });
+    notifications.push({ title: '⚡ Fastest Lap', body: driver + ' sets fastest lap' + (lapTime ? ': ' + lapTime : ''), url: '/dashboard' });
   }
 
   return notifications;
@@ -104,10 +104,9 @@ async function sendNotifications(notifications) {
 }
 
 function connectToRealtime() {
-  const url = `${REALTIME_URL}/api/realtime`;
+  const url = REALTIME_URL + '/api/realtime';
   console.log('Connecting to realtime SSE:', url);
   readyToNotify = false;
-
   const es = new EventSource(url);
 
   es.addEventListener('initial', (event) => {
@@ -126,19 +125,15 @@ function connectToRealtime() {
   es.addEventListener('update', async (event) => {
     try {
       const delta = JSON.parse(event.data);
-      const newState = { ...lastState, ...delta };
-
+      const newState = Object.assign({}, lastState, delta);
       if (!readyToNotify) {
-        // Still warming up — silently apply state updates, no notifications
         lastState = newState;
         return;
       }
-
       const notifications = detectEvents(lastState, newState);
       lastState = newState;
-
       if (notifications.length > 0) {
-        console.log('Sending notifications:', notifications.map(n => n.title));
+        console.log('Sending notifications:', notifications.map(function(n) { return n.title; }));
         await sendNotifications(notifications);
       }
     } catch (e) {
@@ -147,7 +142,7 @@ function connectToRealtime() {
   });
 
   es.onerror = (err) => {
-    console.error('SSE error, reconnecting in 5s...', err.message || '');
+    console.error('SSE error, reconnecting in 5s...', (err && err.message) || '');
     es.close();
     setTimeout(connectToRealtime, 5000);
   };
@@ -182,11 +177,11 @@ app.delete('/subscribe', (req, res) => {
   res.json({ message: 'Unsubscribed successfully' });
 });
 
-// Tweet cache (CDN Syndication + Nitter RSS fallback)
+// Tweet cache
 let tweetCache = { tweets: [], fetchedAt: 0 };
 const TWEET_CACHE_MS = 30 * 60 * 1000; // 30 minutes
 
-//// Strategy 1: Twitter CDN Syndication API — JSONP format, returns HTML tweet body
+// Parse tweet list from Twitter embed HTML
 function parseTweetsFromHtml(html) {
   const tweets = [];
   const itemRe = /<li[^>]+data-tweet-id="(\d+)"[^>]*>([\s\S]*?)<\/li>/g;
@@ -196,17 +191,17 @@ function parseTweetsFromHtml(html) {
     const inner = m[2];
     const textMatch = /<p[^>]*class="[^"]*timeline-Tweet-text[^"]*"[^>]*>([\s\S]*?)<\/p>/.exec(inner);
     const rawText = textMatch
-      ? textMatch[1].replace(/<[^>]+>/g,'').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&#39;/g,"'").replace(/&quot;/g,'"').trim()
+      ? textMatch[1].replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&#39;/g, "'").replace(/&quot;/g, '"').trim()
       : '';
     const timeMatch = /<time[^>]+datetime="([^"]+)"/.exec(inner) || /data-datetime="([^"]+)"/.exec(inner);
     const created_at = timeMatch ? new Date(timeMatch[1]).toISOString() : new Date().toISOString();
-    if (rawText) tweets.push({ id, text: rawText, created_at });
+    if (rawText) tweets.push({ id: id, text: rawText, created_at: created_at });
   }
   return tweets;
 }
 
+// Strategy 1: Twitter CDN JSONP (powers embed widgets — may return empty from cloud IPs)
 async function fetchTweetsFromCDN() {
-  // cdn.syndication.twimg.com is a JSONP endpoint — needs callback param to return data
   const cdnUrl = 'https://cdn.syndication.twimg.com/timeline/profile?screen_name=f1_naija&count=20&lang=en&callback=f1nCallback';
   try {
     console.log('Trying CDN JSONP: timeline/profile');
@@ -221,27 +216,29 @@ async function fetchTweetsFromCDN() {
       signal: AbortSignal.timeout(10000),
     });
     const body = await res.text();
-    console.log(`CDN JSONP: status=${res.status} bodyLen=${body.length}`);
+    console.log('CDN JSONP: status=' + res.status + ' bodyLen=' + body.length);
     if (body && body.trim()) {
-      // Strip JSONP wrapper: f1nCallback({...}) -> {...}
       const match = body.match(/^[^(]+\(([\s\S]*)\)\s*;?\s*$/);
       const jsonStr = match ? match[1] : body;
       const data = JSON.parse(jsonStr);
-      console.log(`CDN JSONP: parsed, htmlLen=${data.body?.length}, status=${data.headers?.status}`);
-      const html = data.body || '';
-      if (html) {
-        const tweets = parseTweetsFromHtml(html);
-        if (tweets.length > 0) { console.log(`CDN JSONP: got ${tweets.length} tweets`); return tweets; }
+      const htmlBody = data.body || '';
+      console.log('CDN JSONP: parsed ok, htmlLen=' + htmlBody.length);
+      if (htmlBody) {
+        const tweets = parseTweetsFromHtml(htmlBody);
+        if (tweets.length > 0) {
+          console.log('CDN JSONP: got ' + tweets.length + ' tweets');
+          return tweets;
+        }
         console.log('CDN JSONP: 0 tweets parsed from HTML');
       }
     } else {
-      console.log('CDN JSONP: empty body (IP may be blocked by CDN)');
+      console.log('CDN JSONP: empty body (cloud IP may be blocked)');
     }
   } catch (e) {
-    console.log(`CDN JSONP error: ${e.message}`);
+    console.log('CDN JSONP error: ' + e.message);
   }
 
-  // Fallback: syndication.twitter.com (rate-limited at 429, try when cache expired)
+  // Fallback: syndication.twitter.com (may 429 rate-limit)
   const synUrl = 'https://syndication.twitter.com/srv/timeline-profile/screen-name/f1_naija?lang=en';
   try {
     console.log('Trying syndication.twitter.com');
@@ -255,22 +252,25 @@ async function fetchTweetsFromCDN() {
       signal: AbortSignal.timeout(10000),
     });
     const body = await res.text();
-    console.log(`Syndication: status=${res.status} bodyLen=${body.length}`);
+    console.log('Syndication: status=' + res.status + ' bodyLen=' + body.length);
     if (res.ok && body) {
       const tweets = parseTweetsFromHtml(body);
-      if (tweets.length > 0) { console.log(`Syndication: got ${tweets.length} tweets`); return tweets; }
-      console.log(`Syndication: 0 tweets parsed, preview=${body.substring(0,150)}`);
+      if (tweets.length > 0) {
+        console.log('Syndication: got ' + tweets.length + ' tweets');
+        return tweets;
+      }
+      console.log('Syndication: 0 tweets, preview=' + body.substring(0, 150));
     } else {
-      console.log(`Syndication: HTTP ${res.status} body=${body.substring(0,200)}`);
+      console.log('Syndication: HTTP ' + res.status + ' body=' + body.substring(0, 200));
     }
   } catch (e) {
-    console.log(`Syndication error: ${e.message}`);
+    console.log('Syndication error: ' + e.message);
   }
 
   return null;
 }
 
- Strategy 2: Nitter RSS (fallback — public instances may block cloud IPs)
+// Strategy 2: Nitter RSS (fallback — public instances may block cloud IPs)
 const NITTER_INSTANCES = [
   'https://xcancel.com',
   'https://nitter.privacyredirect.com',
@@ -284,34 +284,34 @@ const NITTER_INSTANCES = [
 async function fetchTweetsFromNitter() {
   for (const instance of NITTER_INSTANCES) {
     try {
-      const res = await fetch(`${instance}/f1_naija/rss`, {
+      const res = await fetch(instance + '/f1_naija/rss', {
         headers: { 'User-Agent': 'Mozilla/5.0' },
         signal: AbortSignal.timeout(8000),
       });
-      if (!res.ok) { console.log(`Nitter ${instance} HTTP ${res.status}`); continue; }
+      if (!res.ok) { console.log('Nitter ' + instance + ' HTTP ' + res.status); continue; }
       const xml = await res.text();
       const items = [];
-      const itemRegex = new RegExp('<item>([\s\S]*?)<\/item>', 'g');
+      const itemRegex = /<item>([\s\S]*?)<\/item>/g;
       let match;
       while ((match = itemRegex.exec(xml)) !== null) {
         const itemXml = match[1];
-        const link = (itemXml.match(new RegExp('<link>(.*?)<\/link>')) || [])[1] || '';
-        const pubDate = (itemXml.match(new RegExp('<pubDate>(.*?)<\/pubDate>')) || [])[1] || '';
-        const desc = (itemXml.match(new RegExp('<description><!\[CDATA\[([\s\S]*?)\]\]><\/description>')) || [])[1] || '';
-        const idMatch = link.match(new RegExp('\/status\/(\d+)'));
-        if (!idMatch) continue;
-        const text = desc
-          .replace(new RegExp('<[^>]+>', 'g'), '')
+        const linkM = itemXml.match(/<link>(.*?)<\/link>/);
+        const dateM = itemXml.match(/<pubDate>(.*?)<\/pubDate>/);
+        const descM = itemXml.match(/<description><!\[CDATA\[([\s\S]*?)\]\]><\/description>/);
+        const idM = linkM && linkM[1].match(/\/status\/(\d+)/);
+        if (!idM) continue;
+        const text = (descM ? descM[1] : '')
+          .replace(/<[^>]+>/g, '')
           .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&nbsp;/g, ' ')
           .trim();
-        items.push({ id: idMatch[1], text, created_at: new Date(pubDate).toISOString() });
+        items.push({ id: idM[1], text: text, created_at: new Date(dateM ? dateM[1] : '').toISOString() });
       }
       if (items.length > 0) {
-        console.log(`Nitter ${instance}: fetched ${items.length} tweets`);
+        console.log('Nitter ' + instance + ': fetched ' + items.length + ' tweets');
         return items;
       }
     } catch (e) {
-      console.log(`Nitter ${instance} failed: ${e.message}`);
+      console.log('Nitter ' + instance + ' failed: ' + e.message);
     }
   }
   return null;
@@ -322,11 +322,10 @@ app.get('/tweets', async (req, res) => {
   if (now - tweetCache.fetchedAt < TWEET_CACHE_MS && tweetCache.tweets.length > 0) {
     return res.json({ tweets: tweetCache.tweets, cached: true });
   }
-  // Try CDN first, then Nitter
   const tweets = (await fetchTweetsFromCDN()) || (await fetchTweetsFromNitter());
   if (tweets) {
-    tweetCache = { tweets, fetchedAt: now };
-    res.json({ tweets });
+    tweetCache = { tweets: tweets, fetchedAt: now };
+    res.json({ tweets: tweets });
   } else {
     res.json({ tweets: tweetCache.tweets, error: 'All tweet sources failed' });
   }
@@ -334,6 +333,6 @@ app.get('/tweets', async (req, res) => {
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`Push service running on port ${PORT}`);
+  console.log('Push service running on port ' + PORT);
   connectToRealtime();
 });
