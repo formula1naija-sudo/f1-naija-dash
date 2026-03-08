@@ -1,284 +1,296 @@
 "use client";
+import { useEffect, useState, useCallback, useRef } from "react";
 
-import { useEffect, useState, useCallback } from "react";
-
-type Tweet = {
-	id: string;
-	text: string;
-	created_at: string;
+type NewsItem = {
+  title: string;
+  description: string;
+  link: string;
+  pubDate: string;
+  source: string;
 };
 
 type Profile = {
-	name: string;
-	screen_name: string;
-	description: string;
-	followers: number;
-	tweets: number;
+  name: string;
+  screen_name: string;
+  description: string;
+  followers: number;
+  tweets: number;
 };
 
 type NotifStatus = "idle" | "subscribed" | "denied" | "unsupported" | "ios-pwa-required";
 
 function timeAgo(dateStr: string): string {
-	const diff = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000);
-	if (diff < 60) return `${diff}s ago`;
-	if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
-	if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-	return `${Math.floor(diff / 86400)}d ago`;
+  if (!dateStr) return "";
+  const diff = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000);
+  if (diff < 60) return `${diff}s ago`;
+  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+  return `${Math.floor(diff / 86400)}d ago`;
 }
 
 function fmt(n: number): string {
-	if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + "M";
-	if (n >= 1_000) return (n / 1_000).toFixed(1) + "K";
-	return n.toString();
+  if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + "M";
+  if (n >= 1_000) return (n / 1_000).toFixed(1) + "K";
+  return n.toString();
 }
 
-function TweetCard({ tweet }: { tweet: Tweet }) {
-	const url = `https://twitter.com/f1_naija/status/${tweet.id}`;
-	return (
-		<a href={url} target="_blank" rel="noopener noreferrer" className="block">
-			<div className="rounded-xl border border-zinc-800 p-4 transition-all hover:border-zinc-600 hover:bg-zinc-900">
-				<div className="flex items-start gap-3">
-					<div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-zinc-800 text-sm font-bold text-green-400">
-						F1
-					</div>
-					<div className="min-w-0 flex-1">
-						<div className="mb-1 flex items-center gap-2">
-							<span className="text-sm font-semibold text-white">F1 Naija</span>
-							<span className="text-xs text-zinc-500">@f1_naija</span>
-							<span className="ml-auto text-xs text-zinc-600">{timeAgo(tweet.created_at)}</span>
-						</div>
-						<p className="break-words text-sm leading-relaxed text-zinc-200 whitespace-pre-wrap">{tweet.text}</p>
-					</div>
-				</div>
-			</div>
-		</a>
-	);
-}
+const SOURCE_COLORS: Record<string, string> = {
+  "BBC Sport": "bg-red-900 text-red-300",
+  "RaceFans": "bg-blue-900 text-blue-300",
+  "The Race": "bg-yellow-900 text-yellow-300",
+  "Motorsport.com": "bg-purple-900 text-purple-300",
+  "Autosport": "bg-orange-900 text-orange-300",
+};
 
-function ProfileCard({ profile }: { profile: Profile }) {
-	return (
-		<div className="rounded-xl border border-zinc-800 p-6">
-			<div className="flex items-start gap-4">
-				<div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-green-600 to-green-400 text-xl font-bold text-black">
-					F1
-				</div>
-				<div className="min-w-0 flex-1">
-					<div className="flex items-center gap-2">
-						<span className="text-base font-bold text-white">{profile.name}</span>
-					</div>
-					<p className="text-sm text-zinc-500 mb-2">@{profile.screen_name}</p>
-					<p className="text-sm leading-relaxed text-zinc-300">{profile.description}</p>
-					<div className="mt-3 flex gap-4 text-sm text-zinc-500">
-						<span><strong className="text-white">{fmt(profile.followers)}</strong> followers</span>
-						<span><strong className="text-white">{fmt(profile.tweets)}</strong> posts</span>
-					</div>
-				</div>
-			</div>
-			<a
-				href="https://twitter.com/f1_naija"
-				target="_blank"
-				rel="noopener noreferrer"
-				className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg bg-zinc-900 border border-zinc-700 py-3 text-sm font-semibold text-white transition-colors hover:border-zinc-500 hover:bg-zinc-800"
-			>
-				Open @f1_naija on X →
-			</a>
-		</div>
-	);
+function NewsCard({ item }: { item: NewsItem }) {
+  const colorClass = SOURCE_COLORS[item.source] ?? "bg-zinc-800 text-zinc-300";
+  return (
+    <a href={item.link} target="_blank" rel="noopener noreferrer" className="block group">
+      <div className="rounded-xl border border-zinc-800 p-4 transition-all hover:border-zinc-600 hover:bg-zinc-900">
+        <div className="flex items-start justify-between gap-3 mb-2">
+          <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${colorClass}`}>
+            {item.source}
+          </span>
+          <span className="text-xs text-zinc-600 whitespace-nowrap">{timeAgo(item.pubDate)}</span>
+        </div>
+        <h3 className="text-sm font-semibold text-white leading-snug mb-1 group-hover:text-green-400 transition-colors">
+          {item.title}
+        </h3>
+        {item.description && (
+          <p className="text-xs text-zinc-500 leading-relaxed line-clamp-2">{item.description}</p>
+        )}
+      </div>
+    </a>
+  );
 }
 
 function SkeletonCard() {
-	return (
-		<div className="animate-pulse rounded-xl border border-zinc-800 p-4">
-			<div className="flex gap-3">
-				<div className="h-9 w-9 rounded-full bg-zinc-800" />
-				<div className="flex-1 space-y-2">
-					<div className="h-3 w-1/3 rounded bg-zinc-800" />
-					<div className="h-3 w-full rounded bg-zinc-800" />
-					<div className="h-3 w-2/3 rounded bg-zinc-800" />
-				</div>
-			</div>
-		</div>
-	);
+  return (
+    <div className="rounded-xl border border-zinc-800 p-4 animate-pulse">
+      <div className="flex items-center justify-between mb-2">
+        <div className="h-4 w-20 rounded-full bg-zinc-800" />
+        <div className="h-3 w-12 rounded bg-zinc-800" />
+      </div>
+      <div className="h-4 w-full rounded bg-zinc-800 mb-1" />
+      <div className="h-4 w-3/4 rounded bg-zinc-800 mb-2" />
+      <div className="h-3 w-full rounded bg-zinc-800" />
+    </div>
+  );
+}
+
+function NewsTicker({ items }: { items: NewsItem[] }) {
+  const tickerRef = useRef<HTMLDivElement>(null);
+  if (!items.length) return null;
+  const tickerItems = [...items, ...items];
+  return (
+    <div className="relative overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950 py-3 mb-6">
+      <div className="flex items-center">
+        <div className="flex-shrink-0 bg-green-500 text-black text-xs font-bold px-3 py-1 mr-4 rounded-full z-10">
+          LIVE
+        </div>
+        <div className="overflow-hidden flex-1">
+          <div
+            ref={tickerRef}
+            className="flex gap-8 animate-marquee whitespace-nowrap"
+            style={{ animation: "marquee 60s linear infinite" }}
+          >
+            {tickerItems.map((item, i) => (
+              <a
+                key={i}
+                href={item.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-zinc-300 hover:text-green-400 transition-colors flex-shrink-0"
+              >
+                <span className="text-zinc-600 mr-2">●</span>
+                {item.title}
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+      <style>{`
+        @keyframes marquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+      `}</style>
+    </div>
+  );
+}
+
+function ProfileCard({ profile }: { profile: Profile }) {
+  return (
+    <div className="rounded-xl border border-zinc-800 p-6 mb-6">
+      <div className="flex items-start gap-4">
+        <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-green-600 to-green-400 text-xl font-bold text-black">
+          F1
+        </div>
+        <div className="min-w-0 flex-1">
+          <span className="text-base font-bold text-white">{profile.name}</span>
+          <p className="text-sm text-zinc-500 mb-2">@{profile.screen_name}</p>
+          <p className="text-sm leading-relaxed text-zinc-300">{profile.description}</p>
+          <div className="mt-3 flex gap-4 text-sm text-zinc-500">
+            <span><strong className="text-white">{fmt(profile.followers)}</strong> followers</span>
+            <span><strong className="text-white">{fmt(profile.tweets)}</strong> posts</span>
+          </div>
+        </div>
+      </div>
+      <a
+        href="https://twitter.com/f1_naija"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg bg-zinc-900 border border-zinc-700 py-3 text-sm font-semibold text-white transition-colors hover:border-zinc-500 hover:bg-zinc-800"
+      >
+        Open @f1_naija on X →
+      </a>
+    </div>
+  );
 }
 
 export default function NewsPage() {
-	const [tweets, setTweets] = useState<Tweet[]>([]);
-	const [profile, setProfile] = useState<Profile | null>(null);
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState<string | null>(null);
-	const [notifStatus, setNotifStatus] = useState<NotifStatus>("idle");
+  const [newsItems, setNewsItems] = useState<NewsItem[]>([]);
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [notifStatus, setNotifStatus] = useState<NotifStatus>("idle");
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
-	const fetchData = useCallback(async () => {
-		// Try tweets API first
-		try {
-			const res = await fetch("/api/tweets");
-			const data = await res.json();
-			if (Array.isArray(data.tweets) && data.tweets.length > 0) {
-				setTweets(data.tweets);
-				setError(null);
-				setLoading(false);
-				return;
-			}
-		} catch {
-			// fall through
-		}
+  const fetchData = useCallback(async () => {
+    try {
+      const [newsRes, profileRes] = await Promise.allSettled([
+        fetch("/api/news"),
+        fetch("https://api.fxtwitter.com/f1_naija"),
+      ]);
 
-		// Fallback: load profile card from fxtwitter (CORS-enabled, always works)
-		try {
-			const res = await fetch("https://api.fxtwitter.com/f1_naija");
-			const data = await res.json();
-			if (data.user) {
-				setProfile({
-					name: data.user.name,
-					screen_name: data.user.screen_name,
-					description: data.user.description,
-					followers: data.user.followers,
-					tweets: data.user.tweets,
-				});
-			}
-		} catch {
-			setError("Could not load news. Check back shortly.");
-		} finally {
-			setLoading(false);
-		}
-	}, []);
+      if (newsRes.status === "fulfilled" && newsRes.value.ok) {
+        const data = await newsRes.value.json();
+        if (Array.isArray(data.items) && data.items.length > 0) {
+          setNewsItems(data.items);
+          setError(null);
+          setLastUpdated(new Date());
+        }
+      }
 
-	useEffect(() => {
-		fetchData();
-		const interval = setInterval(fetchData, 60_000);
-		return () => clearInterval(interval);
-	}, [fetchData]);
+      if (profileRes.status === "fulfilled" && profileRes.value.ok) {
+        const data = await profileRes.value.json();
+        if (data.user) {
+          setProfile({
+            name: data.user.name,
+            screen_name: data.user.screen_name,
+            description: data.user.description,
+            followers: data.user.followers,
+            tweets: data.user.tweets,
+          });
+        }
+      }
+    } catch {
+      setError("Could not load news. Check back shortly.");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-	useEffect(() => {
-		const isIOS =
-			/iPad|iPhone|iPod/.test(navigator.userAgent) ||
-			(navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-		const isStandalone =
-			window.matchMedia("(display-mode: standalone)").matches ||
-			(navigator as Navigator & { standalone?: boolean }).standalone === true;
+  useEffect(() => {
+    fetchData();
+    const interval = setInterval(fetchData, 5 * 60_000);
+    return () => clearInterval(interval);
+  }, [fetchData]);
 
-		if (isIOS && !isStandalone) {
-			setNotifStatus("ios-pwa-required");
-			return;
-		}
-		if (!("Notification" in window)) {
-			setNotifStatus("unsupported");
-		} else if (Notification.permission === "granted") {
-			setNotifStatus("subscribed");
-		} else if (Notification.permission === "denied") {
-			setNotifStatus("denied");
-		}
-	}, []);
+  useEffect(() => {
+    if (typeof window === "undefined" || !("Notification" in window)) {
+      setNotifStatus("unsupported");
+      return;
+    }
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const isStandalone = (window.navigator as { standalone?: boolean }).standalone === true;
+    if (isIOS && !isStandalone) { setNotifStatus("ios-pwa-required"); return; }
+    if (Notification.permission === "granted") setNotifStatus("subscribed");
+    else if (Notification.permission === "denied") setNotifStatus("denied");
+  }, []);
 
-	async function subscribeToNotifications() {
-		if (!("Notification" in window) || !("serviceWorker" in navigator)) {
-			setNotifStatus("unsupported");
-			return;
-		}
-		const permission = await Notification.requestPermission();
-		if (permission !== "granted") { setNotifStatus("denied"); return; }
-		try {
-			const reg = await navigator.serviceWorker.ready;
-			const sub = await reg.pushManager.subscribe({
-				userVisibleOnly: true,
-				applicationServerKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
-			});
-			await fetch("/api/subscribe", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(sub),
-			});
-			setNotifStatus("subscribed");
-		} catch (err) {
-			console.error("Push subscribe error:", err);
-			setNotifStatus("denied");
-		}
-	}
+  const handleNotifToggle = async () => {
+    if (notifStatus === "subscribed") {
+      const reg = await navigator.serviceWorker.ready;
+      const sub = await reg.pushManager.getSubscription();
+      if (sub) {
+        await sub.unsubscribe();
+        await fetch("/api/subscribe", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ endpoint: sub.endpoint }) });
+      }
+      setNotifStatus("idle");
+      return;
+    }
+    const permission = await Notification.requestPermission();
+    if (permission !== "granted") { setNotifStatus("denied"); return; }
+    setNotifStatus("subscribed");
+    try {
+      const reg = await navigator.serviceWorker.ready;
+      const vapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
+      if (!vapidKey) return;
+      const sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: vapidKey });
+      await fetch("/api/subscribe", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(sub) });
+    } catch (e) { console.error("Push subscription error:", e); }
+  };
 
-	async function unsubscribeFromNotifications() {
-		try {
-			const reg = await navigator.serviceWorker.ready;
-			const sub = await reg.pushManager.getSubscription();
-			if (sub) {
-				await fetch("/api/subscribe", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ endpoint: sub.endpoint }) });
-				await sub.unsubscribe();
-			}
-			setNotifStatus("idle");
-		} catch (err) {
-			console.error("Unsubscribe error:", err);
-		}
-	}
+  return (
+    <div className="min-h-screen bg-black text-white">
+      <div className="mx-auto max-w-2xl px-4 py-8">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-2xl font-bold text-white">F1 News</h1>
+            <p className="text-sm text-zinc-500 mt-0.5">
+              Latest from BBC Sport, The Race, Autosport &amp; more
+            </p>
+          </div>
+          {notifStatus !== "unsupported" && notifStatus !== "ios-pwa-required" && (
+            <button
+              onClick={handleNotifToggle}
+              className={`flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold transition-colors border ${
+                notifStatus === "subscribed"
+                  ? "bg-green-950 border-green-800 text-green-400"
+                  : notifStatus === "denied"
+                  ? "bg-zinc-900 border-zinc-700 text-zinc-500 cursor-not-allowed"
+                  : "bg-zinc-900 border-zinc-700 text-zinc-300 hover:border-zinc-500"
+              }`}
+              disabled={notifStatus === "denied"}
+            >
+              {notifStatus === "subscribed" ? "✓ Alerts on" : notifStatus === "denied" ? "Blocked" : "🔔 Alerts"}
+            </button>
+          )}
+        </div>
 
-	return (
-		<div className="mx-auto flex w-full max-w-2xl flex-col gap-6 p-4">
-			{/* Header */}
-			<div className="flex items-center justify-between">
-				<div>
-					<h1 className="text-3xl text-white">News</h1>
-					<p className="mt-0.5 text-sm text-zinc-500">
-						Live F1 updates from{" "}
-						<a href="https://twitter.com/f1_naija" target="_blank" rel="noopener noreferrer" className="text-zinc-400 transition-colors hover:text-white">
-							@f1_naija
-						</a>
-					</p>
-				</div>
-				{notifStatus === "idle" && (
-					<button onClick={subscribeToNotifications} className="rounded-lg bg-green-500 px-4 py-2 text-sm font-semibold text-black transition-colors hover:bg-green-400">
-						Enable Alerts
-					</button>
-				)}
-				{notifStatus === "subscribed" && (
-					<button onClick={unsubscribeFromNotifications} className="text-sm font-medium text-green-400 transition-colors hover:text-zinc-400" title="Click to turn off notifications">
-						{"✓"} Alerts on
-					</button>
-				)}
-				{notifStatus === "denied" && <span className="text-sm text-zinc-500">Notifications blocked</span>}
-				{notifStatus === "unsupported" && <span className="text-sm text-zinc-500">Push not supported</span>}
-				{notifStatus === "ios-pwa-required" && (
-					<span className="text-xs text-right max-w-[140px] leading-tight text-zinc-400">Add to Home Screen for alerts</span>
-				)}
-			</div>
+        {/* Ticker */}
+        {!loading && newsItems.length > 0 && <NewsTicker items={newsItems} />}
 
-			{/* iOS PWA instruction */}
-			{notifStatus === "ios-pwa-required" && (
-				<div className="rounded-xl border border-zinc-700 bg-zinc-900/60 p-4">
-					<p className="text-sm font-semibold text-white mb-2">{"📱"} Get alerts on iPhone / iPad</p>
-					<p className="text-xs text-zinc-400 leading-relaxed">
-						iOS only supports push notifications for apps added to your home screen. In Safari, tap the{" "}
-						<span className="font-semibold text-zinc-300">Share</span> button {"⬆️"}, then choose{" "}
-						<span className="font-semibold text-zinc-300">&quot;Add to Home Screen&quot;</span>. Open the app from your home screen {"—"} alerts will work automatically.
-					</p>
-				</div>
-			)}
+        {/* F1 Naija Profile Card */}
+        {profile && <ProfileCard profile={profile} />}
 
-			{loading && (
-				<div className="flex flex-col gap-3">
-					{Array.from({ length: 3 }).map((_, i) => <SkeletonCard key={i} />)}
-				</div>
-			)}
-			{!loading && error && (
-				<div className="py-12 text-center text-zinc-500">
-					<p>{error}</p>
-					<button onClick={fetchData} className="mt-3 text-sm text-green-400 hover:underline">Retry</button>
-				</div>
-			)}
-			{!loading && !error && tweets.length > 0 && (
-				<div className="flex flex-col gap-3">
-					{tweets.map((tweet) => <TweetCard key={tweet.id} tweet={tweet} />)}
-				</div>
-			)}
-			{!loading && !error && tweets.length === 0 && profile && <ProfileCard profile={profile} />}
-			{!loading && !error && tweets.length === 0 && !profile && (
-				<div className="rounded-xl border border-zinc-800 p-8 text-center">
-					<p className="text-sm text-zinc-400">
-						Follow <a href="https://twitter.com/f1_naija" target="_blank" rel="noopener noreferrer" className="text-green-400 hover:underline">@f1_naija on X</a> for live F1 updates.
-					</p>
-				</div>
-			)}
+        {/* News Cards */}
+        <div className="space-y-3">
+          {loading ? (
+            Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
+          ) : error ? (
+            <div className="rounded-xl border border-zinc-800 p-6 text-center text-zinc-500">
+              <p>{error}</p>
+              <button onClick={fetchData} className="mt-3 text-sm text-green-400 hover:underline">Try again</button>
+            </div>
+          ) : newsItems.length > 0 ? (
+            newsItems.map((item, i) => <NewsCard key={i} item={item} />)
+          ) : (
+            <div className="rounded-xl border border-zinc-800 p-6 text-center text-zinc-500">
+              No news available right now.
+            </div>
+          )}
+        </div>
 
-			<p className="pb-4 text-center text-xs text-zinc-700">
-				Auto-refreshes every 60s · Powered by F1 Naija
-			</p>
-		</div>
-	);
-			}
+        {/* Footer */}
+        <p className="mt-6 text-center text-xs text-zinc-700">
+          {lastUpdated
+            ? `Updated ${timeAgo(lastUpdated.toISOString())} · Auto-refreshes every 5min`
+            : "Auto-refreshes every 5min"}
+        </p>
+      </div>
+    </div>
+  );
+}
