@@ -13,7 +13,7 @@ export default function Layout({ children }: Props) {
 		<>
 			<AdBanner />
 
-			<nav className="sticky top-10 left-0 z-10 flex h-12 w-full items-center justify-between gap-4 border-b border-zinc-800 p-2 px-4 backdrop-blur-lg">
+			<nav className="sticky top-0 left-0 z-10 flex h-12 w-full items-center justify-between gap-4 border-b border-zinc-800 p-2 px-4 backdrop-blur-lg">
 				<div className="flex gap-4">
 					<Link className="transition duration-100 active:scale-95" href="/">
 						Home
@@ -54,7 +54,7 @@ export default function Layout({ children }: Props) {
 				</div>
 			</nav>
 
-			<main className="container mx-auto max-w-(--breakpoint-lg) px-4">
+			<main className="container mx-auto max-w-screen-lg px-4">
 				{children}
 
 				<Footer />
