@@ -41,6 +41,14 @@ const config: NextConfig = {
 		],
 	},
 	headers: async () => frameDisableHeaders,
+  async rewrites() {
+    return [
+      {
+        source: "/api/realtime",
+        destination: "https://rt-api.f1-dash.com/api/realtime",
+      },
+    ];
+  },
 };
 
 export default config;
