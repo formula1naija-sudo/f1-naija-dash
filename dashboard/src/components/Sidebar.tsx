@@ -146,6 +146,7 @@ const liveTimingItems: NavItem[] = [
 const exploreItems: NavItem[] = [
 	{ href: "/", name: "Home", icon: HomeIcon },
 	{ href: "/news", name: "News", icon: NewspaperIcon },
+	{ href: "/standings", name: "Standings", icon: TrophyIcon },
 	{ href: "/schedule", name: "Schedule", icon: CalendarIcon },
 ];
 
