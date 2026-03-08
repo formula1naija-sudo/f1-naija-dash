@@ -1,12 +1,79 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type NotifStatus = "idle" | "subscribed" | "denied" | "unsupported" | "ios-pwa-required";
 
+declare global {
+	interface Window {
+		twttr?: {
+			widgets: {
+				load: (el?: HTMLElement) => void;
+				createTimeline: (id: { sourceType: string; screenName: string }, target: HTMLElement, options: object) => Promise<HTMLElement | null>;
+			};
+		};
+	}
+}
+
 export default function NewsPage() {
 	const [notifStatus, setNotifStatus] = useState<NotifStatus>("idle");
-	const [iframeLoaded, setIframeLoaded] = useState(false);
+	const [widgetState, setWidgetState] = useState<"loading" | "loaded" | "error">("loading");
+	const timelineRef = useRef<HTMLDivElement>(null);
+
+	// Load Twitter widget and render timeline
+	useEffect(() => {
+		let cancelled = false;
+
+		const renderTimeline = () => {
+			if (cancelled || !timelineRef.current || !window.twttr) return;
+			window.twttr.widgets
+				.createTimeline(
+					{ sourceType: "profile", screenName: "f1_naija" },
+					timelineRef.current,
+					{
+						theme: "dark",
+						chrome: "noheader nofooter noborders transparent",
+						tweet_limit: 20,
+						lang: "en",
+						dnt: true,
+					},
+				)
+				.then((el) => {
+					if (cancelled) return;
+					setWidgetState(el ? "loaded" : "error");
+				})
+				.catch(() => {
+					if (!cancelled) setWidgetState("error");
+				});
+		};
+
+		if (window.twttr?.widgets) {
+			renderTimeline();
+		} else {
+			// Inject script if not already present
+			const existing = document.getElementById("twitter-widgets-script");
+			if (!existing) {
+				const script = document.createElement("script");
+				script.id = "twitter-widgets-script";
+				script.src = "https://platform.twitter.com/widgets.js";
+				script.async = true;
+				script.onload = renderTimeline;
+				document.head.appendChild(script);
+			} else {
+				existing.addEventListener("load", renderTimeline);
+			}
+		}
+
+		// Fallback: if widget hasn't loaded in 15s, show error
+		const timeout = setTimeout(() => {
+			if (!cancelled && widgetState === "loading") setWidgetState("error");
+		}, 15000);
+
+		return () => {
+			cancelled = true;
+			clearTimeout(timeout);
+		};
+	}, []);
 
 	// Notification status detection
 	useEffect(() => {
@@ -78,11 +145,6 @@ export default function NewsPage() {
 		}
 	}
 
-	// Twitter syndication embed URL — loads directly in user's browser, bypasses server IP blocks
-	const embedUrl =
-		"https://syndication.twitter.com/srv/timeline-profile/screen-name/f1_naija" +
-		"?lang=en&dnt=true&theme=dark&chrome=noheader%2Cnofooter%2Cnoborders%2Ctransparent&maxHeight=800px";
-
 	return (
 		<div className="mx-auto flex w-full max-w-2xl flex-col gap-6 p-4">
 			{/* Header */}
@@ -145,9 +207,9 @@ export default function NewsPage() {
 				</div>
 			)}
 
-			{/* Twitter timeline embed — loads in user's browser directly from Twitter */}
-			<div className="relative rounded-xl overflow-hidden border border-zinc-800 bg-black min-h-[400px]">
-				{!iframeLoaded && (
+			{/* Twitter Timeline Widget */}
+			<div className="relative min-h-[400px]">
+				{widgetState === "loading" && (
 					<div className="absolute inset-0 flex items-center justify-center">
 						<div className="flex flex-col items-center gap-3 text-zinc-500">
 							<div className="h-6 w-6 animate-spin rounded-full border-2 border-zinc-700 border-t-green-400" />
@@ -155,18 +217,30 @@ export default function NewsPage() {
 						</div>
 					</div>
 				)}
-				<iframe
-					src={embedUrl}
-					className="w-full border-0"
-					style={{ minHeight: "600px", background: "transparent" }}
-					onLoad={() => setIframeLoaded(true)}
-					title="F1 Naija tweets"
-					scrolling="no"
-				/>
+				{widgetState === "error" && (
+					<div className="rounded-xl border border-zinc-800 p-8 text-center">
+						<p className="text-sm text-zinc-400">
+							Could not load tweets — visit{" "}
+							<a
+								href="https://twitter.com/f1_naija"
+								target="_blank"
+								rel="noopener noreferrer"
+								className="text-green-400 hover:underline"
+							>
+								@f1_naija on X
+							</a>{" "}
+							for live F1 updates.
+						</p>
+					</div>
+				)}
+				<div ref={timelineRef} className={widgetState !== "loaded" ? "invisible" : ""} />
 			</div>
 
 			<p className="pb-4 text-center text-xs text-zinc-700">
-				Powered by F1 Naija · <a href="https://twitter.com/f1_naija" target="_blank" rel="noopener noreferrer" className="hover:text-zinc-500">@f1_naija</a>
+				Powered by F1 Naija ·{" "}
+				<a href="https://twitter.com/f1_naija" target="_blank" rel="noopener noreferrer" className="hover:text-zinc-500">
+					@f1_naija
+				</a>
 			</p>
 		</div>
 	);
