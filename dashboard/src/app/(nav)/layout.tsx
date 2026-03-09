@@ -130,7 +130,7 @@ export default function Layout({ children }: Props) {
           WebkitTapHighlightColor: "transparent",
         }}>
           <span style={{ color: "#00d484" }}>F1</span>
-          <span style={{ color: "#5a6888", fontWeight: 400 }}>Â·</span>
+          <span style={{ color: "#5a6888", fontWeight: 400 }}>·</span>
           Naija
         </Link>
 
