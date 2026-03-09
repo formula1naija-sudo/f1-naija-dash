@@ -8,7 +8,6 @@ import type { Driver, TimingDataDriver } from "@/types/state.type";
 import { useSettingsStore } from "@/stores/useSettingsStore";
 import { useDataStore } from "@/stores/useDataStore";
 
-import DriverTag from "./DriverTag";
 import DriverDRS from "./DriverDRS";
 import DriverGap from "./DriverGap";
 import DriverTire from "./DriverTire";
@@ -54,20 +53,20 @@ export default function Driver({ driver, timingDriver, position }: Props) {
 	const teamHex = driver.TeamColour ? `#${driver.TeamColour}` : "#444";
 
 	const cardBg = favoriteDriver
-		? "rgba(0,212,132,0.08)"
+		? "rgba(0,212,132,0.05)"
 		: hasFastest
-		? "rgba(156,80,245,0.08)"
+		? "rgba(156,80,245,0.05)"
 		: sessionPart != undefined && inDangerZone(position, sessionPart)
-		? "rgba(232,0,31,0.08)"
-		: "rgba(255,255,255,0.018)";
+		? "rgba(232,0,31,0.05)"
+		: "transparent";
 
 	const cardBorder = favoriteDriver
-		? "rgba(0,212,132,0.25)"
+		? "rgba(0,212,132,0.15)"
 		: hasFastest
-		? "rgba(156,80,245,0.25)"
+		? "rgba(156,80,245,0.15)"
 		: sessionPart != undefined && inDangerZone(position, sessionPart)
-		? "rgba(232,0,31,0.25)"
-		: "rgba(255,255,255,0.06)";
+		? "rgba(232,0,31,0.15)"
+		: "rgba(255,255,255,0.04)";
 
 	return (
 		<motion.div
@@ -95,17 +94,29 @@ export default function Driver({ driver, timingDriver, position }: Props) {
 						: "8rem 3.5rem 5.5rem 4rem 5rem 5.5rem auto",
 				}}
 			>
-				{/* Driver badge + name + team stacked */}
-				<div className="flex min-w-0 flex-col gap-0.5">
-					<DriverTag className="w-fit!" short={driver.Tla} teamColor={driver.TeamColour} position={position} />
-					<div className="min-w-0 overflow-hidden pl-0.5">
-						<p style={{ fontSize: 11, fontWeight: 700, color: "#edf2ff", lineHeight: 1.2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-							{driver.LastName}
-						</p>
-						<p style={{ fontSize: 9, color: "#5a6888", lineHeight: 1.2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-							{driver.TeamName}
-						</p>
-					</div>
+				{/* Driver row: pos · TLA badge · LastName */}
+				<div className="flex min-w-0 items-center gap-1.5 overflow-hidden">
+					<span style={{
+						fontSize: 12, fontWeight: 800, lineHeight: 1,
+						color: position <= 3 ? "#f5a724" : "#52525b",
+						width: 18, flexShrink: 0, textAlign: "right",
+					}}>
+						{position}
+					</span>
+					<span style={{
+						padding: "2px 5px", borderRadius: 4,
+						fontSize: 10, fontWeight: 800, letterSpacing: ".04em",
+						background: `${teamHex}28`, color: teamHex,
+						flexShrink: 0,
+					}}>
+						{driver.Tla}
+					</span>
+					<span style={{
+						fontSize: 11, fontWeight: 500, color: "#a1a1aa",
+						overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+					}}>
+						{driver.LastName}
+					</span>
 				</div>
 				<DriverDRS
 					on={carData ? hasDRS(carData[45]) : false}
