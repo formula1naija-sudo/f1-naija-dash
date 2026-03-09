@@ -1,6 +1,4 @@
 import Image from "next/image";
-
-import Note from "@/components/Note";
 import DriverDRS from "@/components/driver/DriverDRS";
 import DriverTire from "@/components/driver/DriverTire";
 import DriverPedals from "@/components/driver/DriverPedals";
@@ -16,282 +14,420 @@ import hardTireIcon from "public/tires/hard.svg";
 import softTireIcon from "public/tires/soft.svg";
 import wetTireIcon from "public/tires/wet.svg";
 
+const SECTIONS = [
+  { id: "colors",    label: "Colours" },
+  { id: "leaderboard", label: "Leaderboard" },
+  { id: "drs",       label: "DRS & PIT" },
+  { id: "tires",     label: "Tyres" },
+  { id: "delay",     label: "Delay Control" },
+  { id: "pedals",    label: "Pedals" },
+  { id: "weather",   label: "Weather" },
+];
+
 export default function HelpPage() {
-	return (
-		<div>
-			<h1 className="my-4 text-3xl">Help Page</h1>
+  return (
+    <div style={{ background: "#04060e", color: "#edf2ff", minHeight: "100vh" }}>
+      <style>{`
+        @keyframes helpFadeUp {
+          from { opacity: 0; transform: translateY(16px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        .help-fade { animation: helpFadeUp .5s ease both; }
+        .help-fade-1 { animation-delay: .05s; }
+        .help-fade-2 { animation-delay: .15s; }
+        .help-fade-3 { animation-delay: .25s; }
+        .help-card {
+          background: rgba(255,255,255,.025);
+          border: 1px solid rgba(255,255,255,.07);
+          border-radius: 14px;
+          transition: border-color .2s;
+        }
+        .help-card:hover { border-color: rgba(0,212,132,.18); }
+        .help-section-tag {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          font-size: 9px;
+          font-weight: 700;
+          letter-spacing: .14em;
+          text-transform: uppercase;
+          color: #00d484;
+          margin-bottom: 12px;
+        }
+        .help-section-tag::before {
+          content: '';
+          display: block;
+          width: 14px;
+          height: 1px;
+          background: #00d484;
+        }
+        .help-h2 {
+          font-size: clamp(22px, 4vw, 30px);
+          font-weight: 900;
+          letter-spacing: -.03em;
+          color: #edf2ff;
+          margin-bottom: 10px;
+          line-height: 1;
+        }
+        .help-p {
+          font-size: 13px;
+          line-height: 1.75;
+          color: #5a6888;
+          max-width: 600px;
+        }
+        .help-note {
+          background: rgba(245,167,36,.06);
+          border: 1px solid rgba(245,167,36,.2);
+          border-radius: 10px;
+          padding: 12px 16px;
+          font-size: 12px;
+          color: #b38a40;
+          line-height: 1.6;
+        }
+        .help-note::before {
+          content: '⚠ ';
+          color: #f5a724;
+          font-weight: 700;
+        }
+        .color-chip {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 12px 16px;
+          border-radius: 10px;
+          background: rgba(255,255,255,.02);
+          border: 1px solid rgba(255,255,255,.06);
+        }
+        .color-dot {
+          width: 28px;
+          height: 28px;
+          border-radius: 8px;
+          flex-shrink: 0;
+        }
+        .toc-link {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-size: 12px;
+          font-weight: 600;
+          color: #3a4560;
+          text-decoration: none;
+          padding: 8px 12px;
+          border-radius: 8px;
+          border: 1px solid transparent;
+          transition: all .18s;
+          -webkit-tap-highlight-color: transparent;
+        }
+        .toc-link:hover {
+          color: #00d484;
+          border-color: rgba(0,212,132,.2);
+          background: rgba(0,212,132,.04);
+        }
+      `}</style>
 
-			<p>This page explains some core features and UI elements of f1-dash.</p>
+      {/* ── HERO ── */}
+      <div style={{
+        position: "relative", overflow: "hidden",
+        padding: "clamp(48px,8vw,80px) 0 clamp(36px,6vw,56px)",
+        borderBottom: "1px solid rgba(255,255,255,.06)",
+      }}>
+        <div style={{
+          position: "absolute", inset: 0, pointerEvents: "none",
+          backgroundImage: "linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px)",
+          backgroundSize: "64px 64px",
+          WebkitMaskImage: "radial-gradient(ellipse 80% 80% at 50% 0%,black 30%,transparent 80%)",
+          maskImage: "radial-gradient(ellipse 80% 80% at 50% 0%,black 30%,transparent 80%)",
+        }} />
+        <div style={{
+          position: "absolute", inset: 0, pointerEvents: "none",
+          background: "radial-gradient(ellipse 60% 50% at 20% 40%,rgba(0,212,132,.04) 0%,transparent 60%)",
+        }} />
+        <div style={{
+          position: "absolute", bottom: -30, right: -10,
+          fontSize: "clamp(90px,14vw,200px)", fontWeight: 900,
+          letterSpacing: "-.02em", color: "rgba(255,255,255,.012)",
+          lineHeight: 1, pointerEvents: "none", userSelect: "none",
+        }}>HELP</div>
 
-			<h2 className="my-4 text-2xl">Colors</h2>
+        <div style={{ position: "relative", zIndex: 1 }}>
+          <div className="help-fade help-fade-1" style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
+            <div style={{ width: 16, height: 1, background: "#00d484", flexShrink: 0 }} />
+            <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: "#00d484" }}>
+              F1 Naija · Dashboard Guide
+            </span>
+          </div>
+          <div className="help-fade help-fade-2" style={{ lineHeight: .88, marginBottom: 18 }}>
+            <div style={{ fontSize: "clamp(42px,7vw,88px)", fontWeight: 900, letterSpacing: "-.04em", color: "#edf2ff", lineHeight: .92 }}>
+              How it
+            </div>
+            <div style={{
+              fontSize: "clamp(42px,7vw,88px)", fontWeight: 900,
+              letterSpacing: "-.04em", lineHeight: .92,
+              background: "linear-gradient(120deg,#00d484 0%,#00f0a0 40%,#f5a724 100%)",
+              WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
+            }}>Works.</div>
+          </div>
+          <p className="help-fade help-fade-3 help-p">
+            Everything you need to know about reading the live F1 Naija dashboard —
+            colours, indicators, tyre compounds, delay control, and more.
+          </p>
+        </div>
+      </div>
 
-			<p>
-				A core element in the UI of f1-dash, inspired by official Formula 1 graphics, is the color-coding system used
-				for lap times, sector times, mini sectors, and gaps. Each color has a meaning in the context of lap times,
-				sector times, or mini sectors.
-			</p>
+      {/* ── CONTENT ── */}
+      <div style={{ padding: "40px 0 80px" }}>
 
-			<div className="my-4 flex flex-col">
-				<div className="flex gap-1">
-					<p className="flex items-center gap-1">
-						<span className="size-4 rounded-md bg-white" /> White
-					</p>
-					<p>Last lap time</p>
-				</div>
+        {/* Quick-nav */}
+        <div style={{
+          display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 48,
+          padding: "16px", borderRadius: 14,
+          background: "rgba(255,255,255,.02)",
+          border: "1px solid rgba(255,255,255,.06)",
+        }}>
+          <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "#3a4560", alignSelf: "center", paddingRight: 8 }}>Jump to</span>
+          {SECTIONS.map(s => (
+            <a key={s.id} href={`#${s.id}`} className="toc-link">{s.label}</a>
+          ))}
+        </div>
 
-				<div className="flex gap-1">
-					<p className="flex items-center gap-1 text-yellow-500">
-						<span className="size-4 rounded-md bg-amber-400" /> Yellow
-					</p>
-					<p>Slower than personal best</p>
-				</div>
+        {/* ── COLOURS ── */}
+        <section id="colors" style={{ marginBottom: 56 }}>
+          <div className="help-section-tag">Colours</div>
+          <h2 className="help-h2">Colour Coding</h2>
+          <p className="help-p" style={{ marginBottom: 24 }}>
+            Colour is the core language of the dashboard — every lap time, sector, and mini-sector
+            is coloured to tell you instantly how a driver is performing relative to their own best
+            and the overall best.
+          </p>
 
-				<div className="flex gap-1">
-					<p className="flex items-center gap-1 text-emerald-500">
-						<span className="size-4 rounded-md bg-emerald-500" /> Green
-					</p>
-					<p>Personal best</p>
-				</div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(240px,1fr))", gap: 8 }}>
+            {[
+              { color: "#ffffff",  label: "White",  desc: "Last lap time — no special status" },
+              { color: "#f5a724",  label: "Gold",   desc: "Slower than personal best (mini-sectors only)" },
+              { color: "#00d484",  label: "Green",  desc: "New personal best lap or sector" },
+              { color: "#9c50f5",  label: "Purple", desc: "Fastest overall in the session" },
+              { color: "#3b82f6",  label: "Blue",   desc: "Driver is in or exiting the pit lane" },
+            ].map(({ color, label, desc }) => (
+              <div key={label} className="color-chip">
+                <div className="color-dot" style={{ background: color, boxShadow: `0 0 12px ${color}44` }} />
+                <div>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: "#edf2ff", marginBottom: 2 }}>{label}</div>
+                  <div style={{ fontSize: 11, color: "#5a6888", lineHeight: 1.4 }}>{desc}</div>
+                </div>
+              </div>
+            ))}
+          </div>
 
-				<div className="flex gap-1">
-					<p className="flex items-center gap-1 text-violet-500">
-						<span className="size-4 rounded-md bg-violet-500" /> Purple
-					</p>
-					<p>Overall best</p>
-				</div>
+          <div className="help-note" style={{ marginTop: 16 }}>
+            Yellow (gold) only appears on mini-sectors — using it on full lap times would make
+            the UI look cluttered, as many drivers would be yellow simultaneously.
+          </div>
+        </section>
 
-				<div className="flex gap-1">
-					<p className="flex items-center gap-1 text-blue-500">
-						<span className="size-4 rounded-md bg-blue-500" /> Blue
-					</p>
-					<p>Driver in the pit lane</p>
-				</div>
-			</div>
+        {/* ── LEADERBOARD ── */}
+        <section id="leaderboard" style={{ marginBottom: 56 }}>
+          <div className="help-section-tag">Leaderboard</div>
+          <h2 className="help-h2">Driver Row Backgrounds</h2>
+          <p className="help-p" style={{ marginBottom: 24 }}>
+            Depending on a driver&apos;s status and where the session stands, their row on the leaderboard
+            may be highlighted with a coloured background.
+          </p>
 
-			<Note>
-				Only mini sectors use the yellow color. Using yellow for all drivers not improving their lap times would make
-				the UI look cluttered, as many text elements would be yellow simultaneously.
-			</Note>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(260px,1fr))", gap: 8 }}>
+            {[
+              { bg: "rgba(156,80,245,.10)", border: "rgba(156,80,245,.25)", label: "Purple tint", desc: "Driver has the fastest overall lap time in this session" },
+              { bg: "rgba(0,212,132,.06)",  border: "rgba(0,212,132,.2)",   label: "Green tint",  desc: "This is your selected favourite driver" },
+              { bg: "rgba(232,0,31,.10)",   border: "rgba(232,0,31,.25)",   label: "Red tint",    desc: "Driver is in the danger zone during qualifying" },
+              { bg: "rgba(255,255,255,.04)", border: "rgba(255,255,255,.12)", label: "Dimmed / transparent", desc: "Driver has crashed out or retired from the session" },
+            ].map(({ bg, border, label, desc }) => (
+              <div key={label} style={{
+                padding: "14px 16px", borderRadius: 10,
+                background: bg, border: `1px solid ${border}`,
+              }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: "#edf2ff", marginBottom: 4 }}>{label}</div>
+                <div style={{ fontSize: 11, color: "#5a6888", lineHeight: 1.5 }}>{desc}</div>
+              </div>
+            ))}
+          </div>
+        </section>
 
-			<h2 className="my-4 text-2xl">Leaderboard</h2>
+        {/* ── DRS & PIT ── */}
+        <section id="drs" style={{ marginBottom: 56 }}>
+          <div className="help-section-tag">DRS & PIT</div>
+          <h2 className="help-h2">DRS & Pit Indicator</h2>
+          <p className="help-p" style={{ marginBottom: 8 }}>
+            Every driver row shows a small DRS / PIT pill. It tells you at a glance whether a driver
+            has no DRS, is eligible, has it active, or is in the pit lane.
+          </p>
+          <p className="help-p" style={{ marginBottom: 24 }}>
+            Use it to quickly spot overtake attempts or pit-stop strategies unfolding in real time.
+          </p>
 
-			<p className="mb-4">
-				The leaderboard shows all the drivers of the ongoing session. Depending on the driver&apos;s status and the
-				session&apos;s progression, some drivers may have a colored background.
-			</p>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {[
+              { props: { on: false, possible: false, inPit: false, pitOut: false }, label: "Off", desc: "No DRS — default state" },
+              { props: { on: false, possible: true,  inPit: false, pitOut: false }, label: "Possible", desc: "Within 1 second of the car ahead; eligible for DRS in the next zone" },
+              { props: { on: true,  possible: false, inPit: false, pitOut: false }, label: "Active", desc: "DRS is open and the driver is getting the straight-line speed boost" },
+              { props: { on: false, possible: false, inPit: true,  pitOut: false }, label: "PIT", desc: "In the pit lane or leaving — may drop positions" },
+            ].map(({ props, label, desc }) => (
+              <div key={label} className="help-card" style={{ padding: "14px 16px", display: "flex", alignItems: "center", gap: 16 }}>
+                <div style={{ width: 56, flexShrink: 0 }}>
+                  <DriverDRS on={props.on} possible={props.possible} inPit={props.inPit} pitOut={props.pitOut} />
+                </div>
+                <div>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: "#edf2ff", marginBottom: 2 }}>{label}</div>
+                  <div style={{ fontSize: 11, color: "#5a6888", lineHeight: 1.5 }}>{desc}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
 
-			<div className="grid grid-cols-1 gap-x-4 divide-y divide-zinc-800 sm:grid-cols-3 sm:divide-y-0">
-				<div>
-					<p className="rounded-md bg-violet-800/30 p-2">Driver has a purple background</p>
-					<p className="p-2">Driver has the fastest overall lap time</p>
-				</div>
+        {/* ── TYRES ── */}
+        <section id="tires" style={{ marginBottom: 56 }}>
+          <div className="help-section-tag">Tyres</div>
+          <h2 className="help-h2">Tyre Compounds</h2>
+          <p className="help-p" style={{ marginBottom: 16 }}>
+            Each driver&apos;s current tyre compound and age (in laps) is shown on their row.
+            In the example below the driver is on a 12-lap-old Soft set and has pitted once.
+          </p>
 
-				<div className="pt-4 sm:pt-0">
-					<p className="rounded-md border p-2 opacity-50">Driver is a bit transparent</p>
-					<p className="p-2">Driver has crashed or retired from the session</p>
-				</div>
+          <div className="help-card" style={{ padding: "16px 20px", marginBottom: 20 }}>
+            <DriverTire
+              stints={[
+                { TotalLaps: 12, Compound: "SOFT" },
+                { TotalLaps: 12, Compound: "SOFT", New: "TRUE" },
+              ]}
+            />
+          </div>
 
-				<div className="pt-4 sm:pt-0">
-					<p className="rounded-md bg-red-800/30 p-2">Driver has a red background</p>
-					<p className="p-2">Driver is in the danger zone during qualifying</p>
-				</div>
-			</div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(110px,1fr))", gap: 8 }}>
+            {[
+              { icon: softTireIcon,   label: "Soft" },
+              { icon: mediumTireIcon, label: "Medium" },
+              { icon: hardTireIcon,   label: "Hard" },
+              { icon: interTireIcon,  label: "Intermediate" },
+              { icon: wetTireIcon,    label: "Wet" },
+              { icon: unknownTireIcon,label: "Unknown" },
+            ].map(({ icon, label }) => (
+              <div key={label} className="help-card" style={{ padding: "14px", display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
+                <Image src={icon} alt={label} style={{ width: 36, height: 36 }} />
+                <span style={{ fontSize: 11, color: "#5a6888", fontWeight: 600 }}>{label}</span>
+              </div>
+            ))}
+          </div>
 
-			<h2 className="my-4 text-2xl">DRS & PIT Status</h2>
+          <div className="help-note" style={{ marginTop: 16 }}>
+            The tyre type may show as &quot;Unknown&quot; at the very start of a session or when
+            the data feed hasn&apos;t been updated yet.
+          </div>
+        </section>
 
-			<p className="mb-4">
-				Each driver in the leaderboard has a DRS and PIT status indicator. It shows whether a driver has no DRS, is less
-				than 1 second behind the driver ahead (and has DRS from the detection zone), has DRS active, or is in the pit
-				lane or leaving it.
-			</p>
+        {/* ── DELAY ── */}
+        <section id="delay" style={{ marginBottom: 56 }}>
+          <div className="help-section-tag">Delay Control</div>
+          <h2 className="help-h2">Sync With Your Stream</h2>
+          <p className="help-p" style={{ marginBottom: 12 }}>
+            The dashboard updates several seconds ahead of most TV or streaming broadcasts.
+            Delay Control lets you add an artificial delay so the dashboard stays in sync
+            with what you&apos;re watching.
+          </p>
+          <p className="help-p" style={{ marginBottom: 20 }}>
+            Setting a 30-second delay means the dashboard holds all updates for 30 seconds
+            before showing them — keeping spoilers away until you see them on screen.
+          </p>
 
-			<p className="mb-4">
-				Overall it gives you a quick overview if the driver is going into the pits and might drop a few places behind or
-				if the driver has DRS and a chance to overtake the driver ahead.
-			</p>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(220px,1fr))", gap: 8, marginBottom: 16 }}>
+            {[
+              { icon: "🏁", label: "Start of a new lap", sub: "Race" },
+              { icon: "⏱", label: "Session clock",       sub: "Practice & Qualifying" },
+              { icon: "⚡", label: "Mini-sector flashes", sub: "When available" },
+            ].map(({ icon, label, sub }) => (
+              <div key={label} className="help-card" style={{ padding: "14px 16px", display: "flex", alignItems: "flex-start", gap: 12 }}>
+                <span style={{ fontSize: 22, lineHeight: 1, marginTop: 2 }}>{icon}</span>
+                <div>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: "#edf2ff", marginBottom: 2 }}>{label}</div>
+                  <div style={{ fontSize: 11, color: "#5a6888" }}>{sub}</div>
+                </div>
+              </div>
+            ))}
+          </div>
 
-			<div className="mb-4 flex flex-col gap-4">
-				<div className="flex items-center gap-2">
-					<div className="w-[4rem]">
-						<DriverDRS on={false} possible={false} inPit={false} pitOut={false} />
-					</div>
+          <div className="help-note">
+            The maximum delay you can set equals the time you&apos;ve already spent on the
+            dashboard page. A 30-second delay on a 20-second visit means you wait 10 more
+            seconds before updates resume. This will improve in a future update.
+          </div>
+        </section>
 
-					<p>Off: No DRS (default)</p>
-				</div>
+        {/* ── PEDALS ── */}
+        <section id="pedals" style={{ marginBottom: 56 }}>
+          <div className="help-section-tag">Driver Telemetry</div>
+          <h2 className="help-h2">Pedal & RPM Bars</h2>
+          <p className="help-p" style={{ marginBottom: 24 }}>
+            Three compact bars show each driver&apos;s throttle input, braking, and engine RPM in real time.
+          </p>
 
-				<div className="flex items-center gap-2">
-					<div className="w-[4rem]">
-						<DriverDRS on={false} possible={true} inPit={false} pitOut={false} />
-					</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {[
+              { cls: "bg-red-500",     val: 1, max: 3, label: "Brake",    desc: "On / off — whether the driver is braking" },
+              { cls: "bg-emerald-500", val: 3, max: 4, label: "Throttle", desc: "0–100% — how hard the driver is pressing the accelerator" },
+              { cls: "bg-blue-500",    val: 2, max: 3, label: "RPM",      desc: "0–15,000 — engine revs per minute" },
+            ].map(({ cls, val, max, label, desc }) => (
+              <div key={label} className="help-card" style={{ padding: "14px 16px", display: "flex", alignItems: "center", gap: 16 }}>
+                <div style={{ width: 56, flexShrink: 0 }}>
+                  <DriverPedals className={cls} value={val} maxValue={max} />
+                </div>
+                <div>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: "#edf2ff", marginBottom: 2 }}>{label}</div>
+                  <div style={{ fontSize: 11, color: "#5a6888", lineHeight: 1.5 }}>{desc}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
 
-					<p>Possible: Eligible for DRS in the next zone</p>
-				</div>
+        {/* ── WEATHER ── */}
+        <section id="weather" style={{ marginBottom: 40 }}>
+          <div className="help-section-tag">Weather</div>
+          <h2 className="help-h2">Track Conditions</h2>
+          <p className="help-p" style={{ marginBottom: 24 }}>
+            The weather panel shows live conditions at the circuit. Use it to predict
+            strategy calls like tyre switches or safety car periods in wet weather.
+          </p>
 
-				<div className="flex items-center gap-2">
-					<div className="w-[4rem]">
-						<DriverDRS on={true} possible={false} inPit={false} pitOut={false} />
-					</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            {[
+              { component: <TemperatureComplication value={39} label="TRC" />, desc: "Track surface temperature in °C" },
+              { component: <TemperatureComplication value={26} label="AIR" />, desc: "Ambient air temperature in °C" },
+              { component: <HumidityComplication value={36} />,                desc: "Relative humidity percentage" },
+              { component: <RainComplication rain={true} />,                   desc: "Raining now — wet conditions active" },
+              { component: <WindSpeedComplication speed={2.9} directionDeg={250} />, desc: "Wind speed in m/s and compass direction" },
+            ].map(({ component, desc }, i) => (
+              <div key={i} className="help-card" style={{ padding: "12px 16px", display: "flex", alignItems: "center", gap: 16 }}>
+                <div style={{ flexShrink: 0 }}>{component}</div>
+                <div style={{ fontSize: 12, color: "#5a6888" }}>{desc}</div>
+              </div>
+            ))}
+          </div>
+        </section>
 
-					<p>Active: DRS is active</p>
-				</div>
-
-				<div className="flex items-center gap-2">
-					<div className="w-[4rem]">
-						<DriverDRS on={false} possible={false} inPit={true} pitOut={false} />
-					</div>
-
-					<p>PIT: In the pit lane or leaving</p>
-				</div>
-			</div>
-
-			<h2 className="my-4 text-2xl">Tires</h2>
-
-			<p className="mb-4">
-				We also show the different tires a driver can use and how many laps they have done on them. <br />
-				In this example, the driver has a soft tire which is 12 laps old and he pitted one time.
-			</p>
-
-			<div className="mb-4">
-				<DriverTire
-					stints={[
-						{ TotalLaps: 12, Compound: "SOFT" },
-						{ TotalLaps: 12, Compound: "SOFT", New: "TRUE" },
-					]}
-				/>
-			</div>
-
-			<p className="mb-4">These are the different icons for the different tire compounds:</p>
-
-			<div className="mb-4 flex flex-wrap gap-4">
-				<div className="flex items-center gap-2">
-					<Image src={softTireIcon} alt="soft" className="size-8" />
-					<p>Soft</p>
-				</div>
-
-				<div className="flex items-center gap-2">
-					<Image src={mediumTireIcon} alt="medium" className="size-8" />
-					<p>Medium</p>
-				</div>
-
-				<div className="flex items-center gap-2">
-					<Image src={hardTireIcon} alt="hard" className="size-8" />
-					<p>Hard</p>
-				</div>
-
-				<div className="flex items-center gap-2">
-					<Image src={interTireIcon} alt="intermediate" className="size-8" />
-					<p>Intermediate</p>
-				</div>
-
-				<div className="flex items-center gap-2">
-					<Image src={wetTireIcon} alt="wet" className="size-8" />
-					<p>Wet</p>
-				</div>
-
-				<div className="flex items-center gap-2">
-					<Image src={unknownTireIcon} alt="unknown" className="size-8" />
-					<p>Unknown</p>
-				</div>
-			</div>
-
-			<Note className="mb-4">
-				Sometimes the tire type is unknown. This can happen at the beginning of a session or when something goes wrong.
-			</Note>
-
-			<h2 className="my-4 text-2xl">Delay Control</h2>
-
-			<p className="mb-4">
-				When using f1-dash while watching on TV, F1TV, or your favorite streaming platform, you may notice that f1-dash
-				updates much earlier than your stream. This can make exciting race events less interesting, as you see them on
-				f1-dash before experiencing them on your stream. This is where the delay control comes in.
-			</p>
-
-			<p className="mb-4">
-				With delay control, you can set a delay in seconds to make f1-dash update later than it normally would. So
-				setting a 30-second delay will cause f1-dash to update 30 seconds later than it normally would.
-				<br />
-				You can use this to sync your stream with f1-dash.
-			</p>
-
-			<Note className="mb-4">
-				Currently you can only set a delay that is the time you have been on the dashboard page. So 30s on a 20s page
-				visit makes you wait 10s until playback of the updates resumes. (This will be changed in the future)
-			</Note>
-
-			<h3 className="my-4 text-xl">What to look for when syncing?</h3>
-
-			<ul className="list ml-6 list-disc">
-				<li>
-					Start of a new lap <span className="text-zinc-500">(race)</span>
-				</li>
-				<li>
-					Session clock <span className="text-zinc-500">(practice, qualifying)</span>
-				</li>
-				<li>If available mini sectors</li>
-			</ul>
-
-			<h2 className="my-4 text-2xl">Driver Pedals</h2>
-
-			<div className="mb-4 flex flex-col gap-4">
-				<div className="flex items-center gap-6">
-					<div className="w-[4rem]">
-						<DriverPedals className="bg-red-500" value={1} maxValue={3} />
-					</div>
-
-					<p>
-						Shows if the driver is braking <span className="text-zinc-500">(on / off)</span>
-					</p>
-				</div>
-
-				<div className="flex items-center gap-6">
-					<div className="w-[4rem]">
-						<DriverPedals className="bg-emerald-500" value={3} maxValue={4} />
-					</div>
-
-					<p>
-						Shows how much the driver is pressing the throttle pedal <span className="text-zinc-500">(0-100%)</span>
-					</p>
-				</div>
-
-				<div className="flex items-center gap-6">
-					<div className="w-[4rem]">
-						<DriverPedals className="bg-blue-500" value={2} maxValue={3} />
-					</div>
-
-					<p>
-						Shows the engine&apos;s RPM <span className="text-zinc-500">(0 - 15&apos;000)</span>
-					</p>
-				</div>
-			</div>
-
-			<h2 className="my-4 text-2xl">Weather</h2>
-
-			<div className="mb-4 flex flex-col gap-2">
-				<div className="flex flex-row items-center gap-2">
-					<TemperatureComplication value={39} label="TRC" />
-					<p>This shows the current track temperature.</p>
-				</div>
-
-				<div className="flex flex-row items-center gap-2">
-					<TemperatureComplication value={26} label="AIR" />
-					<p>This shows the current air temperature.</p>
-				</div>
-
-				<div className="flex flex-row items-center gap-2">
-					<HumidityComplication value={36} />
-					<p>This shows the current humidity.</p>
-				</div>
-
-				<div className="flex flex-row items-center gap-2">
-					<RainComplication rain={true} />
-					<p>This shows if it&apos;s raining or not.</p>
-				</div>
-
-				<div className="flex flex-row items-center gap-2">
-					<WindSpeedComplication speed={2.9} directionDeg={250} />
-					<p>This shows the current wind speed in m/s and cardinal direction.</p>
-				</div>
-			</div>
-		</div>
-	);
+        {/* Footer note */}
+        <div style={{
+          borderTop: "1px solid rgba(255,255,255,.06)",
+          paddingTop: 28,
+          display: "flex", alignItems: "center", gap: 12,
+        }}>
+          <div style={{ width: 16, height: 1, background: "#f5a724", flexShrink: 0 }} />
+          <p style={{ fontSize: 11, color: "#3a4560" }}>
+            Still confused? Reach out to us at{" "}
+            <a href="mailto:hello@f1naija.com" style={{ color: "#f5a724", textDecoration: "none" }}>hello@f1naija.com</a>
+            {" "}or DM{" "}
+            <a href="https://x.com/f1_naija" target="_blank" rel="noopener noreferrer" style={{ color: "#f5a724", textDecoration: "none" }}>@f1_naija</a>
+            {" "}on X.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
 }

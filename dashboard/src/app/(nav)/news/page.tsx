@@ -129,7 +129,7 @@ function NewsTicker({ items }: { items: NewsItem[] }) {
   if (!items.length) return null;
   const tickerItems = [...items, ...items];
   const totalChars = items.reduce((sum, item) => sum + item.title.length, 0);
-  const duration = Math.max(30, totalChars * 0.012);
+  const duration = Math.max(12, totalChars * 0.004);
 
   return (
     <div style={{
