@@ -49,11 +49,11 @@ const TableHeaders = () => {
 			className="grid items-center gap-2 p-1 px-2 text-sm font-medium text-zinc-500"
 			style={{
 				gridTemplateColumns: carMetrics
-					? "5.5rem 3.5rem 5.5rem 4rem 5rem 5.5rem auto 10.5rem"
-					: "5.5rem 3.5rem 5.5rem 4rem 5rem 5.5rem auto",
+					? "8rem 3.5rem 5.5rem 4rem 5rem 5.5rem auto 10.5rem"
+					: "8rem 3.5rem 5.5rem 4rem 5rem 5.5rem auto",
 			}}
 		>
-			<p>Position</p>
+			<p>Driver</p>
 			<p>DRS</p>
 			<p>Tire</p>
 			<p>Info</p>
@@ -75,8 +75,8 @@ const SkeletonDriver = () => {
 			className="grid items-center gap-2 p-1.5"
 			style={{
 				gridTemplateColumns: carMetrics
-					? "5.5rem 3.5rem 5.5rem 4rem 5rem 5.5rem auto 10.5rem"
-					: "5.5rem 3.5rem 5.5rem 4rem 5rem 5.5rem auto",
+					? "8rem 3.5rem 5.5rem 4rem 5rem 5.5rem auto 10.5rem"
+					: "8rem 3.5rem 5.5rem 4rem 5rem 5.5rem auto",
 			}}
 		>
 			<div className={animateClass} style={{ width: "100%" }} />

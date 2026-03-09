@@ -91,11 +91,22 @@ export default function Driver({ driver, timingDriver, position }: Props) {
 				className="grid items-center gap-2"
 				style={{
 					gridTemplateColumns: carMetrics
-						? "5.5rem 3.5rem 5.5rem 4rem 5rem 5.5rem auto 10.5rem"
-						: "5.5rem 3.5rem 5.5rem 4rem 5rem 5.5rem auto",
+						? "8rem 3.5rem 5.5rem 4rem 5rem 5.5rem auto 10.5rem"
+						: "8rem 3.5rem 5.5rem 4rem 5rem 5.5rem auto",
 				}}
 			>
-				<DriverTag className="min-w-full!" short={driver.Tla} teamColor={driver.TeamColour} position={position} />
+				{/* Driver badge + name + team stacked */}
+				<div className="flex min-w-0 flex-col gap-0.5">
+					<DriverTag className="w-fit!" short={driver.Tla} teamColor={driver.TeamColour} position={position} />
+					<div className="min-w-0 overflow-hidden pl-0.5">
+						<p style={{ fontSize: 11, fontWeight: 700, color: "#edf2ff", lineHeight: 1.2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+							{driver.LastName}
+						</p>
+						<p style={{ fontSize: 9, color: "#5a6888", lineHeight: 1.2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+							{driver.TeamName}
+						</p>
+					</div>
+				</div>
 				<DriverDRS
 					on={carData ? hasDRS(carData[45]) : false}
 					possible={carData ? possibleDRS(carData[45]) : false}
