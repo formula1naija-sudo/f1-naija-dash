@@ -136,7 +136,7 @@ export default function HomeHero() {
     : MOCK_DRIVERS.map((d, i) => ({
         pos: d.pos, fn: d.fn, ln: d.ln, color: d.color,
         gap: d.baseGap !== null ? `+${Number(gaps[i]).toFixed(3)}` : "",
-        sectors: d.sectors as string[],
+        sectors: [...d.sectors],
       }));
 
   return (
