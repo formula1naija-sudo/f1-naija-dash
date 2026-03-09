@@ -27,8 +27,8 @@ export default function DriverMiniSectors({ sectors = [], bestSectors }: Props) 
 					<div className={clsx("flex", showMiniSectors ? "items-center gap-1" : "flex-col")}>
 						<p
 							className={clsx("text-lg leading-none font-medium tabular-nums", {
-								"text-violet-600!": sector.OverallFastest,
-								"text-emerald-500!": sector.PersonalFastest,
+								"text-naija-purple!": sector.OverallFastest,
+								"text-naija-green!": sector.PersonalFastest,
 								"text-zinc-500": !sector.Value,
 							})}
 						>
@@ -38,7 +38,7 @@ export default function DriverMiniSectors({ sectors = [], bestSectors }: Props) 
 						{showBestSectors && (
 							<p
 								className={clsx("text-sm leading-none text-zinc-500 tabular-nums", {
-									"text-violet-600!": bestSectors?.[i].Position === 1,
+									"text-naija-purple!": bestSectors?.[i].Position === 1,
 								})}
 							>
 								{bestSectors && bestSectors[i].Value ? bestSectors[i].Value : "-- ---"}
@@ -56,9 +56,9 @@ function MiniSector({ status }: { status: number }) {
 		<div
 			style={{ width: 10, height: 5, borderRadius: 2 }}
 			className={clsx({
-				"bg-amber-400": status === 2048 || status === 2052, // TODO unsure
-				"bg-emerald-500": status === 2049,
-				"bg-violet-600": status === 2051,
+				"bg-naija-gold": status === 2048 || status === 2052, // TODO unsure
+				"bg-naija-green": status === 2049,
+				"bg-naija-purple": status === 2051,
 				"bg-blue-500": status === 2064,
 				"bg-zinc-700": status === 0,
 			})}

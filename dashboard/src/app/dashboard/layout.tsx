@@ -107,7 +107,7 @@ function ConnectingSkeleton() {
 
 function MobileDynamicBar() {
   return (
-    <div className="flex flex-col divide-y divide-zinc-800 border-b border-zinc-800 md:hidden">
+    <div className="flex flex-col divide-y divide-zinc-800/60 border-b border-zinc-800/60 md:hidden">
       <div className="p-2">
         <SessionInfo />
       </div>
@@ -121,7 +121,7 @@ function MobileDynamicBar() {
 function MobileStaticBar({ show, connected }: { show: boolean; connected: boolean }) {
   const open = useSidebarStore((state) => state.open);
   return (
-    <div className="flex w-full items-center justify-between overflow-hidden border-b border-zinc-800 p-2 md:hidden">
+    <div className="flex w-full items-center justify-between overflow-hidden border-b border-zinc-800/60 p-2 md:hidden">
       <div className="flex items-center gap-2">
         <SidenavButton key="mobile" onClick={() => open()} />
         <DelayInput saveDelay={500} />
@@ -137,7 +137,7 @@ function DesktopStaticBar({ show }: { show: boolean }) {
   const pinned = useSidebarStore((state) => state.pinned);
   const pin = useSidebarStore((state) => state.pin);
   return (
-    <div className="hidden w-full flex-row justify-between overflow-hidden rounded-lg border border-zinc-800 p-2 md:flex">
+    <div className="hidden w-full flex-row justify-between overflow-hidden rounded-lg border border-zinc-800/60 p-2 md:flex">
       <div className="flex items-center gap-2">
         <AnimatePresence>
           {!pinned && <SidenavButton key="desktop" className="shrink-0" onClick={() => pin()} />}

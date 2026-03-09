@@ -229,7 +229,7 @@ export default function Sidebar({ connected }: Props) {
 
 					{/* Brand */}
 					<div className="px-2 pb-3">
-						<span className="text-sm font-bold tracking-widest text-red-500">F1 NAIJA</span>
+						<span className="text-sm font-bold tracking-widest text-naija-green">F1 NAIJA</span>
 					</div>
 
 					{/* Live Timing */}
@@ -319,7 +319,7 @@ const Item = ({ item, external }: ItemProps) => {
 				className={clsx(
 					"flex items-center gap-2.5 rounded-lg px-2 py-1.5 text-sm transition-colors",
 					active
-						? "bg-zinc-800 text-white"
+						? "bg-zinc-800 text-naija-green"
 						: "text-zinc-400 hover:bg-zinc-900 hover:text-zinc-100",
 				)}
 			>

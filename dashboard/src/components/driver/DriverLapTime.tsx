@@ -13,8 +13,8 @@ export default function DriverLapTime({ last, best, hasFastest }: Props) {
 		<div className="place-self-start">
 			<p
 				className={clsx("text-lg leading-none font-medium tabular-nums", {
-					"text-violet-600!": last.OverallFastest,
-					"text-emerald-500!": last.PersonalFastest,
+					"text-naija-purple!": last.OverallFastest,
+					"text-naija-green!": last.PersonalFastest,
 					"text-zinc-500!": !last.Value,
 				})}
 			>
@@ -22,7 +22,7 @@ export default function DriverLapTime({ last, best, hasFastest }: Props) {
 			</p>
 			<p
 				className={clsx("text-sm leading-none text-zinc-500 tabular-nums", {
-					"text-violet-600!": hasFastest,
+					"text-naija-purple!": hasFastest,
 					"text-zinc-500!": !best.Value,
 				})}
 			>

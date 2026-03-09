@@ -10,6 +10,12 @@
 
 	--color-popover: rgba(37, 37, 37, 0.9);
 	--color-pane: oklch(18% 0.005 285.82);
+
+	/* F1 Naija brand palette */
+	--color-naija-green: #00d484;
+	--color-naija-gold: #f5a724;
+	--color-naija-red: #e8001f;
+	--color-naija-purple: #9c50f5;
 }
 
 @layer utilities {

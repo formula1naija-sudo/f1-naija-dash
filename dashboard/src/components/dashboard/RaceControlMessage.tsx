@@ -30,7 +30,7 @@ export function RaceControlMessage({ msg, gmtOffset }: Props) {
 			layout="position"
 			animate={{ opacity: 1, scale: 1 }}
 			initial={{ opacity: 0, scale: 0.8 }}
-			className={clsx("flex items-center justify-between gap-1 rounded-lg p-2", { "bg-sky-800/30": favoriteDriver })}
+			className={clsx("flex items-center justify-between gap-1 rounded-lg p-2", { "bg-naija-green/10": favoriteDriver })}
 		>
 			<div>
 				<div className="flex items-center gap-1 text-sm leading-none text-zinc-500">

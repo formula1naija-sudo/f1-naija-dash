@@ -80,7 +80,7 @@ export default function RadioMessage({ driver, capture, basePath, gmtOffset }: P
 		<motion.li
 			animate={{ opacity: 1, scale: 1 }}
 			initial={{ opacity: 0, scale: 0.9 }}
-			className={clsx("flex flex-col gap-1 rounded-lg p-2", { "bg-sky-800/30": favoriteDriver })}
+			className={clsx("flex flex-col gap-1 rounded-lg p-2", { "bg-naija-green/10": favoriteDriver })}
 		>
 			<div className="flex items-center gap-1 text-sm leading-none text-zinc-500">
 				<time dateTime={localTime}>{localTime}</time>

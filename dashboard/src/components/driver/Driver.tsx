@@ -56,9 +56,9 @@ export default function Driver({ driver, timingDriver, position }: Props) {
 			layout="position"
 			className={clsx("flex flex-col gap-1 rounded-lg p-1.5 select-none", {
 				"opacity-50": timingDriver.KnockedOut || timingDriver.Retired || timingDriver.Stopped,
-				"bg-sky-800/30": favoriteDriver,
-				"bg-violet-800/30": hasFastest,
-				"bg-red-800/30": sessionPart != undefined && inDangerZone(position, sessionPart),
+				"bg-naija-green/10": favoriteDriver,
+				"bg-naija-purple/10": hasFastest,
+				"bg-naija-red/10": sessionPart != undefined && inDangerZone(position, sessionPart),
 			})}
 		>
 			<div
