@@ -112,7 +112,7 @@ export default function Layout({ children }: Props) {
 
       <AdBanner />
 
-      {/* ── NAV ─────────────────────────────────────────── */}
+      {/* ââ NAV âââââââââââââââââââââââââââââââââââââââââââ */}
       <nav style={{
         position: "sticky", top: 40, left: 0, zIndex: 40,
         display: "flex", alignItems: "center", justifyContent: "space-between",
@@ -123,9 +123,14 @@ export default function Layout({ children }: Props) {
         borderBottom: "1px solid rgba(255,255,255,.07)",
       }}>
         {/* Logo wordmark */}
-        <Link href="/" style={{ fontSize: 13, fontWeight: 900, letterSpacing: ".08em", textTransform: "uppercase", color: "#edf2ff", textDecoration: "none", lineHeight: 1 }}>
+        <Link href="/" style={{
+          fontSize: 13, fontWeight: 900, letterSpacing: ".06em",
+          textTransform: "uppercase", color: "#edf2ff",
+          textDecoration: "none", display: "flex", alignItems: "center", gap: 6,
+          WebkitTapHighlightColor: "transparent",
+        }}>
           <span style={{ color: "#00d484" }}>F1</span>
-          <span style={{ color: "#5a6888", fontWeight: 400, padding: "0 4px" }}>·</span>
+          <span style={{ color: "#5a6888", fontWeight: 400 }}>Â·</span>
           Naija
         </Link>
 
@@ -142,26 +147,6 @@ export default function Layout({ children }: Props) {
           ))}
         </div>
 
-        {/* Desktop socials */}
-        <div style={{ display: "flex", alignItems: "center", gap: 14 }} className="hidden sm:flex">
-          <a
-            href="https://x.com/f1_naija" target="_blank" rel="noopener noreferrer"
-            style={{ fontSize: 12, color: "#5a6888", textDecoration: "none", transition: "color .18s" }}
-            onMouseEnter={e => (e.currentTarget.style.color = "#edf2ff")}
-            onMouseLeave={e => (e.currentTarget.style.color = "#5a6888")}
-          >
-            𝕏
-          </a>
-          <a
-            href="https://www.instagram.com/f1_naija/" target="_blank" rel="noopener noreferrer"
-            style={{ fontSize: 12, color: "#5a6888", textDecoration: "none", transition: "color .18s" }}
-            onMouseEnter={e => (e.currentTarget.style.color = "#edf2ff")}
-            onMouseLeave={e => (e.currentTarget.style.color = "#5a6888")}
-          >
-            IG
-          </a>
-        </div>
-
         {/* Mobile hamburger */}
         <button
           className={`hamburger sm:hidden${menuOpen ? " open" : ""}`}
@@ -174,7 +159,7 @@ export default function Layout({ children }: Props) {
         </button>
       </nav>
 
-      {/* ── MOBILE MENU OVERLAY ─────────────────────────── */}
+      {/* ââ MOBILE MENU OVERLAY âââââââââââââââââââââââââââ */}
       {menuOpen && (
         <div className="mobile-nav sm:hidden">
           <button
@@ -185,7 +170,7 @@ export default function Layout({ children }: Props) {
               fontSize: 13, color: "#5a6888", cursor: "pointer",
               padding: "8px", WebkitTapHighlightColor: "transparent",
             }}
-          >✕ Close</button>
+          >â Close</button>
 
           {NAV_LINKS.map(l => (
             <Link
@@ -201,7 +186,7 @@ export default function Layout({ children }: Props) {
           <div style={{ marginTop: 24, display: "flex", gap: 16 }}>
             <a href="https://x.com/f1_naija" target="_blank" rel="noopener noreferrer"
               style={{ fontSize: 13, color: "#5a6888", textDecoration: "none" }}>
-              𝕏 Twitter
+              ð Twitter
             </a>
             <a href="https://www.instagram.com/f1_naija/" target="_blank" rel="noopener noreferrer"
               style={{ fontSize: 13, color: "#5a6888", textDecoration: "none" }}>
@@ -215,7 +200,7 @@ export default function Layout({ children }: Props) {
         </div>
       )}
 
-      {/* ── MAIN ─────────────────────────────────────────── */}
+      {/* ââ MAIN âââââââââââââââââââââââââââââââââââââââââââ */}
       <main className="container mx-auto max-w-(--breakpoint-lg) px-4">
         {children}
         <Footer />
