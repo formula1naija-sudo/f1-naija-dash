@@ -160,9 +160,8 @@ export default function HomeHero() {
           position: "relative",
           overflow: "hidden",
           display: "grid",
-          gridTemplateColumns: "1fr",
         }}
-        className="lg:grid lg:grid-cols-[1fr_460px]"
+        className="lg:grid-cols-2"
       >
         {/* bg grid */}
         <div style={{
