@@ -191,7 +191,7 @@ export default function HomeHero() {
           </div>
 
           <div className="hero-fade-1 mb-6">
-            <Image src="/tag-logo.png" alt="F1 Naija" width={340} height={340} style={{ objectFit: "contain", filter: "drop-shadow(0 0 24px rgba(0,212,132,0.4))" }} priority />
+            <Image src="/tag-logo.png" alt="F1 Naija" width={260} height={260} style={{ objectFit: "contain", filter: "drop-shadow(0 0 20px rgba(0,212,132,0.35))" }} priority />
           </div>
 
           <div style={{ lineHeight: .9, marginBottom: 28 }}>
