@@ -305,6 +305,38 @@ export default function StandingsPage() {
         {/* ── CONSTRUCTOR STANDINGS ── */}
         {!loading && activeTab === "constructors" && constructors.length > 0 && (
           <div>
+            {constructors[0] && (() => {
+              const c = constructors[0];
+              const teamColor = getTeamColor(c.Constructor.constructorId);
+              return (
+                <div style={{
+                  background: "linear-gradient(135deg,rgba(245,167,36,.08) 0%,rgba(0,212,132,.06) 100%)",
+                  border: "1px solid rgba(245,167,36,.25)",
+                  borderRadius: 14, padding: "20px", marginBottom: 16,
+                  display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap",
+                }}>
+                  <div style={{
+                    width: 48, height: 48, borderRadius: "50%",
+                    background: `radial-gradient(circle,${teamColor}33,transparent)`,
+                    border: `2px solid ${teamColor}`,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    fontSize: 20, fontWeight: 900, color: "#f5a724", flexShrink: 0,
+                  }}>1</div>
+                  <div style={{ flex: 1, minWidth: 160 }}>
+                    <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "#f5a724", marginBottom: 4 }}>Championship Leader</div>
+                    <div style={{ fontSize: "clamp(16px,4vw,22px)", fontWeight: 900, letterSpacing: "-.02em" }}>
+                      <span style={{ color: "#f5a724" }}>{c.Constructor.name}</span>
+                    </div>
+                    <div style={{ fontSize: 11, color: "#5a6888", marginTop: 2 }}>{c.Constructor.nationality}</div>
+                  </div>
+                  <div style={{ textAlign: "right" }}>
+                    <div style={{ fontSize: "clamp(28px,6vw,42px)", fontWeight: 900, letterSpacing: "-.04em", color: "#f5a724", lineHeight: 1 }}>{c.points}</div>
+                    <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: ".1em", textTransform: "uppercase", color: "#5a6888" }}>pts</div>
+                  </div>
+                </div>
+              );
+            })()}
+
             <div style={{ display: "grid", gridTemplateColumns: "2.5rem 4px 1fr auto auto", gap: "0 12px", padding: "0 12px 8px", fontSize: 9, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "#3a4560" }}>
               <span>Pos</span><span /><span>Constructor</span>
               <span style={{ textAlign: "right" }}>Pts</span>
