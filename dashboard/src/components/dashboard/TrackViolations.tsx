@@ -45,6 +45,11 @@ export default function TrackViolations() {
 		? Object.values(drivers).filter((driver) => trackLimits[driver.RacingNumber] > 0)
 		: undefined;
 
+	const maxViolations =
+		violationDrivers && violationDrivers.length > 0
+			? Math.max(...violationDrivers.map((d) => trackLimits[d.RacingNumber]))
+			: 1;
+
 	return (
 		<div className="flex flex-col gap-0.5">
 			{violationDrivers && violationDrivers.length < 1 && (
@@ -63,6 +68,7 @@ export default function TrackViolations() {
 							driver={driver}
 							driversTiming={driversTiming ?? undefined}
 							driverViolations={trackLimits[driver.RacingNumber]}
+							maxViolations={maxViolations}
 						/>
 					))}
 		</div>

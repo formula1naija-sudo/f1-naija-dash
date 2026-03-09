@@ -7,26 +7,34 @@ import DriverTag from "@/components/driver/DriverTag";
 type Props = {
 	driver: Driver;
 	driverViolations: number;
+	maxViolations: number;
 	driversTiming: TimingData | undefined;
 };
 
-export default function DriverViolations({ driver, driverViolations, driversTiming }: Props) {
-	return (
-		<div className="flex gap-2 p-1.5" key={`violation.${driver.RacingNumber}`}>
-			<DriverTag className="h-fit" teamColor={driver.TeamColour} short={driver.Tla} />
+export default function DriverViolations({ driver, driverViolations, maxViolations, driversTiming }: Props) {
+	const pct = maxViolations > 0 ? (driverViolations / maxViolations) * 100 : 0;
 
-			<div className="flex flex-col justify-around text-sm leading-none text-zinc-600">
-				<p>
-					{driverViolations} Violation{driverViolations > 1 ? "s" : ""}
-					{driverViolations > 4 && <span> - {Math.round(driverViolations / 5) * 5}s Penalty</span>}
-				</p>
-				{driverViolations > 4 && driversTiming && (
-					<p>
-						{calculatePosition(Math.round(driverViolations / 5) * 5, driver.RacingNumber, driversTiming)}
-						th after penalty
-					</p>
-				)}
+	return (
+		<div className="flex items-center gap-2 px-2 py-2" key={`violation.${driver.RacingNumber}`}>
+			<DriverTag className="h-fit shrink-0" teamColor={driver.TeamColour} short={driver.Tla} />
+
+			<div className="flex min-w-0 flex-1 items-center gap-2">
+				<div className="h-1.5 flex-1 overflow-hidden rounded-full bg-zinc-800">
+					<div
+						className="h-full rounded-full transition-all duration-500"
+						style={{ width: `${pct}%`, background: "#e8001f" }}
+					/>
+				</div>
+				<span className="w-4 shrink-0 text-right text-sm font-semibold" style={{ color: "#e8001f" }}>
+					{driverViolations}
+				</span>
 			</div>
+
+			{driverViolations > 4 && driversTiming && (
+				<p className="shrink-0 text-xs text-zinc-500">
+					{calculatePosition(Math.round(driverViolations / 5) * 5, driver.RacingNumber, driversTiming)}th
+				</p>
+			)}
 		</div>
 	);
 }
