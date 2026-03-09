@@ -177,14 +177,14 @@ export default function HomeHero() {
         <div style={{ position: "absolute", bottom: -20, right: -10, fontSize: "clamp(120px,17vw,230px)", fontWeight: 900, letterSpacing: "-.02em", color: "rgba(255,255,255,.013)", lineHeight: 1, pointerEvents: "none", userSelect: "none" }}>NAIJA</div>
 
         {/* LEFT */}
-        <div className="relative z-10 flex flex-col justify-center px-6 py-20 lg:px-12">
-          <div className="hero-fade-1 mb-8">
-            <img src="/tag-logo.png" alt="F1 Naija" style={{ width: 216, height: 216, objectFit: "contain", filter: "drop-shadow(0 0 16px rgba(0,212,132,0.3))" }} />
-          </div>
-
-          <div className="hero-fade-1 mb-7 flex items-center gap-2">
+        <div className="relative z-10 flex flex-col justify-start px-6 pt-8 pb-16 lg:px-12">
+          <div className="hero-fade-1 mb-5 flex items-center gap-2">
             <div style={{ width: 20, height: 1, background: "#00d484", flexShrink: 0 }} />
             <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: "#00d484" }}>Formula 1 · Season 2026</span>
+          </div>
+
+          <div className="hero-fade-1 mb-6">
+            <img src="/tag-logo.png" alt="F1 Naija" style={{ width: 216, height: 216, objectFit: "contain", filter: "drop-shadow(0 0 16px rgba(0,212,132,0.3))" }} />
           </div>
 
           <div style={{ lineHeight: .9, marginBottom: 28 }}>
