@@ -21,29 +21,63 @@ export default function TrackMap() {
 	const driversTiming = useDataStore((state) => state.state?.TimingData);
 
 	return (
-		<div className="flex flex-col-reverse md:h-full md:flex-row">
-			<div className="flex w-full flex-col gap-0.5 overflow-y-auto border-zinc-800 md:h-full md:w-fit md:rounded-lg md:border md:p-2">
-				{(!drivers || !driversTiming) &&
-					new Array(20).fill("").map((_, index) => <SkeletonDriver key={`driver.loading.${index}`} />)}
-
-				{drivers && driversTiming && (
-					<AnimatePresence>
-						{Object.values(driversTiming.Lines)
-							.sort(sortPos)
-							.map((timingDriver, index) => (
-								<TrackMapDriver
-									key={`trackmap.driver.${timingDriver.RacingNumber}`}
-									position={index + 1}
-									driver={drivers[timingDriver.RacingNumber]}
-									timingDriver={timingDriver}
-								/>
-							))}
-					</AnimatePresence>
-				)}
+		<div className="flex h-full flex-col">
+			{/* ── PAGE HERO ── */}
+			<div style={{
+				position: "relative", overflow: "hidden", flexShrink: 0,
+				padding: "clamp(24px,4vw,40px) 16px clamp(20px,3vw,32px)",
+				borderBottom: "1px solid rgba(255,255,255,.06)",
+			}}>
+				<div style={{
+					position: "absolute", inset: 0, pointerEvents: "none",
+					backgroundImage: "linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px)",
+					backgroundSize: "64px 64px",
+					WebkitMaskImage: "radial-gradient(ellipse 80% 80% at 50% 0%,black 30%,transparent 80%)",
+					maskImage: "radial-gradient(ellipse 80% 80% at 50% 0%,black 30%,transparent 80%)",
+				}} />
+				<div style={{ position: "relative", zIndex: 1 }}>
+					<div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+						<div style={{ width: 16, height: 1, background: "#00d484", flexShrink: 0 }} />
+						<span style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: "#00d484" }}>
+							Driver Tracker
+						</span>
+					</div>
+					<div style={{ lineHeight: 0.92 }}>
+						<span style={{ fontSize: "clamp(28px,5vw,56px)", fontWeight: 900, letterSpacing: "-.04em", color: "#edf2ff" }}>Track </span>
+						<span style={{
+							fontSize: "clamp(28px,5vw,56px)", fontWeight: 900, letterSpacing: "-.04em",
+							background: "linear-gradient(120deg,#00d484 0%,#7affd4 50%,#00d484 100%)",
+							WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
+						}}>Map.</span>
+					</div>
+				</div>
 			</div>
 
-			<div className="md:flex-1">
-				<Map />
+			{/* ── MAP + DRIVER LIST ── */}
+			<div className="flex min-h-0 flex-1 flex-col-reverse md:flex-row">
+				<div className="flex w-full flex-col gap-0.5 overflow-y-auto border-zinc-800 md:h-full md:w-fit md:rounded-lg md:border md:p-2">
+					{(!drivers || !driversTiming) &&
+						new Array(20).fill("").map((_, index) => <SkeletonDriver key={`driver.loading.${index}`} />)}
+
+					{drivers && driversTiming && (
+						<AnimatePresence>
+							{Object.values(driversTiming.Lines)
+								.sort(sortPos)
+								.map((timingDriver, index) => (
+									<TrackMapDriver
+										key={`trackmap.driver.${timingDriver.RacingNumber}`}
+										position={index + 1}
+										driver={drivers[timingDriver.RacingNumber]}
+										timingDriver={timingDriver}
+									/>
+								))}
+						</AnimatePresence>
+					)}
+				</div>
+
+				<div className="md:flex-1">
+					<Map />
+				</div>
 			</div>
 		</div>
 	);
