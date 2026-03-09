@@ -15,6 +15,7 @@ type Profile = {
   description: string;
   followers: number;
   tweets: number;
+  avatar_url?: string;
 };
 
 type NotifStatus = "idle" | "subscribed" | "denied" | "unsupported" | "ios-pwa-required";
@@ -127,7 +128,7 @@ function NewsTicker({ items }: { items: NewsItem[] }) {
   if (!items.length) return null;
   const tickerItems = [...items, ...items];
   const totalChars = items.reduce((sum, item) => sum + item.title.length, 0);
-  const duration = Math.max(16, totalChars * 0.04);
+  const duration = Math.max(30, totalChars * 0.012);
 
   return (
     <div style={{
@@ -204,6 +205,7 @@ export default function NewsPage() {
             description: data.user.description,
             followers: data.user.followers,
             tweets: data.user.tweets,
+            avatar_url: data.user.avatar_url,
           });
         }
       }
@@ -216,7 +218,7 @@ export default function NewsPage() {
 
   useEffect(() => {
     fetchData();
-    const interval = setInterval(fetchData, 5 * 60_000);
+    const interval = setInterval(fetchData, 2 * 60_000);
     return () => clearInterval(interval);
   }, [fetchData]);
 
@@ -357,12 +359,22 @@ export default function NewsPage() {
             borderRadius: 12, padding: "18px 20px", marginBottom: 24,
             flexWrap: "wrap",
           }}>
-            <div style={{
-              width: 52, height: 52, borderRadius: "50%", flexShrink: 0,
-              background: "linear-gradient(135deg,#008751,#00d484)",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: 18, fontWeight: 900, color: "#04060e",
-            }}>F1</div>
+            {profile.avatar_url ? (
+              <img
+                src={profile.avatar_url}
+                alt={profile.name}
+                width={52}
+                height={52}
+                style={{ width: 52, height: 52, borderRadius: "50%", flexShrink: 0, objectFit: "cover", border: "2px solid rgba(0,212,132,.3)" }}
+              />
+            ) : (
+              <div style={{
+                width: 52, height: 52, borderRadius: "50%", flexShrink: 0,
+                background: "linear-gradient(135deg,#008751,#00d484)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                fontSize: 18, fontWeight: 900, color: "#04060e",
+              }}>F1</div>
+            )}
             <div style={{ flex: 1, minWidth: 200 }}>
               <div style={{ fontSize: 14, fontWeight: 800, color: "#edf2ff" }}>{profile.name}</div>
               <div style={{ fontSize: 11, color: "#5a6888", marginBottom: 8 }}>@{profile.screen_name}</div>
