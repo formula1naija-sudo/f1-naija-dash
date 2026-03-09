@@ -122,16 +122,13 @@ export default function Layout({ children }: Props) {
         WebkitBackdropFilter: "blur(20px)",
         borderBottom: "1px solid rgba(255,255,255,.07)",
       }}>
-        {/* Logo wordmark */}
-        <Link href="/" style={{
-          fontSize: 13, fontWeight: 900, letterSpacing: ".06em",
-          textTransform: "uppercase", color: "#edf2ff",
-          textDecoration: "none", display: "flex", alignItems: "center", gap: 6,
-          WebkitTapHighlightColor: "transparent",
-        }}>
-          <span style={{ color: "#00d484" }}>F1</span>
-          <span style={{ color: "#5a6888", fontWeight: 400 }}>·</span>
-          Naija
+        {/* Logo */}
+        <Link href="/" style={{ display: "flex", alignItems: "center", WebkitTapHighlightColor: "transparent" }}>
+          <img
+            src="/tag-logo.png"
+            alt="F1 Naija"
+            style={{ height: 36, width: 36, objectFit: "contain" }}
+          />
         </Link>
 
         {/* Desktop links */}
