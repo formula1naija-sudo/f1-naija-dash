@@ -51,16 +51,42 @@ export default function Driver({ driver, timingDriver, position }: Props) {
 
 	const favoriteDriver = useSettingsStore((state) => state.favoriteDrivers.includes(driver.RacingNumber));
 
+	const teamHex = driver.TeamColour ? `#${driver.TeamColour}` : "#444";
+
+	const cardBg = favoriteDriver
+		? "rgba(0,212,132,0.08)"
+		: hasFastest
+		? "rgba(156,80,245,0.08)"
+		: sessionPart != undefined && inDangerZone(position, sessionPart)
+		? "rgba(232,0,31,0.08)"
+		: "rgba(255,255,255,0.018)";
+
+	const cardBorder = favoriteDriver
+		? "rgba(0,212,132,0.25)"
+		: hasFastest
+		? "rgba(156,80,245,0.25)"
+		: sessionPart != undefined && inDangerZone(position, sessionPart)
+		? "rgba(232,0,31,0.25)"
+		: "rgba(255,255,255,0.06)";
+
 	return (
 		<motion.div
 			layout="position"
-			className={clsx("flex flex-col gap-1 rounded-lg p-1.5 select-none", {
+			className={clsx("relative flex flex-col gap-1 rounded-xl select-none overflow-hidden", {
 				"opacity-50": timingDriver.KnockedOut || timingDriver.Retired || timingDriver.Stopped,
-				"bg-naija-green/10": favoriteDriver,
-				"bg-naija-purple/10": hasFastest,
-				"bg-naija-red/10": sessionPart != undefined && inDangerZone(position, sessionPart),
 			})}
+			style={{
+				background: cardBg,
+				border: `1px solid ${cardBorder}`,
+				padding: "6px 6px 6px 14px",
+			}}
 		>
+			{/* Team colour left accent bar */}
+			<div
+				className="absolute top-0 left-0 bottom-0"
+				style={{ width: 3, background: teamHex, borderRadius: "12px 0 0 12px" }}
+			/>
+
 			<div
 				className="grid items-center gap-2"
 				style={{
