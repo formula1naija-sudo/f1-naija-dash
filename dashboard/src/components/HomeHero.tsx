@@ -48,6 +48,7 @@ export default function HomeHero() {
   const [localTime, setLocalTime] = useState("");
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
 
     // city cycler
@@ -350,10 +351,11 @@ export default function HomeHero() {
               </div>
             </div>
           </div>
+          </div>
         </div>
       </section>
 
-      {/* ─── MARQUEE ────────────────────────────────────── */}
+      {/* #── MARQUEE ────────────────────────────────────── */}
       <div style={{
         background: "#0d1424",
         borderTop: "1px solid rgba(255,255,255,.05)",
