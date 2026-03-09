@@ -296,9 +296,9 @@ export default function HomeHero() {
                   LIVE
                 </div>
                 <div style={{ fontSize: 11, fontWeight: 600, color: "#5a6888" }}>
-                  <span style={{ color: "#edf2ff" }}>Bahrain GP</span> · Race
+                  <span style={{ color: "#edf2ff" }}>Australian GP</span> · Race
                 </div>
-                <div style={{ fontSize: 11, fontWeight: 700, color: "#f5a724" }}>LAP 38/57</div>
+                <div style={{ fontSize: 11, fontWeight: 700, color: "#f5a724" }}>LAP 42/58</div>
               </div>
 
               {/* drivers */}
@@ -342,7 +342,7 @@ export default function HomeHero() {
               }}>
                 <div>
                   <div style={{ fontSize: 9, color: "#5a6888", textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 2 }}>Next Race</div>
-                  <div style={{ fontSize: 16, fontWeight: 800, letterSpacing: ".04em", color: "#00d484" }}>Saudi GP in 7d</div>
+                  <div style={{ fontSize: 16, fontWeight: 800, letterSpacing: ".04em", color: "#00d484" }}>Chinese GP in 4d</div>
                 </div>
                 <div style={{ textAlign: "right" }}>
                   <div style={{ fontSize: 9, color: "#5a6888", textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 2 }}>Lagos · WAT</div>
