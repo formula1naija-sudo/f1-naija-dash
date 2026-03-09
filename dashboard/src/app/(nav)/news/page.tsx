@@ -34,47 +34,72 @@ function fmt(n: number): string {
   return n.toString();
 }
 
-const SOURCE_COLORS: Record<string, string> = {
-  "BBC Sport":       "bg-red-900 text-red-300",
-  "RaceFans":        "bg-blue-900 text-blue-300",
-  "The Race":        "bg-yellow-900 text-yellow-300",
-  "Motorsport.com":  "bg-purple-900 text-purple-300",
-  "Autosport":       "bg-orange-900 text-orange-300",
-  "Planet F1":       "bg-green-900 text-green-300",
-  "Motorsport Week": "bg-teal-900 text-teal-300",
-  "ESPN F1":         "bg-red-950 text-red-400",
-  "GPblog":          "bg-indigo-900 text-indigo-300",
-  "GPfans":          "bg-sky-900 text-sky-300",
-  "RacingNews365":   "bg-amber-900 text-amber-300",
-  "Speedcafe":       "bg-lime-900 text-lime-300",
-  "Crash.net":       "bg-rose-900 text-rose-300",
-  "Formu1a.uno":     "bg-violet-900 text-violet-300",
-  "Formula Passion": "bg-pink-900 text-pink-300",
-  "AMUS":            "bg-gray-800 text-gray-300",
-  "Motorsport Total":"bg-cyan-900 text-cyan-300",
-  "Soymotor":        "bg-yellow-950 text-yellow-400",
-  "F1i":             "bg-blue-950 text-blue-400",
-  "Formule1.nl":     "bg-orange-950 text-orange-400",
-  "AutoRacer IT":    "bg-emerald-900 text-emerald-300",
+const SOURCE_COLORS: Record<string, { bg: string; text: string }> = {
+  "BBC Sport":        { bg: "rgba(220,38,38,.15)",   text: "#f87171" },
+  "RaceFans":         { bg: "rgba(59,130,246,.15)",  text: "#93c5fd" },
+  "The Race":         { bg: "rgba(234,179,8,.15)",   text: "#fde047" },
+  "Motorsport.com":  { bg: "rgba(168,85,247,.15)",  text: "#d8b4fe" },
+  "Autosport":        { bg: "rgba(249,115,22,.15)",  text: "#fdba74" },
+  "Planet F1":        { bg: "rgba(0,212,132,.15)",   text: "#00d484" },
+  "ESPN F1":          { bg: "rgba(220,38,38,.15)",   text: "#f87171" },
+  "GPblog":           { bg: "rgba(99,102,241,.15)",  text: "#a5b4fc" },
+  "GPfans":           { bg: "rgba(14,165,233,.15)",  text: "#7dd3fc" },
 };
 
-function NewsCard({ item }: { item: NewsItem }) {
-  const colorClass = SOURCE_COLORS[item.source] ?? "bg-zinc-800 text-zinc-300";
+function NewsCard({ item, featured = false }: { item: NewsItem; featured?: boolean }) {
+  const src = SOURCE_COLORS[item.source] ?? { bg: "rgba(255,255,255,.06)", text: "#5a6888" };
   return (
-    <a href={item.link} target="_blank" rel="noopener noreferrer" className="block group">
-      <div className="rounded-xl border border-zinc-800 p-4 transition-all hover:border-zinc-600 hover:bg-zinc-900">
-        <div className="flex items-start justify-between gap-3 mb-2">
-          <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${colorClass}`}>
-            {item.source}
-          </span>
-          <span className="text-xs text-zinc-600 whitespace-nowrap">{timeAgo(item.pubDate)}</span>
+    <a
+      href={item.link}
+      target="_blank"
+      rel="noopener noreferrer"
+      style={{ textDecoration: "none", display: "block", WebkitTapHighlightColor: "transparent" }}
+    >
+      <div style={{
+        background: featured ? "rgba(0,212,132,.04)" : "rgba(255,255,255,.02)",
+        border: "1px solid",
+        borderColor: featured ? "rgba(0,212,132,.18)" : "rgba(255,255,255,.06)",
+        borderRadius: 12,
+        padding: featured ? "20px" : "14px 16px",
+        transition: "border-color .2s, transform .2s",
+        height: "100%",
+      }}
+      onMouseEnter={e => {
+        (e.currentTarget as HTMLDivElement).style.borderColor = "rgba(0,212,132,.3)";
+        if (featured) (e.currentTarget as HTMLDivElement).style.transform = "translateY(-2px)";
+      }}
+      onMouseLeave={e => {
+        (e.currentTarget as HTMLDivElement).style.borderColor = featured ? "rgba(0,212,132,.18)" : "rgba(255,255,255,.06)";
+        (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)";
+      }}
+      >
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, marginBottom: 10 }}>
+          <span style={{
+            fontSize: 10, fontWeight: 700, padding: "3px 10px", borderRadius: 20,
+            background: src.bg, color: src.text, letterSpacing: ".04em", whiteSpace: "nowrap",
+          }}>{item.source}</span>
+          <span style={{ fontSize: 10, color: "#3a4560", whiteSpace: "nowrap" }}>{timeAgo(item.pubDate)}</span>
         </div>
-        <h3 className="text-sm font-semibold text-white leading-snug mb-1 group-hover:text-green-400 transition-colors">
+        <h3 style={{
+          fontSize: featured ? "clamp(15px,2.5vw,18px)" : 13,
+          fontWeight: featured ? 800 : 600,
+          letterSpacing: "-.01em",
+          lineHeight: 1.45,
+          color: "#edf2ff",
+          margin: "0 0 8px",
+        }}>
           {item.title}
         </h3>
         {item.description && (
-          <p className="text-xs text-zinc-500 leading-relaxed line-clamp-2">{item.description}</p>
+          <p style={{
+            fontSize: 12, color: "#5a6888", lineHeight: 1.6, margin: 0,
+            display: "-webkit-box", WebkitLineClamp: featured ? 3 : 2,
+            WebkitBoxOrient: "vertical", overflow: "hidden",
+          }}>{item.description}</p>
         )}
+        <div style={{ marginTop: 12, fontSize: 11, fontWeight: 700, color: featured ? "#00d484" : "#3a4560" }}>
+          Read more →
+        </div>
       </div>
     </a>
   );
@@ -82,91 +107,69 @@ function NewsCard({ item }: { item: NewsItem }) {
 
 function SkeletonCard() {
   return (
-    <div className="rounded-xl border border-zinc-800 p-4 animate-pulse">
-      <div className="flex items-center justify-between mb-2">
-        <div className="h-4 w-20 rounded-full bg-zinc-800" />
-        <div className="h-3 w-12 rounded bg-zinc-800" />
+    <div style={{
+      background: "rgba(255,255,255,.02)",
+      border: "1px solid rgba(255,255,255,.05)",
+      borderRadius: 12, padding: 16,
+    }}>
+      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 10, gap: 8 }}>
+        <div style={{ height: 20, width: 80, borderRadius: 20, background: "rgba(255,255,255,.06)" }} />
+        <div style={{ height: 12, width: 40, borderRadius: 4, background: "rgba(255,255,255,.04)" }} />
       </div>
-      <div className="h-4 w-full rounded bg-zinc-800 mb-1" />
-      <div className="h-4 w-3/4 rounded bg-zinc-800 mb-2" />
-      <div className="h-3 w-full rounded bg-zinc-800" />
+      <div style={{ height: 14, width: "100%", borderRadius: 4, background: "rgba(255,255,255,.06)", marginBottom: 6 }} />
+      <div style={{ height: 14, width: "80%", borderRadius: 4, background: "rgba(255,255,255,.04)", marginBottom: 10 }} />
+      <div style={{ height: 10, width: "60%", borderRadius: 4, background: "rgba(255,255,255,.03)" }} />
     </div>
   );
 }
 
 function NewsTicker({ items }: { items: NewsItem[] }) {
   if (!items.length) return null;
-  // Top 8 headlines only — fixed 6s cycle for maximum speed
-  const tickerSource = items.slice(0, 8);
-  const tickerItems = [...tickerSource, ...tickerSource];
-  const duration = 6; // fixed 6s — ~800px/s fast live-ticker feel
+  const tickerItems = [...items, ...items];
+  const totalChars = items.reduce((sum, item) => sum + item.title.length, 0);
+  const duration = Math.max(16, totalChars * 0.04);
 
   return (
-    <div className="relative overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950 py-3 mb-6">
-      <div className="flex items-center">
-        <div className="flex-shrink-0 bg-green-500 text-black text-xs font-bold px-3 py-1 mr-4 rounded-full z-10">
-          LIVE
-        </div>
-        <div className="overflow-hidden flex-1">
-          <div
-            className="flex gap-8 whitespace-nowrap"
-            style={{ animation: `marquee ${duration}s linear infinite` }}
-          >
-            {tickerItems.map((item, i) => (
-              <a
-                key={i}
-                href={item.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm text-zinc-300 hover:text-green-400 transition-colors flex-shrink-0"
-              >
-                <span className="text-zinc-600 mr-2">●</span>
-                {item.title}
-              </a>
-            ))}
-          </div>
-        </div>
-      </div>
+    <div style={{
+      position: "relative", overflow: "hidden",
+      borderRadius: 10,
+      border: "1px solid rgba(0,212,132,.15)",
+      background: "rgba(0,212,132,.04)",
+      height: 42, display: "flex", alignItems: "center",
+      marginBottom: 28,
+    }}>
       <style>{`
-        @keyframes marquee {
+        @keyframes newsTicker {
           0%   { transform: translateX(0); }
           100% { transform: translateX(-50%); }
         }
       `}</style>
-    </div>
-  );
-}
-
-function ProfileCard({ profile }: { profile: Profile }) {
-  return (
-    <div className="rounded-xl border border-zinc-800 p-6 mb-6">
-      <div className="flex items-start gap-4">
-        <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-green-600 to-green-400 text-xl font-bold text-black">
-          F1
-        </div>
-        <div className="min-w-0 flex-1">
-          <span className="text-base font-bold text-white">{profile.name}</span>
-          <p className="text-sm text-zinc-500 mb-2">@{profile.screen_name}</p>
-          <p className="text-sm leading-relaxed text-zinc-300">{profile.description}</p>
-          <div className="mt-3 flex gap-4 text-sm text-zinc-500">
-            <span><strong className="text-white">{fmt(profile.followers)}</strong> followers</span>
-            <span><strong className="text-white">{fmt(profile.tweets)}</strong> posts</span>
-          </div>
+      <div style={{
+        flexShrink: 0, background: "#00d484", color: "#04060e",
+        fontSize: 9, fontWeight: 800, padding: "4px 12px",
+        letterSpacing: ".1em", textTransform: "uppercase",
+        borderRadius: "0 20px 20px 0",
+        zIndex: 2, whiteSpace: "nowrap",
+      }}>LIVE</div>
+      <div style={{ overflow: "hidden", flex: 1, padding: "0 16px" }}>
+        <div style={{
+          display: "flex", gap: 32, whiteSpace: "nowrap",
+          animation: `newsTicker ${duration}s linear infinite`,
+        }}>
+          {tickerItems.map((item, i) => (
+            <a key={i} href={item.link} target="_blank" rel="noopener noreferrer"
+              style={{ fontSize: 12, color: "#5a6888", textDecoration: "none", flexShrink: 0 }}>
+              <span style={{ color: "#00d484", marginRight: 8 }}>●</span>
+              {item.title}
+            </a>
+          ))}
         </div>
       </div>
-      <a
-        href="https://twitter.com/f1_naija"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg bg-zinc-900 border border-zinc-700 py-3 text-sm font-semibold text-white transition-colors hover:border-zinc-500 hover:bg-zinc-800"
-      >
-        Open @f1_naija on X →
-      </a>
     </div>
   );
 }
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 12;
 
 export default function NewsPage() {
   const [newsItems, setNewsItems] = useState<NewsItem[]>([]);
@@ -182,6 +185,7 @@ export default function NewsPage() {
         fetch("/api/news"),
         fetch("https://api.fxtwitter.com/f1_naija"),
       ]);
+
       if (newsRes.status === "fulfilled" && newsRes.value.ok) {
         const data = await newsRes.value.json();
         if (Array.isArray(data.items) && data.items.length > 0) {
@@ -190,6 +194,7 @@ export default function NewsPage() {
           setVisibleCount(PAGE_SIZE);
         }
       }
+
       if (profileRes.status === "fulfilled" && profileRes.value.ok) {
         const data = await profileRes.value.json();
         if (data.user) {
@@ -254,70 +259,215 @@ export default function NewsPage() {
   const hasMore = visibleCount < newsItems.length;
 
   return (
-    <div className="pb-8 text-white">
-      <div className="mx-auto max-w-2xl px-4 py-8">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-2xl font-bold text-white">F1 News</h1>
-            <p className="text-sm text-zinc-500 mt-0.5">
-              Latest from BBC, Autosport, The Race, Planet F1 &amp; more
-            </p>
+    <div style={{ background: "#04060e", color: "#edf2ff", minHeight: "100vh" }}>
+      <style>{`
+        @keyframes newsFadeUp {
+          from { opacity: 0; transform: translateY(16px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        .news-fade-1 { animation: newsFadeUp .5s ease .1s both; }
+        .news-fade-2 { animation: newsFadeUp .5s ease .25s both; }
+        .news-fade-3 { animation: newsFadeUp .5s ease .4s both; }
+      `}</style>
+
+      {/* ── PAGE HERO ─────────────────────────────────────── */}
+      <div style={{
+        position: "relative", overflow: "hidden",
+        padding: "clamp(40px,7vw,72px) 0 clamp(32px,5vw,52px)",
+        borderBottom: "1px solid rgba(255,255,255,.06)",
+      }}>
+        <div style={{
+          position: "absolute", inset: 0, pointerEvents: "none",
+          backgroundImage: "linear-gradient(rgba(255,255,255,.016) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.016) 1px,transparent 1px)",
+          backgroundSize: "64px 64px",
+          WebkitMaskImage: "radial-gradient(ellipse 80% 80% at 50% 0%,black 30%,transparent 80%)",
+          maskImage: "radial-gradient(ellipse 80% 80% at 50% 0%,black 30%,transparent 80%)",
+        }} />
+        <div style={{
+          position: "absolute", inset: 0, pointerEvents: "none",
+          background: "radial-gradient(ellipse 60% 50% at 80% 40%,rgba(0,212,132,.04) 0%,transparent 60%)",
+        }} />
+        <div style={{
+          position: "absolute", bottom: -20, right: -10,
+          fontSize: "clamp(80px,13vw,180px)", fontWeight: 900,
+          letterSpacing: "-.02em", color: "rgba(255,255,255,.011)",
+          lineHeight: 1, pointerEvents: "none", userSelect: "none", WebkitUserSelect: "none",
+        }}>NEWS</div>
+
+        <div style={{ position: "relative", zIndex: 1 }}>
+          <div className="news-fade-1" style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
+            <div style={{ width: 16, height: 1, background: "#00d484" }} />
+            <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: "#00d484" }}>
+              Latest · F1 Global Feed
+            </span>
           </div>
-          {notifStatus !== "unsupported" && notifStatus !== "ios-pwa-required" && (
-            <button
-              onClick={handleNotifToggle}
-              className={`flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold transition-colors border ${
-                notifStatus === "subscribed"
-                  ? "bg-green-950 border-green-800 text-green-400"
-                  : notifStatus === "denied"
-                  ? "bg-zinc-900 border-zinc-700 text-zinc-500 cursor-not-allowed"
-                  : "bg-zinc-900 border-zinc-700 text-zinc-300 hover:border-zinc-500"
-              }`}
-              disabled={notifStatus === "denied"}
-            >
-              {notifStatus === "subscribed" ? "✓ Alerts on" : notifStatus === "denied" ? "Blocked" : "🔔 Alerts"}
-            </button>
-          )}
-        </div>
 
+          <div className="news-fade-2" style={{ lineHeight: .9 }}>
+            <div style={{ fontSize: "clamp(40px,6vw,84px)", fontWeight: 900, letterSpacing: "-.04em", color: "#edf2ff", lineHeight: .92 }}>
+              F1 News
+            </div>
+            <div style={{
+              fontSize: "clamp(40px,6vw,84px)", fontWeight: 900,
+              letterSpacing: "-.04em", lineHeight: .92,
+              background: "linear-gradient(120deg,#00d484 0%,#00f0a0 50%,#f5a724 100%)",
+              WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
+            }}>
+              Straight Up.
+            </div>
+          </div>
+
+          <div className="news-fade-3" style={{ marginTop: 18, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
+            <p style={{ fontSize: 12, color: "#5a6888", margin: 0 }}>
+              BBC, Autosport, The Race, Planet F1 &amp; more — all in one place.
+            </p>
+            {notifStatus !== "unsupported" && notifStatus !== "ios-pwa-required" && (
+              <button
+                onClick={handleNotifToggle}
+                disabled={notifStatus === "denied"}
+                style={{
+                  display: "flex", alignItems: "center", gap: 6,
+                  padding: "9px 16px", borderRadius: 8, fontSize: 11, fontWeight: 700,
+                  letterSpacing: ".04em", cursor: notifStatus === "denied" ? "not-allowed" : "pointer",
+                  border: "1px solid",
+                  borderColor: notifStatus === "subscribed" ? "rgba(0,212,132,.4)" : "rgba(255,255,255,.1)",
+                  background: notifStatus === "subscribed" ? "rgba(0,212,132,.08)" : "rgba(255,255,255,.04)",
+                  color: notifStatus === "subscribed" ? "#00d484" : notifStatus === "denied" ? "#3a4560" : "#edf2ff",
+                  minHeight: 40, WebkitTapHighlightColor: "transparent",
+                }}
+              >
+                {notifStatus === "subscribed" ? "✓ Alerts on" : notifStatus === "denied" ? "Blocked" : "🔔 Alerts"}
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* ── CONTENT ───────────────────────────────────────── */}
+      <div style={{ padding: "28px 0 80px" }}>
+
+        {/* Ticker */}
         {!loading && newsItems.length > 0 && <NewsTicker items={newsItems} />}
-        {profile && <ProfileCard profile={profile} />}
 
-        <div className="space-y-3">
-          {loading ? (
-            Array.from({ length: PAGE_SIZE }).map((_, i) => <SkeletonCard key={i} />)
-          ) : error ? (
-            <div className="rounded-xl border border-zinc-800 p-6 text-center text-zinc-500">
-              <p>{error}</p>
-              <button onClick={fetchData} className="mt-3 text-sm text-green-400 hover:underline">Try again</button>
+        {/* @f1_naija Profile card */}
+        {profile && (
+          <div style={{
+            display: "flex", alignItems: "flex-start", gap: 16,
+            background: "rgba(255,255,255,.02)",
+            border: "1px solid rgba(255,255,255,.07)",
+            borderRadius: 12, padding: "18px 20px", marginBottom: 24,
+            flexWrap: "wrap",
+          }}>
+            <div style={{
+              width: 52, height: 52, borderRadius: "50%", flexShrink: 0,
+              background: "linear-gradient(135deg,#008751,#00d484)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: 18, fontWeight: 900, color: "#04060e",
+            }}>F1</div>
+            <div style={{ flex: 1, minWidth: 200 }}>
+              <div style={{ fontSize: 14, fontWeight: 800, color: "#edf2ff" }}>{profile.name}</div>
+              <div style={{ fontSize: 11, color: "#5a6888", marginBottom: 8 }}>@{profile.screen_name}</div>
+              <p style={{ fontSize: 12, color: "#8090b0", lineHeight: 1.6, margin: "0 0 10px" }}>{profile.description}</p>
+              <div style={{ display: "flex", gap: 16, fontSize: 12, color: "#5a6888" }}>
+                <span><strong style={{ color: "#edf2ff" }}>{fmt(profile.followers)}</strong> followers</span>
+                <span><strong style={{ color: "#edf2ff" }}>{fmt(profile.tweets)}</strong> posts</span>
+              </div>
             </div>
-          ) : visibleItems.length > 0 ? (
-            <>
-              {visibleItems.map((item, i) => <NewsCard key={i} item={item} />)}
-              {hasMore && (
-                <button
-                  onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
-                  className="mt-2 w-full rounded-xl border border-zinc-800 py-3 text-sm text-zinc-400 hover:border-zinc-600 hover:text-white transition-colors"
-                >
-                  Show {Math.min(PAGE_SIZE, newsItems.length - visibleCount)} more stories
-                </button>
-              )}
-              {visibleCount > PAGE_SIZE && (
-                <button
-                  onClick={() => setVisibleCount(PAGE_SIZE)}
-                  className="w-full rounded-xl border border-zinc-800 py-2 text-xs text-zinc-600 hover:text-zinc-400 transition-colors"
-                >
-                  ↑ Collapse
-                </button>
-              )}
-            </>
-          ) : (
-            <div className="rounded-xl border border-zinc-800 p-6 text-center text-zinc-500">
-              No news available right now.
+            <a
+              href="https://twitter.com/f1_naija" target="_blank" rel="noopener noreferrer"
+              style={{
+                display: "flex", alignItems: "center", gap: 6,
+                padding: "9px 18px", borderRadius: 8, fontSize: 12, fontWeight: 700,
+                border: "1px solid rgba(255,255,255,.12)",
+                background: "rgba(255,255,255,.04)", color: "#edf2ff",
+                textDecoration: "none", whiteSpace: "nowrap",
+                minHeight: 40, WebkitTapHighlightColor: "transparent",
+                alignSelf: "flex-start",
+              }}
+            >
+              Open @f1_naija →
+            </a>
+          </div>
+        )}
+
+        {/* News grid */}
+        {loading ? (
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(280px,1fr))", gap: 12 }}>
+            {Array.from({ length: PAGE_SIZE }).map((_, i) => <SkeletonCard key={i} />)}
+          </div>
+        ) : error ? (
+          <div style={{
+            display: "flex", flexDirection: "column", alignItems: "center",
+            gap: 12, padding: "60px 20px", color: "#5a6888", textAlign: "center",
+          }}>
+            <div style={{ fontSize: 36 }}>📡</div>
+            <p style={{ fontSize: 14 }}>{error}</p>
+            <button
+              onClick={fetchData}
+              style={{
+                padding: "9px 20px", borderRadius: 8, fontSize: 12, fontWeight: 700,
+                border: "1px solid rgba(0,212,132,.3)", background: "rgba(0,212,132,.08)",
+                color: "#00d484", cursor: "pointer", minHeight: 40,
+              }}
+            >Try again</button>
+          </div>
+        ) : visibleItems.length > 0 ? (
+          <>
+            {/* Featured */}
+            <div style={{ marginBottom: 16 }}>
+              <NewsCard item={visibleItems[0]} featured />
             </div>
-          )}
-        </div>
+
+            {/* Grid */}
+            <div style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill,minmax(260px,1fr))",
+              gap: 10, marginBottom: 12,
+            }}>
+              {visibleItems.slice(1).map((item, i) => (
+                <NewsCard key={i} item={item} />
+              ))}
+            </div>
+
+            {hasMore && (
+              <button
+                onClick={() => setVisibleCount(c => c + PAGE_SIZE)}
+                style={{
+                  width: "100%", marginTop: 8,
+                  padding: "13px", borderRadius: 10, fontSize: 13, fontWeight: 700,
+                  border: "1px solid rgba(255,255,255,.08)",
+                  background: "rgba(255,255,255,.02)", color: "#5a6888",
+                  cursor: "pointer", transition: "all .2s",
+                  minHeight: 48, WebkitTapHighlightColor: "transparent",
+                }}
+                onMouseEnter={e => (e.currentTarget.style.color = "#edf2ff")}
+                onMouseLeave={e => (e.currentTarget.style.color = "#5a6888")}
+              >
+                Load {Math.min(PAGE_SIZE, newsItems.length - visibleCount)} more stories
+              </button>
+            )}
+            {visibleCount > PAGE_SIZE && (
+              <button
+                onClick={() => setVisibleCount(PAGE_SIZE)}
+                style={{
+                  width: "100%", marginTop: 6,
+                  padding: "10px", borderRadius: 10, fontSize: 11,
+                  border: "1px solid rgba(255,255,255,.05)",
+                  background: "transparent", color: "#3a4560",
+                  cursor: "pointer",
+                  minHeight: 44, WebkitTapHighlightColor: "transparent",
+                }}
+              >
+                ↑ Collapse
+              </button>
+            )}
+          </>
+        ) : (
+          <div style={{ textAlign: "center", padding: "60px 20px", color: "#5a6888" }}>
+            <div style={{ fontSize: 36, marginBottom: 12 }}>🏎️</div>
+            <p>No news available right now.</p>
+          </div>
+        )}
       </div>
     </div>
   );
-                          }
+}
