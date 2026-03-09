@@ -9,7 +9,7 @@ export default function Footer() {
         <div className="flex items-center gap-2">
           <span className="text-sm font-bold tracking-wide text-white">F1 Naija</span>
           <span className="text-zinc-700 text-xs">·</span>
-          <span className="text-[11px] text-zinc-600">v{process.env.version}</span>
+          <span className="text-[11px] text-zinc-600">v{process.env.NEXT_PUBLIC_VERSION}</span>
         </div>
 
         {/* Social links */}
