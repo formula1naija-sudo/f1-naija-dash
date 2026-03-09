@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import { useState, useEffect, useRef, useMemo } from "react";
 import Link from "next/link";
 
@@ -32,6 +33,7 @@ const SECTOR_COLORS: Record<string, string> = {
   w: "#1e2a3a",
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function deepMerge(base: any, patch: any): any {
   if (!base || typeof base !== "object" || Array.isArray(base)) return patch;
   const out = { ...base };
@@ -51,10 +53,13 @@ export default function HomeHero() {
   const [gaps, setGaps] = useState(MOCK_DRIVERS.map(d => d.baseGap));
   const [mounted, setMounted] = useState(false);
   const [localTime, setLocalTime] = useState("");
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const stateRef = useRef<any>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [liveData, setLiveData] = useState<any>(null);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
 
     const cityTimer = setInterval(() => {
@@ -89,18 +94,20 @@ export default function HomeHero() {
       clearInterval(timeTimer);
       sse.close();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const liveDrivers = useMemo(() => {
     if (!liveData?.TimingData?.Lines || !liveData?.DriverList) return null;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const lines = liveData.TimingData.Lines as Record<string, any>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const driverList = liveData.DriverList as Record<string, any>;
     const result = Object.keys(lines)
       .map(key => {
         const timing = lines[key];
         const driver = driverList[key];
         if (!driver || timing.Retired) return null;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const secs: string[] = ((timing.Sectors || []) as any[]).slice(0, 3).map((s: any) => {
           if (s.OverallFastest) return "p";
           if (s.PersonalFastest) return "g";
@@ -184,7 +191,7 @@ export default function HomeHero() {
           </div>
 
           <div className="hero-fade-1 mb-6">
-            <img src="/tag-logo.png" alt="F1 Naija" style={{ width: 340, height: 340, objectFit: "contain", filter: "drop-shadow(0 0 24px rgba(0,212,132,0.4))" }} />
+            <Image src="/tag-logo.png" alt="F1 Naija" width={340} height={340} style={{ objectFit: "contain", filter: "drop-shadow(0 0 24px rgba(0,212,132,0.4))" }} priority />
           </div>
 
           <div style={{ lineHeight: .9, marginBottom: 28 }}>

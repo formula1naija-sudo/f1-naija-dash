@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import { useEffect, useState, useCallback } from "react";
 
 type NewsItem = {
@@ -360,12 +361,12 @@ export default function NewsPage() {
             flexWrap: "wrap",
           }}>
             {profile.avatar_url ? (
-              <img
+              <Image
                 src={profile.avatar_url}
                 alt={profile.name}
                 width={52}
                 height={52}
-                style={{ width: 52, height: 52, borderRadius: "50%", flexShrink: 0, objectFit: "cover", border: "2px solid rgba(0,212,132,.3)" }}
+                style={{ borderRadius: "50%", flexShrink: 0, objectFit: "cover", border: "2px solid rgba(0,212,132,.3)" }}
               />
             ) : (
               <div style={{

@@ -38,6 +38,16 @@ const config: NextConfig = {
 				hostname: "**formula1.com",
 				port: "",
 			},
+			{
+				protocol: "https",
+				hostname: "pbs.twimg.com",
+				port: "",
+			},
+			{
+				protocol: "https",
+				hostname: "**.twimg.com",
+				port: "",
+			},
 		],
 	},
 	headers: async () => frameDisableHeaders,
