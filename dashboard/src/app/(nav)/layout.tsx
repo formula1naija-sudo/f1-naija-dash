@@ -1,5 +1,9 @@
-import { type ReactNode } from "react";
+"use client";
+
+import { type ReactNode, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+
 import Footer from "@/components/Footer";
 import AdBanner from "@/components/AdBanner";
 
@@ -7,64 +11,217 @@ type Props = {
   children: ReactNode;
 };
 
+const NAV_LINKS = [
+  { href: "/",          label: "Home" },
+  { href: "/dashboard", label: "Dashboard" },
+  { href: "/schedule",  label: "Schedule" },
+  { href: "/news",      label: "News" },
+  { href: "/standings", label: "Standings" },
+  { href: "/help",      label: "Help" },
+];
+
 export default function Layout({ children }: Props) {
+  const pathname = usePathname();
+  const [menuOpen, setMenuOpen] = useState(false);
+
   return (
     <>
-      {/* Single sticky wrapper — AdBanner + nav stick together as one unit */}
-      <div className="sticky top-0 z-50">
-        <AdBanner />
-        <nav className="flex h-12 w-full items-center justify-between gap-4 border-b border-zinc-800 bg-zinc-950/80 p-2 px-4 backdrop-blur-lg">
-          <div className="flex gap-4 text-sm">
-            <Link className="transition duration-100 active:scale-95 hover:text-white text-zinc-300" href="/">Home</Link>
-            <Link className="transition duration-100 active:scale-95 hover:text-white text-zinc-300" href="/dashboard">Dashboard</Link>
-            <Link className="transition duration-100 active:scale-95 hover:text-white text-zinc-300" href="/schedule">Schedule</Link>
-            <Link className="transition duration-100 active:scale-95 hover:text-white text-zinc-300" href="/news">News</Link>
-            <Link className="transition duration-100 active:scale-95 hover:text-white text-zinc-300" href="/standings">Standings</Link>
-            <Link className="transition duration-100 active:scale-95 hover:text-white text-zinc-300" href="/help">Help</Link>
+      <style>{`
+        .nav-link {
+          position: relative;
+          font-size: 12px;
+          font-weight: 600;
+          letter-spacing: .04em;
+          color: #5a6888;
+          text-decoration: none;
+          padding: 6px 2px;
+          transition: color .18s;
+          white-space: nowrap;
+          -webkit-tap-highlight-color: transparent;
+        }
+        .nav-link::after {
+          content: '';
+          position: absolute;
+          bottom: 0; left: 0; right: 0;
+          height: 1.5px;
+          background: #00d484;
+          transform: scaleX(0);
+          transition: transform .18s;
+          border-radius: 1px;
+        }
+        .nav-link:hover { color: #edf2ff; }
+        .nav-link:hover::after { transform: scaleX(1); }
+        .nav-link.active { color: #edf2ff; }
+        .nav-link.active::after { transform: scaleX(1); }
+
+        .mobile-nav {
+          position: fixed;
+          inset: 0;
+          background: rgba(4,6,14,.97);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          z-index: 50;
+          display: flex;
+          flex-direction: column;
+          padding: 80px 28px 40px;
+          gap: 4px;
+          animation: mobileNavIn .22s ease both;
+        }
+        @keyframes mobileNavIn {
+          from { opacity: 0; transform: translateY(-8px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        .mobile-nav-link {
+          font-size: clamp(28px, 7vw, 40px);
+          font-weight: 900;
+          letter-spacing: -.025em;
+          color: #3a4560;
+          text-decoration: none;
+          padding: 12px 0;
+          border-bottom: 1px solid rgba(255,255,255,.05);
+          transition: color .15s;
+          -webkit-tap-highlight-color: transparent;
+        }
+        .mobile-nav-link:hover,
+        .mobile-nav-link.active { color: #edf2ff; }
+        .mobile-nav-link.active { color: #00d484; }
+
+        .hamburger {
+          display: flex;
+          flex-direction: column;
+          gap: 5px;
+          cursor: pointer;
+          padding: 8px;
+          -webkit-tap-highlight-color: transparent;
+          background: transparent;
+          border: none;
+        }
+        .hamburger span {
+          display: block;
+          width: 22px;
+          height: 2px;
+          background: #edf2ff;
+          border-radius: 1px;
+          transition: transform .25s, opacity .25s;
+          transform-origin: center;
+        }
+        .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+      `}</style>
+
+      <AdBanner />
+
+      {/* ── NAV ─────────────────────────────────────────── */}
+      <nav style={{
+        position: "sticky", top: 40, left: 0, zIndex: 40,
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+        height: 48, padding: "0 16px",
+        background: "rgba(4,6,14,.88)",
+        backdropFilter: "blur(20px)",
+        WebkitBackdropFilter: "blur(20px)",
+        borderBottom: "1px solid rgba(255,255,255,.07)",
+      }}>
+        {/* Logo wordmark */}
+        <Link href="/" style={{
+          fontSize: 13, fontWeight: 900, letterSpacing: ".06em",
+          textTransform: "uppercase", color: "#edf2ff",
+          textDecoration: "none", display: "flex", alignItems: "center", gap: 6,
+          WebkitTapHighlightColor: "transparent",
+        }}>
+          <span style={{ color: "#00d484" }}>F1</span>
+          <span style={{ color: "#5a6888", fontWeight: 400 }}>·</span>
+          Naija
+        </Link>
+
+        {/* Desktop links */}
+        <div style={{ display: "flex", alignItems: "center", gap: 22 }} className="hidden sm:flex">
+          {NAV_LINKS.map(l => (
+            <Link
+              key={l.href}
+              href={l.href}
+              className={`nav-link${pathname === l.href ? " active" : ""}`}
+            >
+              {l.label}
+            </Link>
+          ))}
+        </div>
+
+        {/* Desktop socials */}
+        <div style={{ display: "flex", alignItems: "center", gap: 14 }} className="hidden sm:flex">
+          <a
+            href="https://x.com/f1_naija" target="_blank" rel="noopener noreferrer"
+            style={{ fontSize: 12, color: "#5a6888", textDecoration: "none", transition: "color .18s" }}
+            onMouseEnter={e => (e.currentTarget.style.color = "#edf2ff")}
+            onMouseLeave={e => (e.currentTarget.style.color = "#5a6888")}
+          >
+            𝕏
+          </a>
+          <a
+            href="https://www.instagram.com/f1_naija/" target="_blank" rel="noopener noreferrer"
+            style={{ fontSize: 12, color: "#5a6888", textDecoration: "none", transition: "color .18s" }}
+            onMouseEnter={e => (e.currentTarget.style.color = "#edf2ff")}
+            onMouseLeave={e => (e.currentTarget.style.color = "#5a6888")}
+          >
+            IG
+          </a>
+        </div>
+
+        {/* Mobile hamburger */}
+        <button
+          className={`hamburger sm:hidden${menuOpen ? " open" : ""}`}
+          onClick={() => setMenuOpen(o => !o)}
+          aria-label="Toggle menu"
+        >
+          <span />
+          <span />
+          <span />
+        </button>
+      </nav>
+
+      {/* ── MOBILE MENU OVERLAY ─────────────────────────── */}
+      {menuOpen && (
+        <div className="mobile-nav sm:hidden">
+          <button
+            onClick={() => setMenuOpen(false)}
+            style={{
+              position: "absolute", top: 14, right: 16,
+              background: "transparent", border: "none",
+              fontSize: 13, color: "#5a6888", cursor: "pointer",
+              padding: "8px", WebkitTapHighlightColor: "transparent",
+            }}
+          >✕ Close</button>
+
+          {NAV_LINKS.map(l => (
+            <Link
+              key={l.href}
+              href={l.href}
+              className={`mobile-nav-link${pathname === l.href ? " active" : ""}`}
+              onClick={() => setMenuOpen(false)}
+            >
+              {l.label}
+            </Link>
+          ))}
+
+          <div style={{ marginTop: 24, display: "flex", gap: 16 }}>
+            <a href="https://x.com/f1_naija" target="_blank" rel="noopener noreferrer"
+              style={{ fontSize: 13, color: "#5a6888", textDecoration: "none" }}>
+              𝕏 Twitter
+            </a>
+            <a href="https://www.instagram.com/f1_naija/" target="_blank" rel="noopener noreferrer"
+              style={{ fontSize: 13, color: "#5a6888", textDecoration: "none" }}>
+              Instagram
+            </a>
+            <a href="https://www.tiktok.com/@f1.naija" target="_blank" rel="noopener noreferrer"
+              style={{ fontSize: 13, color: "#5a6888", textDecoration: "none" }}>
+              TikTok
+            </a>
           </div>
+        </div>
+      )}
 
-          {/* Social icon buttons */}
-          <div className="hidden items-center gap-2 sm:flex">
-            {/* X / Twitter */}
-            <Link
-              href="https://x.com/f1naija"
-              target="_blank"
-              aria-label="Follow on X"
-              className="flex h-7 w-7 items-center justify-center rounded-full border border-zinc-700 text-zinc-400 transition hover:border-zinc-400 hover:text-white active:scale-95"
-            >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-              </svg>
-            </Link>
-
-            {/* Instagram */}
-            <Link
-              href="https://instagram.com/f1naija"
-              target="_blank"
-              aria-label="Follow on Instagram"
-              className="flex h-7 w-7 items-center justify-center rounded-full border border-zinc-700 text-zinc-400 transition hover:border-pink-500 hover:text-pink-400 active:scale-95"
-            >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
-              </svg>
-            </Link>
-
-            {/* TikTok */}
-            <Link
-              href="https://tiktok.com/@f1naija"
-              target="_blank"
-              aria-label="Follow on TikTok"
-              className="flex h-7 w-7 items-center justify-center rounded-full border border-zinc-700 text-zinc-400 transition hover:border-zinc-300 hover:text-white active:scale-95"
-            >
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.75a4.85 4.85 0 01-1.01-.06z" />
-              </svg>
-            </Link>
-          </div>
-        </nav>
-      </div>
-
-      <main className="container mx-auto max-w-screen-lg px-4">
+      {/* ── MAIN ─────────────────────────────────────────── */}
+      <main className="container mx-auto max-w-(--breakpoint-lg) px-4">
         {children}
         <Footer />
       </main>
