@@ -18,6 +18,7 @@ export default function Countdown({ next, type }: Props) {
   const requestRef = useRef<number | null>(null);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
     const animateNextFrame = () => {
       const diff = duration(nextMoment.diff(now()));

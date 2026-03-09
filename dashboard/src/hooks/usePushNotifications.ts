@@ -60,11 +60,13 @@ export function usePushNotifications() {
       p.sessionActive = SessionStatus?.Status === "Started";
       p.rainfall = WeatherData?.Rainfall;
       if (RaceControlMessages?.Messages) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const msgs = RaceControlMessages.Messages as any[];
         const last = msgs[msgs.length - 1];
         if (last) p.lastRCM = last.Utc;
       }
       if (TimingData?.Lines) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const lines = TimingData.Lines as Record<string, any>;
         for (const [num, line] of Object.entries(lines)) {
           const pos = Number(line.Position ?? 0);
@@ -113,6 +115,7 @@ export function usePushNotifications() {
 
     // ── Fastest lap ───────────────────────────────────────────────────────
     if (TimingData?.Lines) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const lines = TimingData.Lines as Record<string, any>;
       for (const [num, line] of Object.entries(lines)) {
         if (
@@ -128,6 +131,7 @@ export function usePushNotifications() {
 
     // ── Position changes & retirements ────────────────────────────────────
     if (TimingData?.Lines && DriverList) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const lines = TimingData.Lines as Record<string, any>;
       for (const [num, line] of Object.entries(lines)) {
         const pos: number = Number(line.Position ?? 0);
@@ -165,6 +169,7 @@ export function usePushNotifications() {
 
     // ── Race control — SC / red flag / rain messages ──────────────────────
     if (RaceControlMessages?.Messages) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const msgs = RaceControlMessages.Messages as any[];
       const lastMsg = msgs[msgs.length - 1];
       if (lastMsg && lastMsg.Utc !== p.lastRCM) {
