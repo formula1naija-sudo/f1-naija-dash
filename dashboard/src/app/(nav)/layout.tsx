@@ -124,11 +124,20 @@ export default function Layout({ children }: Props) {
       }}>
         {/* Logo */}
         <Link href="/" style={{ display: "flex", alignItems: "center", WebkitTapHighlightColor: "transparent" }}>
-          <img
-            src="/tag-logo.png"
-            alt="F1 Naija"
-            style={{ height: 36, width: 36, objectFit: "contain" }}
-          />
+          <div style={{ width: 40, height: 40, overflow: "hidden", position: "relative", flexShrink: 0 }}>
+            <img
+              src="/tag-logo.png"
+              alt="F1 Naija"
+              style={{
+                position: "absolute",
+                width: 100,
+                height: 100,
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+              }}
+            />
+          </div>
         </Link>
 
         {/* Desktop links */}
