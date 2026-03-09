@@ -188,7 +188,15 @@ export default function HomeHero() {
         <div
           className="relative z-10 flex flex-col justify-center px-6 py-20 lg:px-12"
         >
-          <div className="hero-fade-1 mb-7 flex items-center gap-2">
+          {/* Logo mark */}
+        <div className="hero-fade-1 mb-8">
+          <img
+            src="/tag-logo.png"
+            alt="F1 Naija"
+            style={{ width: 72, height: 72, objectFit: "contain", filter: "drop-shadow(0 0 16px rgba(0,212,132,0.3))" }}
+          />
+        </div>
+        <div className="hero-fade-1 mb-7 flex items-center gap-2">
             <div style={{ width: 20, height: 1, background: "#00d484", flexShrink: 0 }} />
             <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: "#00d484" }}>
               Formula 1 · Season 2026
@@ -267,29 +275,65 @@ export default function HomeHero() {
           </div>
         </div>
 
-        {/* RIGHT ─ logo */}
+        {/* RIGHT ─ timing card */}
         <div className="hero-card-in relative z-10 flex items-center justify-center px-6 py-10 lg:py-20 lg:pr-8">
-          {/* ambient glow behind logo */}
+          {/* ambient glow behind card */}
           <div style={{
-            position: "absolute",
-            width: 420,
-            height: 420,
-            borderRadius: "50%",
-            background: "radial-gradient(circle,rgba(0,212,132,.12) 0%,transparent 70%)",
+            position: "absolute", width: 280, height: 280, borderRadius: "50%",
+            background: "radial-gradient(circle,rgba(0,212,132,.1) 0%,transparent 70%)",
             pointerEvents: "none",
           }} />
-          <img
-            src="/tag-logo.png"
-            alt="F1 Naija"
-            style={{
-              width: "min(380px, 80vw)",
-              height: "min(380px, 80vw)",
-              objectFit: "contain",
-              position: "relative",
-              zIndex: 1,
-              filter: "drop-shadow(0 0 60px rgba(0,212,132,0.25))",
-            }}
-          />
+
+          <div className="hero-glow-wrap w-full" style={{ maxWidth: 370 }}>
+            <div style={{ borderRadius: 14, background: "#0d1424", overflow: "hidden", position: "relative" }}>
+              {/* scanlines */}
+              <div style={{
+                position: "absolute", inset: 0, pointerEvents: "none", zIndex: 2,
+                backgroundImage: "repeating-linear-gradient(0deg,rgba(255,255,255,.01) 0px,rgba(255,255,255,.01) 1px,transparent 1px,transparent 4px)",
+              }} />
+              {/* header */}
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "13px 18px", background: "rgba(0,0,0,.3)", borderBottom: "1px solid rgba(255,255,255,.06)" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 10, fontWeight: 800, letterSpacing: ".1em", color: "#e8001f" }}>
+                  <div className="hero-live-dot" style={{ width: 6, height: 6, borderRadius: "50%", background: "#e8001f" }} />
+                  LIVE
+                </div>
+                <div style={{ fontSize: 11, fontWeight: 600, color: "#5a6888" }}>
+                  <span style={{ color: "#edf2ff" }}>Australian GP</span> · Race
+                </div>
+                <div style={{ fontSize: 11, fontWeight: 700, color: "#f5a724" }}>LAP 42/58</div>
+              </div>
+              {/* drivers */}
+              {MOCK_DRIVERS.map((d, i) => (
+                <div key={d.pos} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 18px", borderBottom: i < MOCK_DRIVERS.length - 1 ? "1px solid rgba(255,255,255,.04)" : "none" }}>
+                  <div style={{ width: 20, fontSize: 12, fontWeight: 700, textAlign: "center", flexShrink: 0, color: d.pos === 1 ? "#f5a724" : d.pos === 2 ? "#c0c8d8" : d.pos === 3 ? "#cd7f32" : "#5a6888" }}>{d.pos}</div>
+                  <div style={{ width: 3, height: 26, borderRadius: 2, background: d.color, flexShrink: 0 }} />
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: 9, color: "#5a6888", textTransform: "uppercase", letterSpacing: ".06em", lineHeight: 1 }}>{d.fn}</div>
+                    <div style={{ fontSize: 13, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".03em", lineHeight: 1.2 }}>{d.ln}</div>
+                    <div style={{ display: "flex", gap: 2, marginTop: 3 }}>
+                      {d.sectors.map((s, j) => (
+                        <div key={j} style={{ width: 16, height: 2, borderRadius: 1, background: SECTOR_COLORS[s] }} />
+                      ))}
+                    </div>
+                  </div>
+                  <div style={{ fontSize: d.pos === 1 ? 10 : 11, fontWeight: d.pos === 1 ? 800 : 600, color: d.pos === 1 ? "#f5a724" : "#5a6888", textAlign: "right", minWidth: 52, textTransform: d.pos === 1 ? "uppercase" : "none", letterSpacing: d.pos === 1 ? ".05em" : "normal" }}>
+                    {d.pos === 1 ? "LEADER" : gaps[i] !== null ? `+${Number(gaps[i]).toFixed(3)}` : ""}
+                  </div>
+                </div>
+              ))}
+              {/* footer */}
+              <div style={{ padding: "12px 18px", background: "rgba(0,0,0,.2)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <div>
+                  <div style={{ fontSize: 9, color: "#5a6888", textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 2 }}>Next Race</div>
+                  <div style={{ fontSize: 16, fontWeight: 800, letterSpacing: ".04em", color: "#00d484" }}>Chinese GP in 4d</div>
+                </div>
+                <div style={{ textAlign: "right" }}>
+                  <div style={{ fontSize: 9, color: "#5a6888", textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 2 }}>Lagos · WAT</div>
+                  <div style={{ fontSize: 13, fontWeight: 700 }}>{mounted ? localTime : "—"}</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
