@@ -3,18 +3,18 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import Link from "next/link";
 
 const CITIES = [
-  "ð³ð¬ LAGOS", "ð¬ð§ LONDON", "ðºð¸ HOUSTON", "ð¨ð¦ TORONTO", "ð¦ðª DUBAI",
-  "ð³ð¬ ABUJA", "ð¿ð¦ JOHANNESBURG", "ð³ð¬ PORT HARCOURT", "ð³ð± AMSTERDAM", "ð©ðª BERLIN",
+  "🇳🇬 LAGOS", "🇬🇧 LONDON", "🇺🇸 HOUSTON", "🇨🇦 TORONTO", "🇦🇪 DUBAI",
+  "🇳🇬 ABUJA", "🇿🇦 JOHANNESBURG", "🇳🇬 PORT HARCOURT", "🇳🇱 AMSTERDAM", "🇩🇪 BERLIN",
 ];
 
 const MARQUEE_CITIES = [
-  { flag: "ð³ð¬", name: "Lagos" }, { flag: "ð¬ð§", name: "London" },
-  { flag: "ðºð¸", name: "Houston" }, { flag: "ð¨ð¦", name: "Toronto" },
-  { flag: "ð¦ðª", name: "Dubai" }, { flag: "ð¿ð¦", name: "Johannesburg" },
-  { flag: "ð¦ðº", name: "Melbourne" }, { flag: "ð³ð±", name: "Amsterdam" },
-  { flag: "ð©ðª", name: "Berlin" }, { flag: "ð³ð¬", name: "Abuja" },
-  { flag: "ðºð¸", name: "New York" }, { flag: "ð¸ð¬", name: "Singapore" },
-  { flag: "ð³ð¬", name: "Port Harcourt" }, { flag: "ð®ðª", name: "Dublin" },
+  { flag: "🇳🇬", name: "Lagos" }, { flag: "🇬🇧", name: "London" },
+  { flag: "🇺🇸", name: "Houston" }, { flag: "🇨🇦", name: "Toronto" },
+  { flag: "🇦🇪", name: "Dubai" }, { flag: "🇿🇦", name: "Johannesburg" },
+  { flag: "🇦🇺", name: "Melbourne" }, { flag: "🇳🇱", name: "Amsterdam" },
+  { flag: "🇩🇪", name: "Berlin" }, { flag: "🇳🇬", name: "Abuja" },
+  { flag: "🇺🇸", name: "New York" }, { flag: "🇸🇬", name: "Singapore" },
+  { flag: "🇳🇬", name: "Port Harcourt" }, { flag: "🇮🇪", name: "Dublin" },
 ];
 
 const MOCK_DRIVERS = [
@@ -184,7 +184,7 @@ export default function HomeHero() {
 
           <div className="hero-fade-1 mb-7 flex items-center gap-2">
             <div style={{ width: 20, height: 1, background: "#00d484", flexShrink: 0 }} />
-            <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: "#00d484" }}>Formula 1 Â· Season 2026</span>
+            <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: "#00d484" }}>Formula 1 · Season 2026</span>
           </div>
 
           <div style={{ lineHeight: .9, marginBottom: 28 }}>
@@ -199,11 +199,11 @@ export default function HomeHero() {
           <p className="hero-fade-2" style={{ fontSize: 15, lineHeight: 1.7, color: "#5a6888", maxWidth: 400, marginBottom: 32 }}>
             The home of Formula 1 for{" "}
             <strong style={{ color: "#edf2ff", fontWeight: 600 }}>Naija fans everywhere</strong>{" "}
-            â Lagos to London, Houston to Dubai.
+            — Lagos to London, Houston to Dubai.
           </p>
 
           <div className="hero-fade-2" style={{ display: "flex", gap: 12, marginBottom: 44, flexWrap: "wrap" }}>
-            <Link href="/dashboard" style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "12px 26px", borderRadius: 7, fontSize: 13, fontWeight: 700, background: "#00d484", color: "#04060e", textDecoration: "none", letterSpacing: ".03em" }}>ð Open Dashboard</Link>
+            <Link href="/dashboard" style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "12px 26px", borderRadius: 7, fontSize: 13, fontWeight: 700, background: "#00d484", color: "#04060e", textDecoration: "none", letterSpacing: ".03em" }}>🏁 Open Dashboard</Link>
             <Link href="/schedule" style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "12px 26px", borderRadius: 7, fontSize: 13, fontWeight: 600, background: "transparent", color: "#edf2ff", textDecoration: "none", border: "1px solid rgba(255,255,255,.14)", letterSpacing: ".03em" }}>View Schedule</Link>
           </div>
 
@@ -218,7 +218,7 @@ export default function HomeHero() {
           </div>
         </div>
 
-        {/* RIGHT â timing card (clicks through to dashboard) */}
+        {/* RIGHT — timing card (clicks through to dashboard) */}
         <div className="hero-card-in relative z-10 flex items-center justify-center px-6 py-10 lg:py-20 lg:pr-8">
           <div style={{ position: "absolute", width: 280, height: 280, borderRadius: "50%", background: "radial-gradient(circle,rgba(0,212,132,.1) 0%,transparent 70%)", pointerEvents: "none" }} />
           <Link href="/dashboard" style={{ textDecoration: "none", display: "block", width: "100%", maxWidth: 370 }}>
@@ -233,7 +233,7 @@ export default function HomeHero() {
                     {isLive ? "LIVE" : "PREVIEW"}
                   </div>
                   <div style={{ fontSize: 11, fontWeight: 600, color: "#5a6888" }}>
-                    <span style={{ color: "#edf2ff" }}>{sessionName}</span> Â· {sessionType}
+                    <span style={{ color: "#edf2ff" }}>{sessionName}</span> · {sessionType}
                   </div>
                   <div style={{ fontSize: 11, fontWeight: 700, color: "#f5a724" }}>LAP {currentLap}/{totalLaps}</div>
                 </div>
@@ -265,8 +265,8 @@ export default function HomeHero() {
                     <div style={{ fontSize: 16, fontWeight: 800, letterSpacing: ".04em", color: "#00d484" }}>Chinese GP in 4d</div>
                   </div>
                   <div style={{ textAlign: "right" }}>
-                    <div style={{ fontSize: 9, color: "#5a6888", textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 2 }}>Lagos Â· WAT</div>
-                    <div style={{ fontSize: 13, fontWeight: 700 }}>{mounted ? localTime : "â"}</div>
+                    <div style={{ fontSize: 9, color: "#5a6888", textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 2 }}>Lagos · WAT</div>
+                    <div style={{ fontSize: 13, fontWeight: 700 }}>{mounted ? localTime : "—"}</div>
                   </div>
                 </div>
               </div>
