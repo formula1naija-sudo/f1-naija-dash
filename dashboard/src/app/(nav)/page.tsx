@@ -1,3 +1,5 @@
+"use client";
+
 import HomeHero from "@/components/HomeHero";
 import RaceCountdown from "@/components/RaceCountdown";
 import Link from "next/link";
