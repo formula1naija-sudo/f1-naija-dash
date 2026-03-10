@@ -6,6 +6,100 @@ import TeamRadios from "@/components/dashboard/TeamRadios";
 import TrackViolations from "@/components/dashboard/TrackViolations";
 import Map from "@/components/dashboard/Map";
 import Footer from "@/components/Footer";
+import { useDataStore } from "@/stores/useDataStore";
+
+function MapFrame() {
+	const circuitName = useDataStore((state) => state.state?.SessionInfo?.Meeting?.Circuit?.ShortName ?? "Circuit");
+	const lapCount = useDataStore((state) => state.state?.LapCount);
+
+	const lapProgress = lapCount?.TotalLaps
+		? Math.min((lapCount.CurrentLap / lapCount.TotalLaps) * 100, 100)
+		: 0;
+
+	return (
+		<div style={{
+			border: "1px solid var(--f1-border)",
+			borderRadius: 12,
+			background: "#0a0a0a",
+			position: "relative",
+			overflow: "hidden",
+			display: "flex",
+			alignItems: "center",
+			justifyContent: "center",
+			flex: 1,
+		}}>
+			{/* Circuit name label */}
+			<span style={{
+				position: "absolute", top: 14, left: 14,
+				fontSize: 10, fontWeight: 600,
+				color: "#3f3f46", letterSpacing: ".06em", textTransform: "uppercase",
+				zIndex: 10,
+			}}>
+				{circuitName}
+			</span>
+
+			{/* LIVE TRACKING badge */}
+			<span style={{
+				position: "absolute", top: 14, right: 14,
+				display: "flex", alignItems: "center", gap: 5,
+				fontSize: 10, fontWeight: 600,
+				color: "#00d484",
+				background: "rgba(0,212,132,0.1)",
+				border: "1px solid rgba(0,212,132,0.25)",
+				padding: "4px 10px", borderRadius: 6,
+				zIndex: 10,
+			}}>
+				<span style={{
+					width: 5, height: 5, borderRadius: "50%",
+					background: "#00d484",
+					boxShadow: "0 0 5px #00d484",
+					display: "inline-block",
+				}} />
+				LIVE TRACKING
+			</span>
+
+			<div className="h-full w-full">
+				<Map />
+			</div>
+
+			{lapCount && (
+				<>
+					<span style={{
+						position: "absolute", bottom: 22, left: 14,
+						fontSize: 9, color: "#52525b",
+						letterSpacing: ".08em", textTransform: "uppercase",
+						zIndex: 10,
+					}}>
+						Lap Progress
+					</span>
+					<span style={{
+						position: "absolute", bottom: 22, right: 14,
+						fontSize: 10, fontWeight: 700, color: "#f5a724",
+						zIndex: 10,
+					}}>
+						Lap {lapCount.CurrentLap} / {lapCount.TotalLaps}
+					</span>
+					<div style={{
+						position: "absolute", bottom: 14, left: 14, right: 14,
+						height: 3,
+						background: "rgba(255,255,255,0.04)",
+						borderRadius: 99,
+						overflow: "hidden",
+						zIndex: 10,
+					}}>
+						<div style={{
+							height: "100%",
+							width: `${lapProgress}%`,
+							background: "linear-gradient(90deg,#00d484,rgba(0,212,132,0.3))",
+							borderRadius: 99,
+							transition: "width 1s linear",
+						}} />
+					</div>
+				</>
+			)}
+		</div>
+	);
+}
 
 export default function Page() {
 	return (
@@ -67,8 +161,8 @@ export default function Page() {
 						</div>
 					</div>
 
-					<div className="flex-1 2xl:max-h-[50rem]">
-						<Map />
+					<div className="flex flex-1 2xl:max-h-[50rem]">
+						<MapFrame />
 					</div>
 				</div>
 

@@ -52,7 +52,8 @@ export default function Driver({ driver, timingDriver, position }: Props) {
 
 	const teamHex = driver.TeamColour ? `#${driver.TeamColour}` : "#444";
 
-	const cardBg = favoriteDriver
+	// Row background — matches mockup .g-row / .p-row / .r-row
+	const rowBg = favoriteDriver
 		? "rgba(0,212,132,0.05)"
 		: hasFastest
 		? "rgba(156,80,245,0.05)"
@@ -60,30 +61,31 @@ export default function Driver({ driver, timingDriver, position }: Props) {
 		? "rgba(232,0,31,0.05)"
 		: "transparent";
 
-	const cardBorder = favoriteDriver
-		? "rgba(0,212,132,0.15)"
+	// Left accent bar colour
+	const accentColor = favoriteDriver
+		? "#00d484"
 		: hasFastest
-		? "rgba(156,80,245,0.15)"
+		? "#9c50f5"
 		: sessionPart != undefined && inDangerZone(position, sessionPart)
-		? "rgba(232,0,31,0.15)"
-		: "rgba(255,255,255,0.04)";
+		? "#e8001f"
+		: teamHex;
 
 	return (
 		<motion.div
 			layout="position"
-			className={clsx("relative flex flex-col gap-1 rounded-xl select-none overflow-hidden", {
+			className={clsx("relative select-none overflow-hidden", {
 				"opacity-50": timingDriver.KnockedOut || timingDriver.Retired || timingDriver.Stopped,
 			})}
 			style={{
-				background: cardBg,
-				border: `1px solid ${cardBorder}`,
-				padding: "6px 6px 6px 14px",
+				background: rowBg,
+				borderBottom: "1px solid rgba(255,255,255,0.025)",
+				padding: "6px 13px 6px 17px",
 			}}
 		>
-			{/* Team colour left accent bar */}
+			{/* Team colour / state left accent bar */}
 			<div
 				className="absolute top-0 left-0 bottom-0"
-				style={{ width: 3, background: teamHex, borderRadius: "12px 0 0 12px" }}
+				style={{ width: 3, background: accentColor, borderRadius: "12px 0 0 12px" }}
 			/>
 
 			<div
@@ -94,7 +96,7 @@ export default function Driver({ driver, timingDriver, position }: Props) {
 						: "8rem 3.5rem 5.5rem 4rem 5rem 5.5rem auto",
 				}}
 			>
-				{/* Driver row: pos · TLA badge · LastName */}
+				{/* Driver: pos · TLA badge · LastName */}
 				<div className="flex min-w-0 items-center gap-1.5 overflow-hidden">
 					<span style={{
 						fontSize: 12, fontWeight: 800, lineHeight: 1,
