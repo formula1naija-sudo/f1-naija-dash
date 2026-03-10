@@ -38,20 +38,17 @@ export default function WeatherPage() {
 			{/* ── MAP + CONDITIONS PANEL ── */}
 			<div className="flex min-h-0 flex-1 flex-col md:flex-row">
 
-				{/* Conditions sidebar */}
-				<div style={{
-					flexShrink: 0,
-					width: "100%",
-					borderBottom: "1px solid var(--f1-border-soft)",
-				}} className="md:border-b-0 md:border-r md:w-56 md:overflow-y-auto">
-					<div style={{ padding: "14px 14px 0" }}>
-						<WeatherConditions />
-					</div>
+				{/* Map — left */}
+				<div className="relative min-h-0 flex-1" style={{ minHeight: 320 }}>
+					<WeatherMap />
 				</div>
 
-				{/* Map */}
-				<div className="relative min-h-0 flex-1" style={{ minHeight: 280 }}>
-					<WeatherMap />
+				{/* Conditions — right */}
+				<div
+					className="md:border-l md:w-72 md:overflow-y-auto"
+					style={{ flexShrink: 0, width: "100%", borderColor: "var(--f1-border-soft)" }}
+				>
+					<WeatherConditions />
 				</div>
 			</div>
 		</div>

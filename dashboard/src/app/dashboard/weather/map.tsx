@@ -10,8 +10,6 @@ import { getRainviewer } from "@/lib/rainviewer";
 
 import { useDataStore } from "@/stores/useDataStore";
 
-import PlayControls from "@/components/ui/PlayControls";
-
 import Timeline from "./map-timeline";
 
 export function WeatherMap() {
@@ -110,19 +108,110 @@ export function WeatherMap() {
 		currentFrameRef.current = idx;
 	};
 
+	/* Location label: "MELBOURNE · ALBERT PARK" */
+	const locationLabel = meeting
+		? `${meeting.Location.toUpperCase()} · ${meeting.Circuit.ShortName.toUpperCase()}`
+		: null;
+
 	return (
 		<div className="relative h-full w-full">
 			<div ref={mapContainerRef} className="absolute h-full w-full" />
 
-			{!loading && frames.length > 0 && (
-				<div className="absolute right-0 bottom-0 left-0 z-20 m-2 flex gap-4 rounded-lg bg-black/80 p-4 backdrop-blur-xs md:right-auto md:w-lg">
-					<PlayControls playing={playing} onClick={() => setPlaying((v) => !v)} />
-
-					<Timeline frames={frames} setFrame={setFrame} playing={playing} />
+			{/* ── Top-left: location ── */}
+			{locationLabel && (
+				<div
+					style={{
+						position: "absolute",
+						top: 12,
+						left: 12,
+						zIndex: 20,
+						fontSize: 11,
+						fontWeight: 700,
+						letterSpacing: ".1em",
+						color: "rgba(255,255,255,0.7)",
+						background: "rgba(0,0,0,0.55)",
+						backdropFilter: "blur(6px)",
+						padding: "4px 10px",
+						borderRadius: 6,
+						border: "1px solid rgba(255,255,255,0.08)",
+					}}
+				>
+					{locationLabel}
 				</div>
 			)}
 
-			{loading && <div className="h-full w-full animate-pulse rounded-lg bg-zinc-800" />}
+			{/* ── Top-right: compass ── */}
+			<button
+				onClick={() => mapRef.current?.resetNorth()}
+				style={{
+					position: "absolute",
+					top: 12,
+					right: 12,
+					zIndex: 20,
+					display: "flex",
+					alignItems: "center",
+					gap: 4,
+					padding: "4px 10px",
+					borderRadius: 6,
+					background: "rgba(0,0,0,0.55)",
+					backdropFilter: "blur(6px)",
+					border: "1px solid rgba(255,255,255,0.08)",
+					cursor: "pointer",
+					fontSize: 11,
+					fontWeight: 700,
+					color: "rgba(255,255,255,0.7)",
+					letterSpacing: ".06em",
+				}}
+			>
+				N <span style={{ fontSize: 10 }}>↑</span>
+			</button>
+
+			{/* ── Bottom: RADAR TIMELINE panel ── */}
+			{!loading && frames.length > 0 && (
+				<div
+					style={{
+						position: "absolute",
+						bottom: 0,
+						left: 0,
+						right: 0,
+						zIndex: 20,
+						margin: 8,
+						borderRadius: 10,
+						background: "rgba(0,0,0,0.82)",
+						backdropFilter: "blur(8px)",
+						border: "1px solid rgba(255,255,255,0.07)",
+						overflow: "hidden",
+					}}
+				>
+					{/* Panel header */}
+					<div
+						style={{
+							padding: "8px 14px 4px",
+							fontSize: 9,
+							fontWeight: 700,
+							letterSpacing: ".14em",
+							textTransform: "uppercase",
+							color: "#52525b",
+						}}
+					>
+						Radar Timeline · Past 2h — Nowcast +1h
+					</div>
+
+					{/* Timeline + controls */}
+					<div style={{ padding: "2px 14px 12px" }}>
+						<Timeline
+							frames={frames}
+							setFrame={setFrame}
+							playing={playing}
+							setPlaying={setPlaying}
+						/>
+					</div>
+				</div>
+			)}
+
+			{loading && (
+				<div className="h-full w-full animate-pulse rounded-lg bg-zinc-800" />
+			)}
 		</div>
 	);
 }

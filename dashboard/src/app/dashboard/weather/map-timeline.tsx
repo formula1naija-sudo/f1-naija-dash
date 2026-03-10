@@ -72,9 +72,10 @@ type Props = {
 	setFrame: (id: number) => void;
 
 	playing: boolean;
+	setPlaying: (fn: (v: boolean) => boolean) => void;
 };
 
-export default function Timeline({ frames, setFrame, playing }: Props) {
+export default function Timeline({ frames, setFrame, playing, setPlaying }: Props) {
 	const constraintsRef = useRef<HTMLDivElement | null>(null);
 	const fullBarRef = useRef<null | HTMLDivElement>(null);
 	const scrubberRef = useRef<null | HTMLButtonElement>(null);
@@ -84,32 +85,28 @@ export default function Timeline({ frames, setFrame, playing }: Props) {
 	const dragControls = useDragControls();
 
 	const [dragging, setDragging] = useState<boolean>(false);
-	const [time, setTime] = useState<number>(0); // relative to DURATION
+	const [time, setTime] = useState<number>(0);
 
 	const startTime = frames[0].time;
 	const endTime = frames[frames.length - 1].time;
-
 	const DURATION = endTime - startTime;
 
 	const currentTime = startTime + time;
 
-	// let minsRemaining = Math.floor((DURATION - currentTime) / 60);
-	// let secsRemaining = `${(DURATION - currentTime) % 60}`.padStart(2, "0");
-	// let timecodeRemaining = `${minsRemaining}:${secsRemaining}`;
-	// let progress = (currentTime / DURATION) * 100;
+	/* ── NOW marker position ── */
+	const nowUnix = Math.floor(Date.now() / 1000);
+	const nowProgress = clamp((nowUnix - startTime) / DURATION, 0, 1);
 
+	/* ── Frame selection ── */
 	useEffect(() => {
 		const targetTime = startTime + time;
-
-		// find the nearest frame, but it must be older
 		const nearestFrame = frames.findLast((frame) => frame.time <= targetTime);
-
 		if (nearestFrame) {
 			setFrame(nearestFrame.id);
 		}
 	}, [time, frames, setFrame, startTime]);
 
-	// every 0.5s, advance 10 minutes
+	/* ── Playback: advance 10 min every 0.5s ── */
 	useInterval(
 		() => {
 			if (time < DURATION) {
@@ -121,17 +118,15 @@ export default function Timeline({ frames, setFrame, playing }: Props) {
 		playing ? 500 : null,
 	);
 
-	// every 0.01s, advance 0.2 minutes
+	/* ── Smooth scrubber animation: advance 12s every 10ms ── */
 	useInterval(
 		() => {
 			if (currentTimePrecise.get() < DURATION) {
-				currentTimePrecise.set(currentTimePrecise.get() + 0.2 * 60); // 12
-
+				currentTimePrecise.set(currentTimePrecise.get() + 0.2 * 60);
 				const newX = getXFromProgress({
 					containerRef: fullBarRef,
 					progress: currentTimePrecise.get() / DURATION,
 				});
-
 				scrubberX.set(newX);
 			} else {
 				currentTimePrecise.set(0);
@@ -141,29 +136,87 @@ export default function Timeline({ frames, setFrame, playing }: Props) {
 		playing ? 10 : null,
 	);
 
-	const legendCount = 10;
+	/* ── Skip helpers ── */
+	const skip = (deltaSecs: number) => {
+		const newTime = clamp(time + deltaSecs, 0, DURATION);
+		setTime(newTime);
+		currentTimePrecise.set(newTime);
+		const newX = getXFromProgress({
+			containerRef: fullBarRef,
+			progress: newTime / DURATION,
+		});
+		scrubberX.set(newX);
+	};
+
+	/* ── Timeline legend (10 ticks) ── */
+	const legendCount = 6;
 	const timeInterval = DURATION / (legendCount - 1);
 
 	return (
 		<div className="relative w-full select-none">
+			{/* ── Scrubber bar ── */}
 			<div
-				className="relative mt-2"
+				className="relative mt-1"
 				onPointerDown={(event) => {
 					const newProgress = getProgressFromX({
 						containerRef: fullBarRef,
 						x: event.clientX,
 					});
 					dragControls.start(event, { snapToCursor: true });
-					setTime(Math.floor(newProgress * DURATION));
-					currentTimePrecise.set(newProgress * DURATION);
+					const newTime = Math.floor(newProgress * DURATION);
+					setTime(newTime);
+					currentTimePrecise.set(newTime);
 				}}
 			>
-				<div ref={fullBarRef} className="h-1 w-full rounded-full bg-zinc-800" />
+				{/* Track */}
+				<div ref={fullBarRef} className="relative h-1 w-full rounded-full bg-zinc-800">
+					{/* Progress fill */}
+					<div
+						style={{
+							position: "absolute",
+							top: 0,
+							left: 0,
+							height: "100%",
+							width: `${(time / DURATION) * 100}%`,
+							background: "linear-gradient(90deg,#00d484,rgba(0,212,132,0.5))",
+							borderRadius: 99,
+							transition: "width 0.4s linear",
+						}}
+					/>
 
-				{/* <motion.div layout style={{ width: progressPreciseWidth }} className="absolute top-0">
-					<div className="bg- absolute inset-0 h-[3px] rounded-full bg-slate-500"></div>
-				</motion.div> */}
+					{/* NOW marker */}
+					{nowProgress > 0 && nowProgress < 1 && (
+						<div
+							style={{
+								position: "absolute",
+								top: -6,
+								bottom: -6,
+								left: `${nowProgress * 100}%`,
+								width: 1,
+								background: "#f5a724",
+								transform: "translateX(-50%)",
+							}}
+						>
+							<span
+								style={{
+									position: "absolute",
+									top: -16,
+									left: "50%",
+									transform: "translateX(-50%)",
+									fontSize: 8,
+									fontWeight: 700,
+									color: "#f5a724",
+									letterSpacing: ".06em",
+									whiteSpace: "nowrap",
+								}}
+							>
+								NOW
+							</span>
+						</div>
+					)}
+				</div>
 
+				{/* Scrubber handle */}
 				<div className="absolute inset-0" ref={constraintsRef}>
 					<motion.button
 						className="absolute flex cursor-ew-resize items-center justify-center rounded-full active:cursor-grabbing"
@@ -200,7 +253,6 @@ export default function Timeline({ frames, setFrame, playing }: Props) {
 
 						<AnimatePresence>
 							{dragging && (
-								// TODO add background blur so you can always see the time
 								<motion.p
 									className="absolute text-sm font-medium tracking-wide tabular-nums"
 									initial={{ y: 12, opacity: 0 }}
@@ -215,15 +267,93 @@ export default function Timeline({ frames, setFrame, playing }: Props) {
 				</div>
 			</div>
 
+			{/* ── Timestamps legend ── */}
 			<div className="mt-4 flex flex-row justify-between">
 				{Array.from({ length: legendCount }).map((_, i) => {
 					const legendTime = startTime + i * timeInterval;
+					const isNow = Math.abs(legendTime - nowUnix) < timeInterval / 2 && i > 0 && i < legendCount - 1;
 					return (
-						<div key={i} className="text-xs text-zinc-500">
-							{unix(legendTime).format("HH:mm")}
+						<div
+							key={i}
+							style={{
+								fontSize: 10,
+								fontWeight: isNow ? 700 : 500,
+								color: isNow ? "#f5a724" : "#52525b",
+							}}
+						>
+							{isNow ? "NOW" : unix(legendTime).format("HH:mm")}
 						</div>
 					);
 				})}
+			</div>
+
+			{/* ── Playback controls ── */}
+			<div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 10 }}>
+				{/* Play / Pause */}
+				<button
+					onClick={() => setPlaying((v) => !v)}
+					style={{
+						display: "flex",
+						alignItems: "center",
+						gap: 6,
+						padding: "5px 14px",
+						borderRadius: 6,
+						background: playing ? "rgba(0,212,132,0.15)" : "rgba(0,212,132,0.1)",
+						border: `1px solid ${playing ? "rgba(0,212,132,0.5)" : "rgba(0,212,132,0.2)"}`,
+						cursor: "pointer",
+						fontSize: 11,
+						fontWeight: 700,
+						color: "#00d484",
+						letterSpacing: ".04em",
+					}}
+				>
+					<span style={{ fontSize: 10 }}>{playing ? "⏸" : "▶"}</span>
+					{playing ? "Pause" : "Play"}
+				</button>
+
+				{/* ◀◀ -30m */}
+				<button
+					onClick={() => skip(-30 * 60)}
+					style={{
+						display: "flex",
+						alignItems: "center",
+						gap: 5,
+						padding: "5px 12px",
+						borderRadius: 6,
+						background: "rgba(255,255,255,0.04)",
+						border: "1px solid rgba(255,255,255,0.08)",
+						cursor: "pointer",
+						fontSize: 11,
+						fontWeight: 600,
+						color: "rgba(255,255,255,0.5)",
+						letterSpacing: ".02em",
+					}}
+				>
+					<span style={{ fontSize: 10 }}>⏮</span>
+					-30m
+				</button>
+
+				{/* ▶▶ +30m */}
+				<button
+					onClick={() => skip(30 * 60)}
+					style={{
+						display: "flex",
+						alignItems: "center",
+						gap: 5,
+						padding: "5px 12px",
+						borderRadius: 6,
+						background: "rgba(255,255,255,0.04)",
+						border: "1px solid rgba(255,255,255,0.08)",
+						cursor: "pointer",
+						fontSize: 11,
+						fontWeight: 600,
+						color: "rgba(255,255,255,0.5)",
+						letterSpacing: ".02em",
+					}}
+				>
+					+30m
+					<span style={{ fontSize: 10 }}>⏭</span>
+				</button>
 			</div>
 		</div>
 	);
