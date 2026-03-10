@@ -191,9 +191,16 @@ export default function NewsPage() {
       })
       .then((data) => {
         if (Array.isArray(data.items) && data.items.length > 0) {
-          setNewsItems(data.items);
+          setNewsItems((prev) => {
+            // Only reset visible count to PAGE_SIZE when genuinely new stories
+            // arrive (first item changed). Otherwise an auto-refresh every 2 min
+            // would collapse the user's expanded "load more" view back to 12.
+            if (prev.length === 0 || prev[0]?.link !== data.items[0]?.link) {
+              setVisibleCount(PAGE_SIZE);
+            }
+            return data.items;
+          });
           setError(null);
-          setVisibleCount(PAGE_SIZE);
         }
       })
       .catch(() => {

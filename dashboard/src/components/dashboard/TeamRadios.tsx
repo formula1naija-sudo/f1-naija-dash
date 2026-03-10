@@ -24,7 +24,9 @@ export default function TeamRadios() {
 
 			{teamRadios && gmtOffset && drivers && teamRadios.Captures && (
 				<AnimatePresence>
-					{teamRadios.Captures.sort(sortUtc)
+					{/* Spread into a new array — .sort() mutates in place and would
+					    silently reorder the Captures array inside the Zustand store. */}
+					{[...teamRadios.Captures].sort(sortUtc)
 						.slice(0, 20)
 						.map((teamRadio, i) => (
 							<RadioMessage

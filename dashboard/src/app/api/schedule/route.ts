@@ -2,8 +2,10 @@ import { env } from "@/env";
 
 export async function GET() {
 	try {
+		// Cache the schedule for 5 minutes — it only changes when sessions
+		// start/end, so there's no need to re-fetch Railway on every request.
 		const res = await fetch(env.API_URL + "/api/schedule", {
-			cache: "no-store",
+			next: { revalidate: 300 },
 		});
 
 		if (!res.ok) {

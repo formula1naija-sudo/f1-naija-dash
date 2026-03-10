@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 
-export const dynamic = "force-dynamic";
+// Cache Twitter results for 60 s — force-dynamic would override the
+// per-fetch revalidate:60 and hit the API on every single request.
+export const revalidate = 60;
 
 const BEARER_TOKEN = process.env.TWITTER_BEARER_TOKEN;
 

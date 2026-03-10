@@ -32,6 +32,13 @@ export default function RaceControl() {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	// Keep the audio element's volume in sync when the user changes the setting.
+	useEffect(() => {
+		if (chimeRef.current) {
+			chimeRef.current.volume = raceControlChimeVolume / 100;
+		}
+	}, [raceControlChimeVolume]);
+
 	useEffect(() => {
 		if (typeof window === "undefined") return;
 
@@ -59,7 +66,9 @@ export default function RaceControl() {
 
 			{messages && gmtOffset && (
 				<AnimatePresence>
-					{messages
+					{/* Spread into a new array before sorting — .sort() mutates in place
+					    and would silently reorder the array inside the Zustand store. */}
+					{[...messages]
 						.sort(sortUtc)
 						.filter((msg) => (msg.Flag ? msg.Flag.toLowerCase() !== "blue" : true))
 						.map((msg, i) => (

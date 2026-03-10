@@ -152,13 +152,13 @@ export const useDataEngine = ({ updateState, updatePosition, updateCarData }: Pr
 			}
 		}
 
-		const maxDelay = Math.min(
-			...Object.values(buffers)
-				.map((buffer) => buffer.maxDelay())
-				.filter((delay) => delay > 0),
-			// carBuffer.maxDelay(),
-			// posBuffer.maxDelay(),
-		);
+		// Filter out 0-delay buffers (no timed data yet), then find the minimum.
+		// Without the empty-array guard, Math.min(...[]) returns Infinity, which
+		// would make the delay display show "∞" until the first timed frames arrive.
+		const delayValues = Object.values(buffers)
+			.map((buffer) => buffer.maxDelay())
+			.filter((delay) => delay > 0);
+		const maxDelay = delayValues.length > 0 ? Math.min(...delayValues) : 0;
 
 		setMaxDelay(maxDelay);
 	};
