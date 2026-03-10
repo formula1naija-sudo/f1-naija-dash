@@ -39,14 +39,14 @@ export default function WeatherPage() {
 			<div className="flex min-h-0 flex-1 flex-col md:flex-row">
 
 				{/* Map — left */}
-				<div className="relative min-h-0 flex-1" style={{ minHeight: 320 }}>
+				<div className="relative min-h-0 h-[420px] w-full md:h-auto md:flex-1" style={{ minHeight: 320 }}>
 					<WeatherMap />
 				</div>
 
 				{/* Conditions — right */}
 				<div
-					className="md:border-l md:w-72 md:overflow-y-auto"
-					style={{ flexShrink: 0, width: "100%", borderColor: "var(--f1-border-soft)" }}
+					className="w-full shrink-0 md:w-72 md:overflow-y-auto md:border-l"
+					style={{ borderColor: "var(--f1-border-soft)" }}
 				>
 					<WeatherConditions />
 				</div>
