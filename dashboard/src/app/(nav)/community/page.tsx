@@ -92,10 +92,12 @@ function SocialCard({
         textDecoration: "none", transition: "border-color .18s, transform .18s",
       }}
       onMouseEnter={e => {
+        if (!window.matchMedia("(hover:hover)").matches) return;
         (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(0,212,132,.3)";
         (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(-2px)";
       }}
       onMouseLeave={e => {
+        if (!window.matchMedia("(hover:hover)").matches) return;
         (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(255,255,255,.07)";
         (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(0)";
       }}
@@ -303,8 +305,8 @@ export default function CommunityPage() {
             border: "1px solid rgba(255,255,255,.07)",
             transition: "border-color .18s",
           }}
-            onMouseEnter={e => (e.currentTarget.style.borderColor = "rgba(0,212,132,.3)")}
-            onMouseLeave={e => (e.currentTarget.style.borderColor = "rgba(255,255,255,.07)")}
+            onMouseEnter={e => { if (!window.matchMedia("(hover:hover)").matches) return; e.currentTarget.style.borderColor = "rgba(0,212,132,.3)"; }}
+            onMouseLeave={e => { if (!window.matchMedia("(hover:hover)").matches) return; e.currentTarget.style.borderColor = "rgba(255,255,255,.07)"; }}
           >
             <div style={{ fontSize: 28, marginBottom: 10 }}>🎙</div>
             <div style={{ fontSize: 14, fontWeight: 800, marginBottom: 6 }}>X Spaces</div>
@@ -322,8 +324,8 @@ export default function CommunityPage() {
             border: "1px solid rgba(255,255,255,.07)",
             transition: "border-color .18s",
           }}
-            onMouseEnter={e => (e.currentTarget.style.borderColor = "rgba(0,212,132,.3)")}
-            onMouseLeave={e => (e.currentTarget.style.borderColor = "rgba(255,255,255,.07)")}
+            onMouseEnter={e => { if (!window.matchMedia("(hover:hover)").matches) return; e.currentTarget.style.borderColor = "rgba(0,212,132,.3)"; }}
+            onMouseLeave={e => { if (!window.matchMedia("(hover:hover)").matches) return; e.currentTarget.style.borderColor = "rgba(255,255,255,.07)"; }}
           >
             <div style={{ fontSize: 28, marginBottom: 10 }}>🏁</div>
             <div style={{ fontSize: 14, fontWeight: 800, marginBottom: 6 }}>Race Day Threads</div>
