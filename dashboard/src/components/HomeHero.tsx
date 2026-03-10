@@ -2,6 +2,8 @@
 import Image from "next/image";
 import { useState, useEffect, useRef, useMemo } from "react";
 import Link from "next/link";
+import { env } from "@/env";
+import type { Round } from "@/types/schedule.type";
 
 const CITIES = [
   "🇳🇬 LAGOS", "🇬🇧 LONDON", "🇺🇸 HOUSTON", "🇨🇦 TORONTO", "🇦🇪 DUBAI",
@@ -53,6 +55,7 @@ export default function HomeHero() {
   const [gaps, setGaps] = useState(MOCK_DRIVERS.map(d => d.baseGap));
   const [mounted, setMounted] = useState(false);
   const [localTime, setLocalTime] = useState("");
+  const [nextRound, setNextRound] = useState<Round | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const stateRef = useRef<any>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -76,7 +79,8 @@ export default function HomeHero() {
       setLocalTime(now.toLocaleTimeString("en-US", { timeZone: "Africa/Lagos", hour12: true, hour: "numeric", minute: "2-digit", second: "2-digit" }));
     }, 1000);
 
-    const sse = new EventSource("/api/realtime");
+    // Fix: use NEXT_PUBLIC_LIVE_URL (not relative path — no /api/realtime on this domain)
+    const sse = new EventSource(`${env.NEXT_PUBLIC_LIVE_URL}/api/realtime`);
     sse.addEventListener("initial", (e: MessageEvent) => {
       const d = JSON.parse(e.data);
       stateRef.current = d;
@@ -87,6 +91,17 @@ export default function HomeHero() {
       stateRef.current = deepMerge(stateRef.current || {}, d);
       setLiveData({ ...stateRef.current });
     });
+
+    // Fetch next race from schedule API
+    fetch("/api/schedule")
+      .then(r => r.ok ? r.json() : null)
+      .then((rounds: Round[] | null) => {
+        if (!rounds) return;
+        const now = Date.now();
+        const next = rounds.find(r => new Date(r.end).getTime() > now);
+        if (next) setNextRound(next);
+      })
+      .catch(() => null);
 
     return () => {
       clearInterval(cityTimer);
@@ -268,7 +283,13 @@ export default function HomeHero() {
                 <div style={{ padding: "12px 18px", background: "rgba(0,0,0,.2)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                   <div>
                     <div style={{ fontSize: 9, color: "var(--f1-muted)", textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 2 }}>Next Race</div>
-                    <div style={{ fontSize: 16, fontWeight: 800, letterSpacing: ".04em", color: "#00d484" }}>Chinese GP in 4d</div>
+                    {nextRound ? (
+                      <div style={{ fontSize: 14, fontWeight: 800, letterSpacing: ".02em", color: "#00d484" }}>
+                        {nextRound.countryName} GP &middot; {new Date(nextRound.start).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}
+                      </div>
+                    ) : (
+                      <div style={{ fontSize: 14, fontWeight: 800, letterSpacing: ".02em", color: "#00d484" }}>—</div>
+                    )}
                   </div>
                   <div style={{ textAlign: "right" }}>
                     <div style={{ fontSize: 9, color: "var(--f1-muted)", textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 2 }}>Lagos · WAT</div>

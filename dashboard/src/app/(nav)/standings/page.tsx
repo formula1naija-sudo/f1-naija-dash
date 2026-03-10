@@ -99,7 +99,7 @@ export default function StandingsPage() {
   const maxConstructorPoints = parseFloat(constructors[0]?.points || "1");
 
   return (
-    <div style={{ background: "#04060e", color: "var(--f1-text)", minHeight: "100vh" }}>
+    <div style={{ background: "var(--f1-bg-page)", color: "var(--f1-text)", minHeight: "100vh" }}>
       <style>{`
         @keyframes standFadeUp {
           from { opacity: 0; transform: translateY(16px); }

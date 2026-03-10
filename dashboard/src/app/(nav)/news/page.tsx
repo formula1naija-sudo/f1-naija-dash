@@ -262,7 +262,7 @@ export default function NewsPage() {
   const hasMore = visibleCount < newsItems.length;
 
   return (
-    <div style={{ background: "#04060e", color: "var(--f1-text)", minHeight: "100vh" }}>
+    <div style={{ background: "var(--f1-bg-page)", color: "var(--f1-text)", minHeight: "100vh" }}>
       <style>{`
         @keyframes newsFadeUp {
           from { opacity: 0; transform: translateY(16px); }
