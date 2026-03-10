@@ -21,7 +21,6 @@ import DelayTimer from '@/components/DelayTimer';
 import ConnectionStatus from '@/components/ConnectionStatus';
 import WhatsAppShare from '@/components/WhatsAppShare';
 import Watermark from '@/components/Watermark';
-import ThemeToggle from '@/components/ThemeToggle';
 import OneSignalInit from '@/components/OneSignalInit';
 import PushPrompt from '@/components/PushPrompt';
 import PushNotificationActivator from '@/components/PushNotificationActivator';
@@ -52,7 +51,6 @@ export default function DashboardLayout({ children }: Props) {
         <Sidebar key="sidebar" connected={connected} />
         <WhatsAppShare />
         <Watermark />
-        <ThemeToggle />
         <NotificationPrompt />
         <OneSignalInit />
         <PushPrompt />

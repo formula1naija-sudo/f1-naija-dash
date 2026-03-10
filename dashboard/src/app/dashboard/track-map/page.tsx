@@ -4,7 +4,6 @@ import { AnimatePresence, motion } from "motion/react";
 import clsx from "clsx";
 
 import Map from "@/components/dashboard/Map";
-import DriverTag from "@/components/driver/DriverTag";
 import DriverDRS from "@/components/driver/DriverDRS";
 import DriverInfo from "@/components/driver/DriverInfo";
 import DriverGap from "@/components/driver/DriverGap";
@@ -115,23 +114,72 @@ const TrackMapDriver = ({ position, driver, timingDriver }: TrackMapDriverProps)
 
 	const favoriteDriver = useSettingsStore((state) => state.favoriteDrivers.includes(driver.RacingNumber));
 
+	const teamHex = driver.TeamColour ? `#${driver.TeamColour}` : "#444";
+
+	const cardBg = favoriteDriver
+		? "rgba(0,212,132,0.05)"
+		: hasFastest
+		? "rgba(156,80,245,0.05)"
+		: sessionPart != undefined && inDangerZone(position, sessionPart)
+		? "rgba(232,0,31,0.05)"
+		: "transparent";
+
+	const cardBorder = favoriteDriver
+		? "rgba(0,212,132,0.15)"
+		: hasFastest
+		? "rgba(156,80,245,0.15)"
+		: sessionPart != undefined && inDangerZone(position, sessionPart)
+		? "rgba(232,0,31,0.15)"
+		: "rgba(255,255,255,0.04)";
+
 	return (
 		<motion.div
 			layout="position"
-			className={clsx("flex flex-col gap-1 rounded-lg p-1.5 select-none", {
+			className={clsx("relative flex flex-col gap-1 rounded-xl select-none overflow-hidden", {
 				"opacity-50": timingDriver.KnockedOut || timingDriver.Retired || timingDriver.Stopped,
-				"bg-sky-800/30": favoriteDriver,
-				"bg-violet-800/30": hasFastest,
-				"bg-red-800/30": sessionPart != undefined && inDangerZone(position, sessionPart),
 			})}
+			style={{
+				background: cardBg,
+				border: `1px solid ${cardBorder}`,
+				padding: "6px 6px 6px 14px",
+			}}
 		>
+			{/* Team colour left accent bar */}
+			<div
+				className="absolute top-0 left-0 bottom-0"
+				style={{ width: 3, background: teamHex, borderRadius: "12px 0 0 12px" }}
+			/>
+
 			<div
 				className="grid items-center gap-2"
 				style={{
-					gridTemplateColumns: "5.5rem 3.5rem 4rem 5rem 5rem",
+					gridTemplateColumns: "8rem 3.5rem 4rem 5rem 5rem",
 				}}
 			>
-				<DriverTag className="min-w-full!" short={driver.Tla} teamColor={driver.TeamColour} position={position} />
+				{/* Driver row: pos · TLA badge · LastName */}
+				<div className="flex min-w-0 items-center gap-1.5 overflow-hidden">
+					<span style={{
+						fontSize: 12, fontWeight: 800, lineHeight: 1,
+						color: position <= 3 ? "#f5a724" : "#52525b",
+						width: 18, flexShrink: 0, textAlign: "right",
+					}}>
+						{position}
+					</span>
+					<span style={{
+						padding: "2px 5px", borderRadius: 4,
+						fontSize: 10, fontWeight: 800, letterSpacing: ".04em",
+						background: `${teamHex}28`, color: teamHex,
+						flexShrink: 0,
+					}}>
+						{driver.Tla}
+					</span>
+					<span style={{
+						fontSize: 11, fontWeight: 500, color: "var(--f1-sub)",
+						overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+					}}>
+						{driver.LastName}
+					</span>
+				</div>
 				<DriverDRS
 					on={carData ? hasDRS(carData[45]) : false}
 					possible={carData ? possibleDRS(carData[45]) : false}
@@ -153,7 +201,7 @@ const SkeletonDriver = () => {
 		<div
 			className="grid place-items-center items-center gap-1 p-1"
 			style={{
-				gridTemplateColumns: "5.5rem 4rem 5.5rem 5rem 5rem",
+				gridTemplateColumns: "8rem 4rem 5.5rem 5rem 5rem",
 			}}
 		>
 			<div className={animateClass} style={{ width: "100%" }} />

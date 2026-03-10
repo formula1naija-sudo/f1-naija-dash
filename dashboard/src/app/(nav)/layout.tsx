@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation";
 
 import Footer from "@/components/Footer";
 import AdBanner from "@/components/AdBanner";
-import ThemeToggle from "@/components/ThemeToggle";
 
 type Props = {
   children: ReactNode;
@@ -84,7 +83,6 @@ export default function Layout({ children }: Props) {
       `}</style>
 
       <AdBanner />
-      <ThemeToggle />
 
       {/* NAV */}
       <nav style={{
