@@ -53,7 +53,7 @@ export default function RaceControl() {
 	}, [messages]);
 
 	return (
-		<ul className="flex flex-col gap-2">
+		<ul className="flex flex-col">
 			{!messages &&
 				new Array(7).fill("").map((_, index) => <SkeletonMessage key={`msg.loading.${index}`} index={index} />)}
 

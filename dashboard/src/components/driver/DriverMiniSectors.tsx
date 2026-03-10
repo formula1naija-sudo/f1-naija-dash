@@ -10,12 +10,13 @@ type Props = {
 
 export default function DriverMiniSectors({ sectors = [], bestSectors }: Props) {
 	const showMiniSectors = useSettingsStore((state) => state.showMiniSectors);
+	const showBestSectors = useSettingsStore((state) => state.showBestSectors);
 
 	if (!showMiniSectors) {
 		return (
 			<div style={{ display: "flex", gap: 8 }}>
 				{sectors.map((sector, i) => (
-					<SectorTime key={`sector.${i}`} sector={sector} bestSector={bestSectors?.[i]} />
+					<SectorTime key={`sector.${i}`} sector={sector} bestSector={showBestSectors ? bestSectors?.[i] : undefined} />
 				))}
 			</div>
 		);

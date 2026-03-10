@@ -71,7 +71,7 @@ export default function DashboardLayout({ children }: Props) {
           <div
             className={
               syncing && !ended
-                ? 'flex min-h-0 h-full flex-1 flex-col items-center justify-center gap-2 border-zinc-800 md:rounded-lg md:border'
+                ? 'flex min-h-0 h-full flex-1 flex-col items-center justify-center gap-2 md:rounded-lg md:border'
                 : 'hidden'
             }
           >
@@ -103,7 +103,7 @@ function ConnectingSkeleton() {
 
 function MobileDynamicBar() {
   return (
-    <div className="flex flex-col divide-y divide-zinc-800/60 border-b border-zinc-800/60 md:hidden">
+    <div className="flex flex-col md:hidden" style={{ borderBottom: "1px solid var(--f1-border)" }}>
       <div className="p-2">
         <SessionInfo />
       </div>
@@ -117,7 +117,7 @@ function MobileDynamicBar() {
 function MobileStaticBar({ show, connected }: { show: boolean; connected: boolean }) {
   const open = useSidebarStore((state) => state.open);
   return (
-    <div className="flex w-full items-center justify-between overflow-hidden border-b border-zinc-800/60 p-2 md:hidden">
+    <div className="flex w-full items-center justify-between overflow-hidden p-2 md:hidden" style={{ borderBottom: "1px solid var(--f1-border)" }}>
       <div className="flex items-center gap-2">
         <SidenavButton key="mobile" onClick={() => open()} />
         <DelayInput saveDelay={500} />

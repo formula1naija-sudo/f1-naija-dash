@@ -146,7 +146,6 @@ export default function RadioMessage({ driver, capture, basePath, gmtOffset }: P
 
 			{/* Play button */}
 			<div
-				onClick={togglePlayback}
 				style={{
 					width: 30, height: 30,
 					borderRadius: "50%",
@@ -156,9 +155,14 @@ export default function RadioMessage({ driver, capture, basePath, gmtOffset }: P
 					cursor: "pointer",
 					flexShrink: 0,
 					transition: "all 0.15s",
+					overflow: "hidden",
 				}}
 			>
-				<PlayControls playing={playing} onClick={() => {}} />
+				<PlayControls
+					playing={playing}
+					onClick={togglePlayback}
+					className="!h-[18px] !w-[18px]"
+				/>
 			</div>
 
 			{/* Duration / time */}

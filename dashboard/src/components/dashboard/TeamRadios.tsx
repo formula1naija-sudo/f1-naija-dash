@@ -19,7 +19,7 @@ export default function TeamRadios() {
 	// TODO add notice that we only show 20
 
 	return (
-		<ul className="flex flex-col gap-2">
+		<ul className="flex flex-col">
 			{!teamRadios && new Array(6).fill("").map((_, index) => <SkeletonMessage key={`radio.loading.${index}`} />)}
 
 			{teamRadios && gmtOffset && drivers && teamRadios.Captures && (
@@ -42,27 +42,31 @@ export default function TeamRadios() {
 }
 
 const SkeletonMessage = () => {
-	const animateClass = "h-6 animate-pulse rounded-md bg-zinc-800";
+	const pulse = "animate-pulse rounded bg-zinc-800/60";
 
 	return (
-		<li className="flex flex-col gap-1 p-2">
-			<div className={clsx(animateClass, "h-4! w-16")} />
-
-			<div
-				className="grid place-items-center items-center gap-4"
-				style={{
-					gridTemplateColumns: "2rem 20rem",
-				}}
-			>
-				<div className="place-self-start">
-					<div className={clsx(animateClass, "h-8! w-14")} />
-				</div>
-
-				<div className="flex items-center gap-4">
-					<div className={clsx(animateClass, "h-6 w-6")} />
-					<div className={clsx(animateClass, "h-2! w-60")} />
-				</div>
+		<li
+			style={{
+				display: "flex",
+				alignItems: "center",
+				gap: 8,
+				padding: "8px 10px",
+				borderBottom: "1px solid var(--f1-border-soft)",
+			}}
+		>
+			{/* TLA badge placeholder */}
+			<div className={clsx(pulse)} style={{ width: 38, height: 22, borderRadius: 5, flexShrink: 0 }} />
+			{/* Name + team */}
+			<div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 4 }}>
+				<div className={clsx(pulse)} style={{ height: 10, width: "55%" }} />
+				<div className={clsx(pulse)} style={{ height: 8, width: "35%" }} />
 			</div>
+			{/* Waveform placeholder */}
+			<div className={clsx(pulse)} style={{ width: 52, height: 16 }} />
+			{/* Play button placeholder */}
+			<div className={clsx(pulse)} style={{ width: 30, height: 30, borderRadius: "50%", flexShrink: 0 }} />
+			{/* Duration placeholder */}
+			<div className={clsx(pulse)} style={{ width: 28, height: 10 }} />
 		</li>
 	);
 };
