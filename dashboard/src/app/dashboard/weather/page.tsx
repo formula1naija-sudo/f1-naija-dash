@@ -1,4 +1,5 @@
 import { WeatherMap } from "@/app/dashboard/weather/map";
+import WeatherConditions from "@/app/dashboard/weather/WeatherConditions";
 
 export default function WeatherPage() {
 	return (
@@ -34,9 +35,24 @@ export default function WeatherPage() {
 				</div>
 			</div>
 
-			{/* ── WEATHER MAP ── */}
-			<div className="relative min-h-0 w-full flex-1">
-				<WeatherMap />
+			{/* ── MAP + CONDITIONS PANEL ── */}
+			<div className="flex min-h-0 flex-1 flex-col md:flex-row">
+
+				{/* Conditions sidebar */}
+				<div style={{
+					flexShrink: 0,
+					width: "100%",
+					borderBottom: "1px solid var(--f1-border-soft)",
+				}} className="md:border-b-0 md:border-r md:w-56 md:overflow-y-auto">
+					<div style={{ padding: "14px 14px 0" }}>
+						<WeatherConditions />
+					</div>
+				</div>
+
+				{/* Map */}
+				<div className="relative min-h-0 flex-1" style={{ minHeight: 280 }}>
+					<WeatherMap />
+				</div>
 			</div>
 		</div>
 	);
