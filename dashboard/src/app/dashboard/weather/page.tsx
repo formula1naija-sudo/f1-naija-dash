@@ -7,11 +7,11 @@ export default function WeatherPage() {
 			<div style={{
 				position: "relative", overflow: "hidden", flexShrink: 0,
 				padding: "clamp(24px,4vw,40px) 16px clamp(20px,3vw,32px)",
-				borderBottom: "1px solid rgba(255,255,255,.06)",
+				borderBottom: "1px solid var(--f1-border-soft)",
 			}}>
 				<div style={{
 					position: "absolute", inset: 0, pointerEvents: "none",
-					backgroundImage: "linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px)",
+					backgroundImage: "linear-gradient(var(--f1-grid-line) 1px,transparent 1px),linear-gradient(90deg,var(--f1-grid-line) 1px,transparent 1px)",
 					backgroundSize: "64px 64px",
 					WebkitMaskImage: "radial-gradient(ellipse 80% 80% at 50% 0%,black 30%,transparent 80%)",
 					maskImage: "radial-gradient(ellipse 80% 80% at 50% 0%,black 30%,transparent 80%)",
@@ -24,7 +24,7 @@ export default function WeatherPage() {
 						</span>
 					</div>
 					<div style={{ lineHeight: 0.92 }}>
-						<span style={{ fontSize: "clamp(28px,5vw,56px)", fontWeight: 900, letterSpacing: "-.04em", color: "#edf2ff" }}>Circuit </span>
+						<span style={{ fontSize: "clamp(28px,5vw,56px)", fontWeight: 900, letterSpacing: "-.04em", color: "var(--f1-text)" }}>Circuit </span>
 						<span style={{
 							fontSize: "clamp(28px,5vw,56px)", fontWeight: 900, letterSpacing: "-.04em",
 							background: "linear-gradient(120deg,#00d484 0%,#7affd4 50%,#00d484 100%)",

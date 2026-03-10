@@ -14,13 +14,13 @@ export default function Page() {
 			<div style={{
 				position: "relative", overflow: "hidden",
 				padding: "clamp(32px,5vw,56px) 16px clamp(24px,4vw,40px)",
-				borderBottom: "1px solid rgba(255,255,255,.06)",
+				borderBottom: "1px solid var(--f1-border-soft)",
 				marginBottom: 12,
 			}}>
 				{/* Grid pattern */}
 				<div style={{
 					position: "absolute", inset: 0, pointerEvents: "none",
-					backgroundImage: "linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px)",
+					backgroundImage: "linear-gradient(var(--f1-grid-line) 1px,transparent 1px),linear-gradient(90deg,var(--f1-grid-line) 1px,transparent 1px)",
 					backgroundSize: "64px 64px",
 					WebkitMaskImage: "radial-gradient(ellipse 80% 80% at 50% 0%,black 30%,transparent 80%)",
 					maskImage: "radial-gradient(ellipse 80% 80% at 50% 0%,black 30%,transparent 80%)",
@@ -40,7 +40,7 @@ export default function Page() {
 					</div>
 					{/* Title */}
 					<div style={{ lineHeight: 0.9 }}>
-						<div style={{ fontSize: "clamp(36px,6vw,72px)", fontWeight: 900, letterSpacing: "-.04em", color: "#edf2ff", lineHeight: 0.92 }}>
+						<div style={{ fontSize: "clamp(36px,6vw,72px)", fontWeight: 900, letterSpacing: "-.04em", color: "var(--f1-text)", lineHeight: 0.92 }}>
 							Live
 						</div>
 						<div style={{
@@ -52,7 +52,7 @@ export default function Page() {
 							Timing.
 						</div>
 					</div>
-					<p style={{ marginTop: 12, fontSize: 12, color: "#5a6888" }}>
+					<p style={{ marginTop: 12, fontSize: 12, color: "var(--f1-muted)" }}>
 						Real-time race data — positions, gaps &amp; telemetry.
 					</p>
 				</div>
@@ -60,8 +60,11 @@ export default function Page() {
 
 			<div className="flex w-full flex-col gap-2 px-2 pb-2">
 				<div className="flex w-full flex-col gap-2 2xl:flex-row">
-					<div className="overflow-x-auto">
-						<LeaderBoard />
+					{/* overflow-x-auto + no-scrollbar: horizontal scroll on small screens */}
+					<div className="no-scrollbar overflow-x-auto">
+						<div style={{ minWidth: "min(100%,760px)" }}>
+							<LeaderBoard />
+						</div>
 					</div>
 
 					<div className="flex-1 2xl:max-h-[50rem]">

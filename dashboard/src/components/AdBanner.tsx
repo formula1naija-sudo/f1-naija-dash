@@ -21,24 +21,24 @@ export default function AdBanner() {
 
   return (
     <div
-      className="flex w-full items-center justify-center gap-4 bg-gradient-to-r from-emerald-700 via-emerald-600 to-emerald-700 px-4 py-2.5 transition-opacity duration-500"
+      className="relative flex w-full flex-wrap items-center justify-center gap-3 bg-gradient-to-r from-emerald-700 via-emerald-600 to-emerald-700 px-10 py-2.5 transition-opacity duration-500"
       style={{ opacity: fading ? 0 : 1 }}
     >
       <span className="text-sm font-semibold text-white">
-        📢 Want your brand in front of F1 fans? Advertise with us →
+        📢 Want your brand in front of F1 fans? Advertise with us
       </span>
       <a
         href="mailto:ads@f1naija.com"
-        className="rounded-md border border-white/30 bg-white/20 px-3 py-1 text-xs font-bold text-white transition hover:bg-white/30"
+        className="rounded-md border border-white/30 bg-white/20 px-3 py-1 text-xs font-bold text-white transition hover:bg-white/30 active:scale-95"
       >
         ads@f1naija.com
       </a>
       <button
         onClick={() => { setFading(true); setTimeout(() => setDismissed(true), 500); }}
-        className="absolute right-4 text-white/60 transition hover:text-white"
-        aria-label="Dismiss"
+        className="absolute right-3 top-1/2 -translate-y-1/2 flex h-6 w-6 items-center justify-center rounded-full text-white/60 transition hover:bg-white/10 hover:text-white"
+        aria-label="Dismiss banner"
       >
-        ✕
+        &#x2715;
       </button>
     </div>
   );

@@ -26,7 +26,7 @@ const SECTIONS = [
 
 export default function HelpPage() {
   return (
-    <div style={{ background: "#04060e", color: "#edf2ff", minHeight: "100vh" }}>
+    <div style={{ background: "#04060e", color: "var(--f1-text)", minHeight: "100vh" }}>
       <style>{`
         @keyframes helpFadeUp {
           from { opacity: 0; transform: translateY(16px); }
@@ -65,14 +65,14 @@ export default function HelpPage() {
           font-size: clamp(22px, 4vw, 30px);
           font-weight: 900;
           letter-spacing: -.03em;
-          color: #edf2ff;
+          color: var(--f1-text);
           margin-bottom: 10px;
           line-height: 1;
         }
         .help-p {
           font-size: 13px;
           line-height: 1.75;
-          color: #5a6888;
+          color: var(--f1-muted);
           max-width: 600px;
         }
         .help-note {
@@ -157,7 +157,7 @@ export default function HelpPage() {
             </span>
           </div>
           <div className="help-fade help-fade-2" style={{ lineHeight: .88, marginBottom: 18 }}>
-            <div style={{ fontSize: "clamp(42px,7vw,88px)", fontWeight: 900, letterSpacing: "-.04em", color: "#edf2ff", lineHeight: .92 }}>
+            <div style={{ fontSize: "clamp(42px,7vw,88px)", fontWeight: 900, letterSpacing: "-.04em", color: "var(--f1-text)", lineHeight: .92 }}>
               How it
             </div>
             <div style={{
@@ -211,8 +211,8 @@ export default function HelpPage() {
               <div key={label} className="color-chip">
                 <div className="color-dot" style={{ background: color, boxShadow: `0 0 12px ${color}44` }} />
                 <div>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: "#edf2ff", marginBottom: 2 }}>{label}</div>
-                  <div style={{ fontSize: 11, color: "#5a6888", lineHeight: 1.4 }}>{desc}</div>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: "var(--f1-text)", marginBottom: 2 }}>{label}</div>
+                  <div style={{ fontSize: 11, color: "var(--f1-muted)", lineHeight: 1.4 }}>{desc}</div>
                 </div>
               </div>
             ))}
@@ -244,8 +244,8 @@ export default function HelpPage() {
                 padding: "14px 16px", borderRadius: 10,
                 background: bg, border: `1px solid ${border}`,
               }}>
-                <div style={{ fontSize: 12, fontWeight: 700, color: "#edf2ff", marginBottom: 4 }}>{label}</div>
-                <div style={{ fontSize: 11, color: "#5a6888", lineHeight: 1.5 }}>{desc}</div>
+                <div style={{ fontSize: 12, fontWeight: 700, color: "var(--f1-text)", marginBottom: 4 }}>{label}</div>
+                <div style={{ fontSize: 11, color: "var(--f1-muted)", lineHeight: 1.5 }}>{desc}</div>
               </div>
             ))}
           </div>
@@ -275,8 +275,8 @@ export default function HelpPage() {
                   <DriverDRS on={props.on} possible={props.possible} inPit={props.inPit} pitOut={props.pitOut} />
                 </div>
                 <div>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: "#edf2ff", marginBottom: 2 }}>{label}</div>
-                  <div style={{ fontSize: 11, color: "#5a6888", lineHeight: 1.5 }}>{desc}</div>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: "var(--f1-text)", marginBottom: 2 }}>{label}</div>
+                  <div style={{ fontSize: 11, color: "var(--f1-muted)", lineHeight: 1.5 }}>{desc}</div>
                 </div>
               </div>
             ))}
@@ -312,7 +312,7 @@ export default function HelpPage() {
             ].map(({ icon, label }) => (
               <div key={label} className="help-card" style={{ padding: "14px", display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
                 <Image src={icon} alt={label} style={{ width: 36, height: 36 }} />
-                <span style={{ fontSize: 11, color: "#5a6888", fontWeight: 600 }}>{label}</span>
+                <span style={{ fontSize: 11, color: "var(--f1-muted)", fontWeight: 600 }}>{label}</span>
               </div>
             ))}
           </div>
@@ -346,8 +346,8 @@ export default function HelpPage() {
               <div key={label} className="help-card" style={{ padding: "14px 16px", display: "flex", alignItems: "flex-start", gap: 12 }}>
                 <span style={{ fontSize: 22, lineHeight: 1, marginTop: 2 }}>{icon}</span>
                 <div>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: "#edf2ff", marginBottom: 2 }}>{label}</div>
-                  <div style={{ fontSize: 11, color: "#5a6888" }}>{sub}</div>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: "var(--f1-text)", marginBottom: 2 }}>{label}</div>
+                  <div style={{ fontSize: 11, color: "var(--f1-muted)" }}>{sub}</div>
                 </div>
               </div>
             ))}
@@ -379,8 +379,8 @@ export default function HelpPage() {
                   <DriverPedals className={cls} value={val} maxValue={max} />
                 </div>
                 <div>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: "#edf2ff", marginBottom: 2 }}>{label}</div>
-                  <div style={{ fontSize: 11, color: "#5a6888", lineHeight: 1.5 }}>{desc}</div>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: "var(--f1-text)", marginBottom: 2 }}>{label}</div>
+                  <div style={{ fontSize: 11, color: "var(--f1-muted)", lineHeight: 1.5 }}>{desc}</div>
                 </div>
               </div>
             ))}
@@ -406,7 +406,7 @@ export default function HelpPage() {
             ].map(({ component, desc }, i) => (
               <div key={i} className="help-card" style={{ padding: "12px 16px", display: "flex", alignItems: "center", gap: 16 }}>
                 <div style={{ flexShrink: 0 }}>{component}</div>
-                <div style={{ fontSize: 12, color: "#5a6888" }}>{desc}</div>
+                <div style={{ fontSize: 12, color: "var(--f1-muted)" }}>{desc}</div>
               </div>
             ))}
           </div>

@@ -196,29 +196,29 @@ export default function HomeHero() {
 
           <div style={{ lineHeight: .9, marginBottom: 28 }}>
             <div style={{ overflow: "hidden", display: "block" }}>
-              <div className="hero-title-1" style={{ fontSize: "clamp(64px,7.5vw,112px)", fontWeight: 900, letterSpacing: "-.035em", lineHeight: .92, color: "#edf2ff" }}>F1</div>
+              <div className="hero-title-1" style={{ fontSize: "clamp(64px,7.5vw,112px)", fontWeight: 900, letterSpacing: "-.035em", lineHeight: .92, color: "var(--f1-text)" }}>F1</div>
             </div>
             <div style={{ overflow: "hidden", display: "block" }}>
               <div className="hero-title-2" style={{ fontSize: "clamp(64px,7.5vw,112px)", fontWeight: 900, letterSpacing: "-.035em", lineHeight: .92, background: "linear-gradient(120deg,#00d484 0%,#00f0a0 40%,#f5a724 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>NAIJA</div>
             </div>
           </div>
 
-          <p className="hero-fade-2" style={{ fontSize: 15, lineHeight: 1.7, color: "#5a6888", maxWidth: 400, marginBottom: 32 }}>
+          <p className="hero-fade-2" style={{ fontSize: 15, lineHeight: 1.7, color: "var(--f1-muted)", maxWidth: 400, marginBottom: 32 }}>
             The home of Formula 1 for{" "}
-            <strong style={{ color: "#edf2ff", fontWeight: 600 }}>Naija fans everywhere</strong>{" "}
+            <strong style={{ color: "var(--f1-text)", fontWeight: 600 }}>Naija fans everywhere</strong>{" "}
             — Lagos to London, Houston to Dubai.
           </p>
 
           <div className="hero-fade-2" style={{ display: "flex", gap: 12, marginBottom: 44, flexWrap: "wrap" }}>
             <Link href="/dashboard" style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "12px 26px", borderRadius: 7, fontSize: 13, fontWeight: 700, background: "#00d484", color: "#04060e", textDecoration: "none", letterSpacing: ".03em" }}>🏁 Open Dashboard</Link>
-            <Link href="/schedule" style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "12px 26px", borderRadius: 7, fontSize: 13, fontWeight: 600, background: "transparent", color: "#edf2ff", textDecoration: "none", border: "1px solid rgba(255,255,255,.14)", letterSpacing: ".03em" }}>View Schedule</Link>
+            <Link href="/schedule" style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "12px 26px", borderRadius: 7, fontSize: 13, fontWeight: 600, background: "transparent", color: "var(--f1-text)", textDecoration: "none", border: "1px solid rgba(255,255,255,.14)", letterSpacing: ".03em" }}>View Schedule</Link>
           </div>
 
           <div className="hero-fade-3 flex items-center gap-3">
-            <span style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: ".12em", color: "#5a6888", whiteSpace: "nowrap" }}>Watching from</span>
+            <span style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: ".12em", color: "var(--f1-muted)", whiteSpace: "nowrap" }}>Watching from</span>
             <div style={{ overflow: "hidden", height: 26, display: "flex", alignItems: "center" }}>
               {cityVisible && (
-                <div key={cityIdx} className="hero-city-in" style={{ fontSize: 17, fontWeight: 800, letterSpacing: ".04em", color: "#edf2ff" }}>{CITIES[cityIdx]}</div>
+                <div key={cityIdx} className="hero-city-in" style={{ fontSize: 17, fontWeight: 800, letterSpacing: ".04em", color: "var(--f1-text)" }}>{CITIES[cityIdx]}</div>
               )}
             </div>
             <div style={{ flex: 1, height: 1, background: "linear-gradient(90deg,rgba(0,212,132,.3),transparent)" }} />
@@ -235,12 +235,12 @@ export default function HomeHero() {
 
                 {/* header */}
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "13px 18px", background: "rgba(0,0,0,.3)", borderBottom: "1px solid rgba(255,255,255,.06)" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 10, fontWeight: 800, letterSpacing: ".1em", color: isLive ? "#e8001f" : "#5a6888" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 10, fontWeight: 800, letterSpacing: ".1em", color: isLive ? "#e8001f" : "var(--f1-muted)" }}>
                     {isLive && <div className="hero-live-dot" style={{ width: 6, height: 6, borderRadius: "50%", background: "#e8001f" }} />}
                     {isLive ? "LIVE" : "PREVIEW"}
                   </div>
-                  <div style={{ fontSize: 11, fontWeight: 600, color: "#5a6888" }}>
-                    <span style={{ color: "#edf2ff" }}>{sessionName}</span> · {sessionType}
+                  <div style={{ fontSize: 11, fontWeight: 600, color: "var(--f1-muted)" }}>
+                    <span style={{ color: "var(--f1-text)" }}>{sessionName}</span> · {sessionType}
                   </div>
                   <div style={{ fontSize: 11, fontWeight: 700, color: "#f5a724" }}>LAP {currentLap}/{totalLaps}</div>
                 </div>
@@ -248,10 +248,10 @@ export default function HomeHero() {
                 {/* drivers */}
                 {displayDrivers.map((d, i) => (
                   <div key={d.pos} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 18px", borderBottom: i < displayDrivers.length - 1 ? "1px solid rgba(255,255,255,.04)" : "none" }}>
-                    <div style={{ width: 20, fontSize: 12, fontWeight: 700, textAlign: "center", flexShrink: 0, color: d.pos === 1 ? "#f5a724" : d.pos === 2 ? "#c0c8d8" : d.pos === 3 ? "#cd7f32" : "#5a6888" }}>{d.pos}</div>
+                    <div style={{ width: 20, fontSize: 12, fontWeight: 700, textAlign: "center", flexShrink: 0, color: d.pos === 1 ? "#f5a724" : d.pos === 2 ? "#c0c8d8" : d.pos === 3 ? "#cd7f32" : "var(--f1-muted)" }}>{d.pos}</div>
                     <div style={{ width: 3, height: 26, borderRadius: 2, background: d.color, flexShrink: 0 }} />
                     <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: 9, color: "#5a6888", textTransform: "uppercase", letterSpacing: ".06em", lineHeight: 1 }}>{d.fn}</div>
+                      <div style={{ fontSize: 9, color: "var(--f1-muted)", textTransform: "uppercase", letterSpacing: ".06em", lineHeight: 1 }}>{d.fn}</div>
                       <div style={{ fontSize: 13, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".03em", lineHeight: 1.2 }}>{d.ln}</div>
                       <div style={{ display: "flex", gap: 2, marginTop: 3 }}>
                         {d.sectors.map((s, j) => (
@@ -259,7 +259,7 @@ export default function HomeHero() {
                         ))}
                       </div>
                     </div>
-                    <div style={{ fontSize: d.pos === 1 ? 10 : 11, fontWeight: d.pos === 1 ? 800 : 600, color: d.pos === 1 ? "#f5a724" : "#5a6888", textAlign: "right", minWidth: 52, textTransform: d.pos === 1 ? "uppercase" : "none", letterSpacing: d.pos === 1 ? ".05em" : "normal" }}>
+                    <div style={{ fontSize: d.pos === 1 ? 10 : 11, fontWeight: d.pos === 1 ? 800 : 600, color: d.pos === 1 ? "#f5a724" : "var(--f1-muted)", textAlign: "right", minWidth: 52, textTransform: d.pos === 1 ? "uppercase" : "none", letterSpacing: d.pos === 1 ? ".05em" : "normal" }}>
                       {d.pos === 1 ? "LEADER" : d.gap || ""}
                     </div>
                   </div>
@@ -268,11 +268,11 @@ export default function HomeHero() {
                 {/* footer */}
                 <div style={{ padding: "12px 18px", background: "rgba(0,0,0,.2)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                   <div>
-                    <div style={{ fontSize: 9, color: "#5a6888", textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 2 }}>Next Race</div>
+                    <div style={{ fontSize: 9, color: "var(--f1-muted)", textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 2 }}>Next Race</div>
                     <div style={{ fontSize: 16, fontWeight: 800, letterSpacing: ".04em", color: "#00d484" }}>Chinese GP in 4d</div>
                   </div>
                   <div style={{ textAlign: "right" }}>
-                    <div style={{ fontSize: 9, color: "#5a6888", textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 2 }}>Lagos · WAT</div>
+                    <div style={{ fontSize: 9, color: "var(--f1-muted)", textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 2 }}>Lagos · WAT</div>
                     <div style={{ fontSize: 13, fontWeight: 700 }}>{mounted ? localTime : "—"}</div>
                   </div>
                 </div>
@@ -285,7 +285,7 @@ export default function HomeHero() {
       <div style={{ background: "#0d1424", borderTop: "1px solid rgba(255,255,255,.05)", borderBottom: "1px solid rgba(255,255,255,.05)", overflow: "hidden", height: 38, display: "flex", alignItems: "center" }}>
         <div className="hero-marquee-track">
           {[...MARQUEE_CITIES, ...MARQUEE_CITIES].map((c, i) => (
-            <div key={i} style={{ padding: "0 22px", fontSize: 10, fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase", color: "#5a6888", display: "flex", alignItems: "center", gap: 6, borderRight: "1px solid rgba(255,255,255,.06)" }}>
+            <div key={i} style={{ padding: "0 22px", fontSize: 10, fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase", color: "var(--f1-muted)", display: "flex", alignItems: "center", gap: 6, borderRight: "1px solid rgba(255,255,255,.06)" }}>
               <span style={{ fontSize: 13 }}>{c.flag}</span>
               {c.name}
             </div>

@@ -23,11 +23,11 @@ export default function SettingsPage() {
 				position: "relative", overflow: "hidden",
 				margin: "-16px -16px 32px -16px",
 				padding: "clamp(24px,4vw,40px) 16px clamp(20px,3vw,32px)",
-				borderBottom: "1px solid rgba(255,255,255,.06)",
+				borderBottom: "1px solid var(--f1-border-soft)",
 			}}>
 				<div style={{
 					position: "absolute", inset: 0, pointerEvents: "none",
-					backgroundImage: "linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px)",
+					backgroundImage: "linear-gradient(var(--f1-grid-line) 1px,transparent 1px),linear-gradient(90deg,var(--f1-grid-line) 1px,transparent 1px)",
 					backgroundSize: "64px 64px",
 					WebkitMaskImage: "radial-gradient(ellipse 80% 80% at 50% 0%,black 30%,transparent 80%)",
 					maskImage: "radial-gradient(ellipse 80% 80% at 50% 0%,black 30%,transparent 80%)",
@@ -40,7 +40,7 @@ export default function SettingsPage() {
 						</span>
 					</div>
 					<div style={{ lineHeight: 0.92 }}>
-						<span style={{ fontSize: "clamp(28px,5vw,56px)", fontWeight: 900, letterSpacing: "-.04em", color: "#edf2ff" }}>Dashboard </span>
+						<span style={{ fontSize: "clamp(28px,5vw,56px)", fontWeight: 900, letterSpacing: "-.04em", color: "var(--f1-text)" }}>Dashboard </span>
 						<span style={{
 							fontSize: "clamp(28px,5vw,56px)", fontWeight: 900, letterSpacing: "-.04em",
 							background: "linear-gradient(120deg,#9c50f5 0%,#c084fc 50%,#00d484 100%)",
@@ -54,7 +54,7 @@ export default function SettingsPage() {
 			<div style={{ marginBottom: 32 }}>
 				<div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
 					<div style={{ width: 3, height: 16, background: "#00d484", borderRadius: 2, flexShrink: 0 }} />
-					<h2 style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "#5a6888" }}>
+					<h2 style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--f1-muted)" }}>
 						Visual
 					</h2>
 				</div>
@@ -101,7 +101,7 @@ export default function SettingsPage() {
 			<div style={{ marginBottom: 32 }}>
 				<div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
 					<div style={{ width: 3, height: 16, background: "#e8001f", borderRadius: 2, flexShrink: 0 }} />
-					<h2 style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "#5a6888" }}>
+					<h2 style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--f1-muted)" }}>
 						Race Control
 					</h2>
 				</div>
@@ -138,7 +138,7 @@ export default function SettingsPage() {
 			<div style={{ marginBottom: 32 }}>
 				<div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
 					<div style={{ width: 3, height: 16, background: "#f5a724", borderRadius: 2, flexShrink: 0 }} />
-					<h2 style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "#5a6888" }}>
+					<h2 style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--f1-muted)" }}>
 						Favorite Drivers
 					</h2>
 				</div>
@@ -150,7 +150,7 @@ export default function SettingsPage() {
 			<div style={{ marginBottom: 32 }}>
 				<div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
 					<div style={{ width: 3, height: 16, background: "#00d484", borderRadius: 2, flexShrink: 0 }} />
-					<h2 style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "#5a6888" }}>
+					<h2 style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--f1-muted)" }}>
 						Speed Metric
 					</h2>
 				</div>
@@ -170,7 +170,7 @@ export default function SettingsPage() {
 			<div style={{ marginBottom: 32 }}>
 				<div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
 					<div style={{ width: 3, height: 16, background: "#9c50f5", borderRadius: 2, flexShrink: 0 }} />
-					<h2 style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "#5a6888" }}>
+					<h2 style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--f1-muted)" }}>
 						Delay
 					</h2>
 				</div>

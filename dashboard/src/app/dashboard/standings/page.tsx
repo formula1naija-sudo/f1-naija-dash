@@ -19,11 +19,11 @@ export default function Standings() {
 			<div style={{
 				position: "relative", overflow: "hidden", flexShrink: 0,
 				padding: "clamp(24px,4vw,40px) 16px clamp(20px,3vw,32px)",
-				borderBottom: "1px solid rgba(255,255,255,.06)",
+				borderBottom: "1px solid var(--f1-border-soft)",
 			}}>
 				<div style={{
 					position: "absolute", inset: 0, pointerEvents: "none",
-					backgroundImage: "linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px)",
+					backgroundImage: "linear-gradient(var(--f1-grid-line) 1px,transparent 1px),linear-gradient(90deg,var(--f1-grid-line) 1px,transparent 1px)",
 					backgroundSize: "64px 64px",
 					WebkitMaskImage: "radial-gradient(ellipse 80% 80% at 50% 0%,black 30%,transparent 80%)",
 					maskImage: "radial-gradient(ellipse 80% 80% at 50% 0%,black 30%,transparent 80%)",
@@ -36,7 +36,7 @@ export default function Standings() {
 						</span>
 					</div>
 					<div style={{ lineHeight: 0.92 }}>
-						<span style={{ fontSize: "clamp(28px,5vw,56px)", fontWeight: 900, letterSpacing: "-.04em", color: "#edf2ff" }}>Race </span>
+						<span style={{ fontSize: "clamp(28px,5vw,56px)", fontWeight: 900, letterSpacing: "-.04em", color: "var(--f1-text)" }}>Race </span>
 						<span style={{
 							fontSize: "clamp(28px,5vw,56px)", fontWeight: 900, letterSpacing: "-.04em",
 							background: "linear-gradient(120deg,#f5a724 0%,#ffd580 50%,#00d484 100%)",
@@ -49,8 +49,8 @@ export default function Standings() {
 			{/* ── CONTENT ── */}
 			{!isRace ? (
 				<div className="flex flex-1 flex-col items-center justify-center gap-1">
-					<p className="font-semibold" style={{ color: "#edf2ff" }}>Championship standings unavailable</p>
-					<p className="text-sm" style={{ color: "#5a6888" }}>Only available during a live race session</p>
+					<p className="font-semibold" style={{ color: "var(--f1-text)" }}>Championship standings unavailable</p>
+					<p className="text-sm" style={{ color: "var(--f1-muted)" }}>Only available during a live race session</p>
 				</div>
 			) : (
 				<div className="grid min-h-0 flex-1 grid-cols-1 divide-y divide-zinc-800 overflow-auto lg:grid-cols-2 lg:divide-x lg:divide-y-0">
@@ -58,7 +58,7 @@ export default function Standings() {
 					<div className="p-4">
 						<div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
 							<div style={{ width: 3, height: 16, background: "#00d484", borderRadius: 2, flexShrink: 0 }} />
-							<h2 style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "#5a6888" }}>
+							<h2 style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--f1-muted)" }}>
 								Driver Championship
 							</h2>
 						</div>
@@ -106,7 +106,7 @@ export default function Standings() {
 					<div className="p-4">
 						<div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
 							<div style={{ width: 3, height: 16, background: "#f5a724", borderRadius: 2, flexShrink: 0 }} />
-							<h2 style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "#5a6888" }}>
+							<h2 style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--f1-muted)" }}>
 								Constructor Championship
 							</h2>
 						</div>

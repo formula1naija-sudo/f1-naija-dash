@@ -6,7 +6,7 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <div style={{ background: "#04060e", color: "#edf2ff", minHeight: "100vh" }}>
+    <div style={{ background: "var(--f1-bg-page)", color: "var(--f1-text)", minHeight: "100vh" }}>
       {/* ── HERO ─────────────────────────────────────────── */}
       <HomeHero />
 
@@ -37,7 +37,7 @@ export default function Home() {
           {HUB_ITEMS.map((item) => (
             <Link key={item.href} href={item.href} style={{ textDecoration: "none" }}>
               <div style={{
-                background: "#0d1424",
+                background: "var(--f1-card)",
                 border: "1px solid rgba(255,255,255,.07)",
                 borderRadius: 14,
                 padding: "26px 24px",
@@ -50,15 +50,15 @@ export default function Home() {
                 (e.currentTarget as HTMLDivElement).style.transform = "translateY(-2px)";
               }}
               onMouseLeave={e => {
-                (e.currentTarget as HTMLDivElement).style.borderColor = "rgba(255,255,255,.07)";
+                (e.currentTarget as HTMLDivElement).style.borderColor = "var(--f1-border)";
                 (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)";
               }}
               >
                 <div style={{ fontSize: 28, marginBottom: 12 }}>{item.icon}</div>
-                <div style={{ fontSize: 15, fontWeight: 800, letterSpacing: "-.01em", marginBottom: 6, color: "#edf2ff" }}>
+                <div style={{ fontSize: 15, fontWeight: 800, letterSpacing: "-.01em", marginBottom: 6, color: "var(--f1-text)" }}>
                   {item.label}
                 </div>
-                <p style={{ fontSize: 12, color: "#5a6888", lineHeight: 1.6, margin: 0 }}>
+                <p style={{ fontSize: 12, color: "var(--f1-muted)", lineHeight: 1.6, margin: 0 }}>
                   {item.desc}
                 </p>
                 <div style={{ marginTop: 16, fontSize: 11, fontWeight: 700, color: "#00d484", letterSpacing: ".06em" }}>
@@ -88,11 +88,11 @@ export default function Home() {
             <h2 style={{ fontSize: "clamp(24px,3.5vw,38px)", fontWeight: 900, letterSpacing: "-.02em", marginBottom: 16, lineHeight: 1 }}>
               What&apos;s F1 Naija?
             </h2>
-            <p style={{ fontSize: 14, color: "#5a6888", lineHeight: 1.75, marginBottom: 16 }}>
+            <p style={{ fontSize: 14, color: "var(--f1-muted)", lineHeight: 1.75, marginBottom: 16 }}>
               F1 Naija is Nigeria&apos;s leading Formula 1 community — built by fans, for fans.
               Real-time telemetry, live timing, race data, standings, and more, all in one place.
             </p>
-            <p style={{ fontSize: 14, color: "#5a6888", lineHeight: 1.75 }}>
+            <p style={{ fontSize: 14, color: "var(--f1-muted)", lineHeight: 1.75 }}>
               Whether you&apos;re watching from Lagos, London, Houston or Dubai — F1 Naija has you covered.
             </p>
           </div>
@@ -107,19 +107,19 @@ export default function Home() {
                 style={{
                   display: "flex", alignItems: "center", gap: 12,
                   padding: "14px 18px",
-                  background: "#0d1424",
+                  background: "var(--f1-card)",
                   border: "1px solid rgba(255,255,255,.07)",
                   borderRadius: 10,
                   textDecoration: "none",
                   transition: "border-color .2s",
                 }}
                 onMouseEnter={e => (e.currentTarget.style.borderColor = "rgba(0,212,132,.3)")}
-                onMouseLeave={e => (e.currentTarget.style.borderColor = "rgba(255,255,255,.07)")}
+                onMouseLeave={e => (e.currentTarget.style.borderColor = "var(--f1-border)")}
               >
                 <span style={{ fontSize: 20 }}>{s.icon}</span>
                 <div>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: "#edf2ff" }}>{s.label}</div>
-                  <div style={{ fontSize: 11, color: "#5a6888" }}>{s.handle}</div>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: "var(--f1-text)" }}>{s.label}</div>
+                  <div style={{ fontSize: 11, color: "var(--f1-muted)" }}>{s.handle}</div>
                 </div>
                 <div style={{ marginLeft: "auto", fontSize: 10, color: "#00d484" }}>↗</div>
               </a>

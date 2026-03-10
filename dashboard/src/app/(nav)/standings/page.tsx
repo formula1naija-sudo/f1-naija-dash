@@ -99,7 +99,7 @@ export default function StandingsPage() {
   const maxConstructorPoints = parseFloat(constructors[0]?.points || "1");
 
   return (
-    <div style={{ background: "#04060e", color: "#edf2ff", minHeight: "100vh" }}>
+    <div style={{ background: "#04060e", color: "var(--f1-text)", minHeight: "100vh" }}>
       <style>{`
         @keyframes standFadeUp {
           from { opacity: 0; transform: translateY(16px); }
@@ -155,7 +155,7 @@ export default function StandingsPage() {
             </span>
           </div>
           <div className="stand-fade stand-fade-2" style={{ lineHeight: .88 }}>
-            <div style={{ fontSize: "clamp(48px,7vw,96px)", fontWeight: 900, letterSpacing: "-.04em", color: "#edf2ff", lineHeight: .92 }}>
+            <div style={{ fontSize: "clamp(48px,7vw,96px)", fontWeight: 900, letterSpacing: "-.04em", color: "var(--f1-text)", lineHeight: .92 }}>
               Championship
             </div>
             <div style={{
@@ -167,7 +167,7 @@ export default function StandingsPage() {
               Standings.
             </div>
           </div>
-          <p className="stand-fade stand-fade-3" style={{ marginTop: 18, fontSize: 13, color: "#5a6888", maxWidth: 380 }}>
+          <p className="stand-fade stand-fade-3" style={{ marginTop: 18, fontSize: 13, color: "var(--f1-muted)", maxWidth: 380 }}>
             Live points tally — auto-updated after every round.
           </p>
         </div>
@@ -196,7 +196,7 @@ export default function StandingsPage() {
                 minHeight: 44,
                 borderColor: activeTab === tab ? "rgba(0,212,132,.4)" : "rgba(255,255,255,.08)",
                 background: activeTab === tab ? "rgba(0,212,132,.08)" : "transparent",
-                color: activeTab === tab ? "#00d484" : "#5a6888",
+                color: activeTab === tab ? "#00d484" : "var(--f1-muted)",
               }}
             >
               {tab === "drivers" ? "Drivers" : "Constructors"}
@@ -221,7 +221,7 @@ export default function StandingsPage() {
         {!loading && drivers.length === 0 && constructors.length === 0 && (
           <div style={{
             display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-            height: 240, gap: 8, color: "#5a6888",
+            height: 240, gap: 8, color: "var(--f1-muted)",
           }}>
             <div style={{ fontSize: 36 }}>🏎️</div>
             <p style={{ fontSize: 15, fontWeight: 600 }}>Championship standings unavailable</p>
@@ -255,11 +255,11 @@ export default function StandingsPage() {
                     <div style={{ fontSize: "clamp(16px,4vw,22px)", fontWeight: 900, letterSpacing: "-.02em" }}>
                       {d.Driver.givenName} <span style={{ color: "#f5a724" }}>{d.Driver.familyName}</span>
                     </div>
-                    <div style={{ fontSize: 11, color: "#5a6888", marginTop: 2 }}>{d.Constructors?.[0]?.name}</div>
+                    <div style={{ fontSize: 11, color: "var(--f1-muted)", marginTop: 2 }}>{d.Constructors?.[0]?.name}</div>
                   </div>
                   <div style={{ textAlign: "right" }}>
                     <div style={{ fontSize: "clamp(28px,6vw,42px)", fontWeight: 900, letterSpacing: "-.04em", color: "#f5a724", lineHeight: 1 }}>{d.points}</div>
-                    <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: ".1em", textTransform: "uppercase", color: "#5a6888" }}>pts</div>
+                    <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: ".1em", textTransform: "uppercase", color: "var(--f1-muted)" }}>pts</div>
                   </div>
                 </div>
               );
@@ -290,11 +290,11 @@ export default function StandingsPage() {
                     <div style={{ position: "relative", zIndex: 1, fontSize: 13, fontWeight: 800, textAlign: "center", color: pos === 1 ? "#f5a724" : pos === 2 ? "#c0c8d8" : pos === 3 ? "#cd7f32" : "#3a4560" }}>{d.position}</div>
                     <div style={{ position: "relative", zIndex: 1, height: 24, width: 4, borderRadius: 2, background: teamColor, flexShrink: 0 }} />
                     <div style={{ position: "relative", zIndex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: 11, color: "#5a6888", lineHeight: 1 }}>{d.Driver.givenName}</div>
+                      <div style={{ fontSize: 11, color: "var(--f1-muted)", lineHeight: 1 }}>{d.Driver.givenName}</div>
                       <div style={{ fontSize: 14, fontWeight: 800, letterSpacing: "-.01em", lineHeight: 1.2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{d.Driver.familyName}</div>
                     </div>
-                    <div style={{ position: "relative", zIndex: 1, fontFamily: "monospace", fontSize: 14, fontWeight: 700, textAlign: "right", color: "#edf2ff" }}>{d.points}</div>
-                    <div style={{ position: "relative", zIndex: 1, fontFamily: "monospace", fontSize: 12, textAlign: "right", color: "#5a6888" }}>{d.wins}</div>
+                    <div style={{ position: "relative", zIndex: 1, fontFamily: "monospace", fontSize: 14, fontWeight: 700, textAlign: "right", color: "var(--f1-text)" }}>{d.points}</div>
+                    <div style={{ position: "relative", zIndex: 1, fontFamily: "monospace", fontSize: 12, textAlign: "right", color: "var(--f1-muted)" }}>{d.wins}</div>
                   </div>
                 );
               })}
@@ -327,11 +327,11 @@ export default function StandingsPage() {
                     <div style={{ fontSize: "clamp(16px,4vw,22px)", fontWeight: 900, letterSpacing: "-.02em" }}>
                       <span style={{ color: "#f5a724" }}>{c.Constructor.name}</span>
                     </div>
-                    <div style={{ fontSize: 11, color: "#5a6888", marginTop: 2 }}>{c.Constructor.nationality}</div>
+                    <div style={{ fontSize: 11, color: "var(--f1-muted)", marginTop: 2 }}>{c.Constructor.nationality}</div>
                   </div>
                   <div style={{ textAlign: "right" }}>
                     <div style={{ fontSize: "clamp(28px,6vw,42px)", fontWeight: 900, letterSpacing: "-.04em", color: "#f5a724", lineHeight: 1 }}>{c.points}</div>
-                    <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: ".1em", textTransform: "uppercase", color: "#5a6888" }}>pts</div>
+                    <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: ".1em", textTransform: "uppercase", color: "var(--f1-muted)" }}>pts</div>
                   </div>
                 </div>
               );
@@ -360,8 +360,8 @@ export default function StandingsPage() {
                     <div style={{ position: "relative", zIndex: 1, fontSize: 13, fontWeight: 800, textAlign: "center", color: pos === 1 ? "#f5a724" : pos === 2 ? "#c0c8d8" : pos === 3 ? "#cd7f32" : "#3a4560" }}>{c.position}</div>
                     <div style={{ position: "relative", zIndex: 1, height: 24, width: 4, borderRadius: 2, background: teamColor, flexShrink: 0 }} />
                     <div style={{ position: "relative", zIndex: 1, fontSize: 14, fontWeight: 800, letterSpacing: "-.01em", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{c.Constructor.name}</div>
-                    <div style={{ position: "relative", zIndex: 1, fontFamily: "monospace", fontSize: 14, fontWeight: 700, textAlign: "right", color: "#edf2ff" }}>{c.points}</div>
-                    <div style={{ position: "relative", zIndex: 1, fontFamily: "monospace", fontSize: 12, textAlign: "right", color: "#5a6888" }}>{c.wins}</div>
+                    <div style={{ position: "relative", zIndex: 1, fontFamily: "monospace", fontSize: 14, fontWeight: 700, textAlign: "right", color: "var(--f1-text)" }}>{c.points}</div>
+                    <div style={{ position: "relative", zIndex: 1, fontFamily: "monospace", fontSize: 12, textAlign: "right", color: "var(--f1-muted)" }}>{c.wins}</div>
                   </div>
                 );
               })}

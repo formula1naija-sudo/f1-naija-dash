@@ -6,7 +6,7 @@ import ScheduleTZPicker from "@/components/schedule/ScheduleTZPicker";
 
 export default async function SchedulePage() {
   return (
-    <div style={{ background: "#04060e", color: "#edf2ff", minHeight: "100vh" }}>
+    <div style={{ background: "#04060e", color: "var(--f1-text)", minHeight: "100vh" }}>
       <style>{`
         @keyframes schFadeUp {
           from { opacity: 0; transform: translateY(16px); }
@@ -53,7 +53,7 @@ export default async function SchedulePage() {
           </div>
 
           <div className="sch-fade-2" style={{ lineHeight: .9 }}>
-            <div style={{ fontSize: "clamp(40px,6vw,84px)", fontWeight: 900, letterSpacing: "-.04em", color: "#edf2ff", lineHeight: .92 }}>
+            <div style={{ fontSize: "clamp(40px,6vw,84px)", fontWeight: 900, letterSpacing: "-.04em", color: "var(--f1-text)", lineHeight: .92 }}>
               Race
             </div>
             <div style={{
@@ -66,7 +66,7 @@ export default async function SchedulePage() {
             </div>
           </div>
 
-          <p className="sch-fade-3" style={{ marginTop: 18, fontSize: 12, color: "#5a6888", margin: "18px 0 0" }}>
+          <p className="sch-fade-3" style={{ marginTop: 18, fontSize: 12, color: "var(--f1-muted)", margin: "18px 0 0" }}>
             All sessions. All timezones. Straight to the point.
           </p>
         </div>
@@ -80,7 +80,7 @@ export default async function SchedulePage() {
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
             <div style={{ width: 4, height: 18, borderRadius: 2, background: "#00d484" }} />
             <h2 style={{ fontSize: 18, fontWeight: 800, letterSpacing: "-.02em", margin: 0 }}>Up Next</h2>
-            <span style={{ fontSize: 11, color: "#5a6888", marginLeft: 4 }}>· All times are local</span>
+            <span style={{ fontSize: 11, color: "var(--f1-muted)", marginLeft: 4 }}>· All times are local</span>
           </div>
           <Suspense fallback={<NextRoundLoading />}>
             <NextRound />

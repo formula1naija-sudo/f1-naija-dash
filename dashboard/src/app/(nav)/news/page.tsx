@@ -49,7 +49,7 @@ const SOURCE_COLORS: Record<string, { bg: string; text: string }> = {
 };
 
 function NewsCard({ item, featured = false }: { item: NewsItem; featured?: boolean }) {
-  const src = SOURCE_COLORS[item.source] ?? { bg: "rgba(255,255,255,.06)", text: "#5a6888" };
+  const src = SOURCE_COLORS[item.source] ?? { bg: "rgba(255,255,255,.06)", text: "var(--f1-muted)" };
   return (
     <a
       href={item.link}
@@ -87,14 +87,14 @@ function NewsCard({ item, featured = false }: { item: NewsItem; featured?: boole
           fontWeight: featured ? 800 : 600,
           letterSpacing: "-.01em",
           lineHeight: 1.45,
-          color: "#edf2ff",
+          color: "var(--f1-text)",
           margin: "0 0 8px",
         }}>
           {item.title}
         </h3>
         {item.description && (
           <p style={{
-            fontSize: 12, color: "#5a6888", lineHeight: 1.6, margin: 0,
+            fontSize: 12, color: "var(--f1-muted)", lineHeight: 1.6, margin: 0,
             display: "-webkit-box", WebkitLineClamp: featured ? 3 : 2,
             WebkitBoxOrient: "vertical", overflow: "hidden",
           }}>{item.description}</p>
@@ -160,7 +160,7 @@ function NewsTicker({ items }: { items: NewsItem[] }) {
         }}>
           {tickerItems.map((item, i) => (
             <a key={i} href={item.link} target="_blank" rel="noopener noreferrer"
-              style={{ fontSize: 12, color: "#5a6888", textDecoration: "none", flexShrink: 0 }}>
+              style={{ fontSize: 12, color: "var(--f1-muted)", textDecoration: "none", flexShrink: 0 }}>
               <span style={{ color: "#00d484", marginRight: 8 }}>●</span>
               {item.title}
             </a>
@@ -262,7 +262,7 @@ export default function NewsPage() {
   const hasMore = visibleCount < newsItems.length;
 
   return (
-    <div style={{ background: "#04060e", color: "#edf2ff", minHeight: "100vh" }}>
+    <div style={{ background: "#04060e", color: "var(--f1-text)", minHeight: "100vh" }}>
       <style>{`
         @keyframes newsFadeUp {
           from { opacity: 0; transform: translateY(16px); }
@@ -306,7 +306,7 @@ export default function NewsPage() {
           </div>
 
           <div className="news-fade-2" style={{ lineHeight: .9 }}>
-            <div style={{ fontSize: "clamp(40px,6vw,84px)", fontWeight: 900, letterSpacing: "-.04em", color: "#edf2ff", lineHeight: .92 }}>
+            <div style={{ fontSize: "clamp(40px,6vw,84px)", fontWeight: 900, letterSpacing: "-.04em", color: "var(--f1-text)", lineHeight: .92 }}>
               F1 News
             </div>
             <div style={{
@@ -320,7 +320,7 @@ export default function NewsPage() {
           </div>
 
           <div className="news-fade-3" style={{ marginTop: 18, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
-            <p style={{ fontSize: 12, color: "#5a6888", margin: 0 }}>
+            <p style={{ fontSize: 12, color: "var(--f1-muted)", margin: 0 }}>
               BBC, Autosport, The Race, Planet F1 &amp; more — all in one place.
             </p>
             {notifStatus !== "unsupported" && notifStatus !== "ios-pwa-required" && (
@@ -334,7 +334,7 @@ export default function NewsPage() {
                   border: "1px solid",
                   borderColor: notifStatus === "subscribed" ? "rgba(0,212,132,.4)" : "rgba(255,255,255,.1)",
                   background: notifStatus === "subscribed" ? "rgba(0,212,132,.08)" : "rgba(255,255,255,.04)",
-                  color: notifStatus === "subscribed" ? "#00d484" : notifStatus === "denied" ? "#3a4560" : "#edf2ff",
+                  color: notifStatus === "subscribed" ? "#00d484" : notifStatus === "denied" ? "#3a4560" : "var(--f1-text)",
                   minHeight: 40, WebkitTapHighlightColor: "transparent",
                 }}
               >
@@ -377,12 +377,12 @@ export default function NewsPage() {
               }}>F1</div>
             )}
             <div style={{ flex: 1, minWidth: 200 }}>
-              <div style={{ fontSize: 14, fontWeight: 800, color: "#edf2ff" }}>{profile.name}</div>
-              <div style={{ fontSize: 11, color: "#5a6888", marginBottom: 8 }}>@{profile.screen_name}</div>
+              <div style={{ fontSize: 14, fontWeight: 800, color: "var(--f1-text)" }}>{profile.name}</div>
+              <div style={{ fontSize: 11, color: "var(--f1-muted)", marginBottom: 8 }}>@{profile.screen_name}</div>
               <p style={{ fontSize: 12, color: "#8090b0", lineHeight: 1.6, margin: "0 0 10px" }}>{profile.description}</p>
-              <div style={{ display: "flex", gap: 16, fontSize: 12, color: "#5a6888" }}>
-                <span><strong style={{ color: "#edf2ff" }}>{fmt(profile.followers)}</strong> followers</span>
-                <span><strong style={{ color: "#edf2ff" }}>{fmt(profile.tweets)}</strong> posts</span>
+              <div style={{ display: "flex", gap: 16, fontSize: 12, color: "var(--f1-muted)" }}>
+                <span><strong style={{ color: "var(--f1-text)" }}>{fmt(profile.followers)}</strong> followers</span>
+                <span><strong style={{ color: "var(--f1-text)" }}>{fmt(profile.tweets)}</strong> posts</span>
               </div>
             </div>
             <a
@@ -391,7 +391,7 @@ export default function NewsPage() {
                 display: "flex", alignItems: "center", gap: 6,
                 padding: "9px 18px", borderRadius: 8, fontSize: 12, fontWeight: 700,
                 border: "1px solid rgba(255,255,255,.12)",
-                background: "rgba(255,255,255,.04)", color: "#edf2ff",
+                background: "rgba(255,255,255,.04)", color: "var(--f1-text)",
                 textDecoration: "none", whiteSpace: "nowrap",
                 minHeight: 40, WebkitTapHighlightColor: "transparent",
                 alignSelf: "flex-start",
@@ -410,7 +410,7 @@ export default function NewsPage() {
         ) : error ? (
           <div style={{
             display: "flex", flexDirection: "column", alignItems: "center",
-            gap: 12, padding: "60px 20px", color: "#5a6888", textAlign: "center",
+            gap: 12, padding: "60px 20px", color: "var(--f1-muted)", textAlign: "center",
           }}>
             <div style={{ fontSize: 36 }}>📡</div>
             <p style={{ fontSize: 14 }}>{error}</p>
@@ -448,12 +448,12 @@ export default function NewsPage() {
                   width: "100%", marginTop: 8,
                   padding: "13px", borderRadius: 10, fontSize: 13, fontWeight: 700,
                   border: "1px solid rgba(255,255,255,.08)",
-                  background: "rgba(255,255,255,.02)", color: "#5a6888",
+                  background: "rgba(255,255,255,.02)", color: "var(--f1-muted)",
                   cursor: "pointer", transition: "all .2s",
                   minHeight: 48, WebkitTapHighlightColor: "transparent",
                 }}
-                onMouseEnter={e => (e.currentTarget.style.color = "#edf2ff")}
-                onMouseLeave={e => (e.currentTarget.style.color = "#5a6888")}
+                onMouseEnter={e => (e.currentTarget.style.color = "var(--f1-text)")}
+                onMouseLeave={e => (e.currentTarget.style.color = "var(--f1-muted)")}
               >
                 Load {Math.min(PAGE_SIZE, newsItems.length - visibleCount)} more stories
               </button>
@@ -475,7 +475,7 @@ export default function NewsPage() {
             )}
           </>
         ) : (
-          <div style={{ textAlign: "center", padding: "60px 20px", color: "#5a6888" }}>
+          <div style={{ textAlign: "center", padding: "60px 20px", color: "var(--f1-muted)" }}>
             <div style={{ fontSize: 36, marginBottom: 12 }}>🏎️</div>
             <p>No news available right now.</p>
           </div>

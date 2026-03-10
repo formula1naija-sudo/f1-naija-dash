@@ -18,6 +18,81 @@
 	--color-naija-purple: #9c50f5;
 }
 
+/* ─── F1 Naija Theme Variables ──────────────────────────────── */
+:root {
+	color-scheme: dark;
+	/* Backgrounds */
+	--f1-bg:            #09090b;
+	--f1-bg-page:       #04060e;
+	--f1-nav:           rgba(9,9,11,0.88);
+	--f1-mob-overlay:   rgba(4,6,14,0.97);
+	--f1-sidebar:       #09090b;
+	--f1-card:          #0d1424;
+	--f1-panel:         rgba(255,255,255,0.025);
+	--f1-panel-header:  rgba(255,255,255,0.02);
+	/* Borders */
+	--f1-border:        rgba(255,255,255,0.07);
+	--f1-border-mid:    rgba(255,255,255,0.12);
+	--f1-border-soft:   rgba(255,255,255,0.025);
+	/* Text */
+	--f1-text:          #edf2ff;
+	--f1-muted:         #5a6888;
+	--f1-sub:           #a1a1aa;
+	/* Hero grid lines */
+	--f1-grid-line:     rgba(255,255,255,0.018);
+	/* Hero card hover border */
+	--f1-hover-border:  rgba(0,212,132,0.3);
+	--f1-card-border:   rgba(255,255,255,0.07);
+}
+
+/* Light theme overrides */
+[data-theme="light"] {
+	color-scheme: light;
+	/* Backgrounds */
+	--f1-bg:            #f3f4f7;
+	--f1-bg-page:       #f3f4f7;
+	--f1-nav:           rgba(243,244,247,0.92);
+	--f1-mob-overlay:   rgba(243,244,247,0.97);
+	--f1-sidebar:       #ffffff;
+	--f1-card:          #ffffff;
+	--f1-panel:         rgba(0,0,0,0.03);
+	--f1-panel-header:  rgba(0,0,0,0.025);
+	/* Borders */
+	--f1-border:        rgba(0,0,0,0.09);
+	--f1-border-mid:    rgba(0,0,0,0.16);
+	--f1-border-soft:   rgba(0,0,0,0.06);
+	/* Text */
+	--f1-text:          #0f172a;
+	--f1-muted:         #475569;
+	--f1-sub:           #64748b;
+	/* Hero grid lines */
+	--f1-grid-line:     rgba(0,0,0,0.04);
+	/* Hero card hover border */
+	--f1-hover-border:  rgba(0,212,132,0.4);
+	--f1-card-border:   rgba(0,0,0,0.09);
+
+	/* Flip Tailwind zinc scale so bg-zinc-950 → light, text-zinc-400 → dark */
+	--color-zinc-950:   oklch(97% 0.002 286);
+	--color-zinc-900:   oklch(93% 0.003 286);
+	--color-zinc-800:   oklch(88% 0.005 286);
+	--color-zinc-700:   oklch(78% 0.007 286);
+	--color-zinc-600:   oklch(66% 0.01  286);
+	--color-zinc-500:   oklch(52% 0.013 286);
+	--color-zinc-400:   oklch(40% 0.013 286);
+	--color-zinc-300:   oklch(30% 0.012 286);
+	--color-zinc-200:   oklch(20% 0.009 286);
+	--color-zinc-100:   oklch(13% 0.006 286);
+	--color-zinc-50:    oklch(9%  0.004 286);
+	/* white/black flip for text-white usage */
+	--color-white:      #0f172a;
+	--color-black:      #f8fafc;
+}
+
+/* Body background driven by theme */
+body {
+	background-color: var(--f1-bg);
+}
+
 @layer utilities {
 	.no-scrollbar::-webkit-scrollbar {
 		display: none;

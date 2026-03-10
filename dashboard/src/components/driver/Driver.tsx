@@ -98,7 +98,7 @@ export default function Driver({ driver, timingDriver, position }: Props) {
 				<div className="flex min-w-0 items-center gap-1.5 overflow-hidden">
 					<span style={{
 						fontSize: 12, fontWeight: 800, lineHeight: 1,
-						color: position <= 3 ? "#f5a724" : "#52525b",
+						color: position <= 3 ? "#f5a724" : "var(--f1-muted)",
 						width: 18, flexShrink: 0, textAlign: "right",
 					}}>
 						{position}
@@ -112,7 +112,7 @@ export default function Driver({ driver, timingDriver, position }: Props) {
 						{driver.Tla}
 					</span>
 					<span style={{
-						fontSize: 11, fontWeight: 500, color: "#a1a1aa",
+						fontSize: 11, fontWeight: 500, color: "var(--f1-sub)",
 						overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
 					}}>
 						{driver.LastName}
