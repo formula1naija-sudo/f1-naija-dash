@@ -2,6 +2,7 @@
 
 import { type ReactNode, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 
 import Footer from "@/components/Footer";
@@ -96,14 +97,17 @@ export default function Layout({ children }: Props) {
         transition: "background .2s, border-color .2s",
       }}>
         <Link href="/" style={{
-          fontSize: 13, fontWeight: 900, letterSpacing: ".06em",
-          textTransform: "uppercase", color: "var(--f1-text)",
-          textDecoration: "none", display: "flex", alignItems: "center", gap: 6,
+          textDecoration: "none", display: "flex", alignItems: "center",
           WebkitTapHighlightColor: "transparent",
         }}>
-          <span style={{ color: "#00d484" }}>F1</span>
-          <span style={{ color: "var(--f1-muted)", fontWeight: 400 }}>·</span>
-          Naija
+          <Image
+            src="/tag-logo.svg"
+            alt="F1 Naija"
+            width={72}
+            height={28}
+            style={{ objectFit: "contain" }}
+            priority
+          />
         </Link>
 
         {/* Desktop links */}
@@ -128,6 +132,16 @@ export default function Layout({ children }: Props) {
       {/* MOBILE MENU OVERLAY */}
       {menuOpen && (
         <div className="mobile-nav sm:hidden">
+          {/* Logo at top-left */}
+          <div style={{ position: "absolute", top: 18, left: 28 }}>
+            <Image
+              src="/tag-logo.svg"
+              alt="F1 Naija"
+              width={80}
+              height={30}
+              style={{ objectFit: "contain" }}
+            />
+          </div>
           <button
             onClick={() => setMenuOpen(false)}
             style={{
