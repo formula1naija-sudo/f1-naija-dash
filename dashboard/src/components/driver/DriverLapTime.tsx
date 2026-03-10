@@ -1,5 +1,3 @@
-import clsx from "clsx";
-
 import type { TimingDataDriver } from "@/types/state.type";
 
 type Props = {
@@ -9,24 +7,47 @@ type Props = {
 };
 
 export default function DriverLapTime({ last, best, hasFastest }: Props) {
+	const bestColor = hasFastest ? "#9c50f5" : "#52525b";
+
+	const lastColor = last.OverallFastest
+		? "#9c50f5"
+		: last.PersonalFastest
+			? "#00d484"
+			: last.Value
+				? "var(--f1-text)"
+				: "#52525b";
+
 	return (
-		<div className="place-self-start">
+		<div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+			{/* Last lap — primary */}
 			<p
-				className={clsx("text-lg leading-none font-medium tabular-nums", {
-					"text-naija-purple!": last.OverallFastest,
-					"text-naija-green!": last.PersonalFastest,
-					"text-zinc-500!": !last.Value,
-				})}
+				style={{
+					fontSize: 11,
+					fontWeight: 700,
+					lineHeight: 1,
+					fontVariantNumeric: "tabular-nums",
+					color: lastColor,
+					margin: 0,
+					whiteSpace: "nowrap",
+				}}
 			>
-				{!!last.Value ? last.Value : "-- -- ---"}
+				{last.Value || "—:——.———"}
+				{last.OverallFastest && <span style={{ marginLeft: 3, fontSize: 9 }}>⚡</span>}
 			</p>
+
+			{/* Best lap — sub */}
 			<p
-				className={clsx("text-sm leading-none text-zinc-500 tabular-nums", {
-					"text-naija-purple!": hasFastest,
-					"text-zinc-500!": !best.Value,
-				})}
+				style={{
+					fontSize: 9,
+					fontWeight: 500,
+					lineHeight: 1,
+					fontVariantNumeric: "tabular-nums",
+					color: bestColor,
+					margin: 0,
+					whiteSpace: "nowrap",
+				}}
 			>
-				{!!best.Value ? best.Value : "-- -- ---"}
+				{best.Value || "—:——.———"}
 			</p>
 		</div>
 	);

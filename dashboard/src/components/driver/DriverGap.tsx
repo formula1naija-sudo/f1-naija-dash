@@ -1,5 +1,3 @@
-import clsx from "clsx";
-
 import type { TimingDataDriver } from "@/types/state.type";
 
 type Props = {
@@ -23,17 +21,36 @@ export default function DriverGap({ timingDriver, sessionPart }: Props) {
 	const catching = timingDriver.IntervalToPositionAhead?.Catching;
 
 	return (
-		<div className="place-self-start">
+		<div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+			{/* Gap to car ahead — primary */}
 			<p
-				className={clsx("text-lg leading-none font-medium tabular-nums", {
-					"text-emerald-500": catching,
-					"text-zinc-500": !gapToFront,
-				})}
+				style={{
+					fontSize: 11,
+					fontWeight: 700,
+					lineHeight: 1,
+					fontVariantNumeric: "tabular-nums",
+					color: catching ? "#00d484" : gapToFront ? "var(--f1-text)" : "#52525b",
+					margin: 0,
+					whiteSpace: "nowrap",
+				}}
 			>
-				{!!gapToFront ? gapToFront : "-- ---"}
+				{gapToFront || "—"}
 			</p>
 
-			<p className="text-sm leading-none text-zinc-500 tabular-nums">{!!gapToLeader ? gapToLeader : "-- ---"}</p>
+			{/* Gap to leader — sub */}
+			<p
+				style={{
+					fontSize: 9,
+					fontWeight: 500,
+					lineHeight: 1,
+					fontVariantNumeric: "tabular-nums",
+					color: "#52525b",
+					margin: 0,
+					whiteSpace: "nowrap",
+				}}
+			>
+				{gapToLeader || "—"}
+			</p>
 		</div>
 	);
 }

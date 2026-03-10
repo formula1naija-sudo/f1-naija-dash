@@ -16,8 +16,8 @@ export default function LeaderBoard() {
 	const carMetrics = useSettingsStore((state) => state.carMetrics);
 
 	const colTemplate = carMetrics
-		? "8rem 3.5rem 5.5rem 4rem 5rem 5.5rem auto 10.5rem"
-		: "8rem 3.5rem 5.5rem 4rem 5rem 5.5rem auto";
+		? "8rem 3rem 5rem 3rem 4.5rem 5.5rem auto 10.5rem"
+		: "8rem 3rem 5rem 3rem 4.5rem 5.5rem auto";
 
 	return (
 		<div style={{
@@ -72,7 +72,7 @@ export default function LeaderBoard() {
 					<span>Driver</span>
 					<span>DRS</span>
 					<span>Tyre</span>
-					<span>Info</span>
+					<span>±</span>
 					<span>Gap</span>
 					<span>Lap Time</span>
 					<span>Sectors</span>
@@ -116,8 +116,8 @@ const SkeletonDriver = () => {
 			className="grid items-center gap-2 px-3 py-1.5"
 			style={{
 				gridTemplateColumns: carMetrics
-					? "8rem 3.5rem 5.5rem 4rem 5rem 5.5rem auto 10.5rem"
-					: "8rem 3.5rem 5.5rem 4rem 5rem 5.5rem auto",
+					? "8rem 3rem 5rem 3rem 4.5rem 5.5rem auto 10.5rem"
+					: "8rem 3rem 5rem 3rem 4.5rem 5.5rem auto",
 				borderBottom: "1px solid rgba(255,255,255,0.025)",
 			}}
 		>

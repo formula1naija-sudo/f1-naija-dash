@@ -92,8 +92,8 @@ export default function Driver({ driver, timingDriver, position }: Props) {
 				className="grid items-center gap-2"
 				style={{
 					gridTemplateColumns: carMetrics
-						? "8rem 3.5rem 5.5rem 4rem 5rem 5.5rem auto 10.5rem"
-						: "8rem 3.5rem 5.5rem 4rem 5rem 5.5rem auto",
+						? "8rem 3rem 5rem 3rem 4.5rem 5.5rem auto 10.5rem"
+						: "8rem 3rem 5rem 3rem 4.5rem 5.5rem auto",
 				}}
 			>
 				{/* Driver: pos · TLA badge · LastName */}

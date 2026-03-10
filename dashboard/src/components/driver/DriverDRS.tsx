@@ -1,5 +1,3 @@
-import clsx from "clsx";
-
 type Props = {
 	on: boolean;
 	possible: boolean;
@@ -10,17 +8,46 @@ type Props = {
 export default function DriverDRS({ on, possible, inPit, pitOut }: Props) {
 	const pit = inPit || pitOut;
 
+	const style: React.CSSProperties = pit
+		? {
+				border: "1px solid rgba(245,167,36,0.6)",
+				color: "#f5a724",
+				background: "rgba(245,167,36,0.08)",
+			}
+		: on
+			? {
+					border: "1px solid rgba(0,212,132,0.7)",
+					color: "#00d484",
+					background: "rgba(0,212,132,0.12)",
+				}
+			: possible
+				? {
+						border: "1px solid rgba(245,167,36,0.4)",
+						color: "rgba(245,167,36,0.6)",
+						background: "transparent",
+					}
+				: {
+						border: "1px solid rgba(63,63,70,0.7)",
+						color: "#3f3f46",
+						background: "transparent",
+					};
+
 	return (
 		<span
-			className={clsx(
-				"text-md inline-flex h-8 w-full items-center justify-center rounded-md border-2 font-mono font-black",
-				{
-					"border-zinc-700 text-zinc-700": !pit && !on && !possible,
-					"border-naija-gold/70 text-naija-gold/70": !pit && !on && possible,
-					"border-naija-green text-naija-green": !pit && on,
-					"border-naija-gold text-naija-gold": pit,
-				},
-			)}
+			style={{
+				display: "inline-flex",
+				alignItems: "center",
+				justifyContent: "center",
+				height: 22,
+				width: 44,
+				borderRadius: 4,
+				fontSize: 9,
+				fontWeight: 800,
+				fontFamily: "monospace",
+				letterSpacing: ".06em",
+				flexShrink: 0,
+				...style,
+			}}
 		>
 			{pit ? "PIT" : "DRS"}
 		</span>
