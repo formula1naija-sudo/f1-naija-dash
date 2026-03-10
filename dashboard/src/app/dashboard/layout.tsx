@@ -133,7 +133,7 @@ function DesktopStaticBar({ show }: { show: boolean }) {
   const pinned = useSidebarStore((state) => state.pinned);
   const pin = useSidebarStore((state) => state.pin);
   return (
-    <div className="hidden w-full flex-row justify-between overflow-hidden rounded-lg border border-zinc-800/60 p-2 md:flex">
+    <div className="hidden w-full flex-row justify-between overflow-hidden rounded-lg p-2 md:flex" style={{ border: "1px solid var(--f1-border)" }}>
       <div className="flex items-center gap-2">
         <AnimatePresence>
           {!pinned && <SidenavButton key="desktop" className="shrink-0" onClick={() => pin()} />}

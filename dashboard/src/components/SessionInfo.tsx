@@ -37,23 +37,56 @@ export default function SessionInfo() {
 			: undefined;
 
 	return (
-		<div className="flex items-center gap-2">
+		<div style={{ display: "flex", alignItems: "center", gap: 10 }}>
 			<Flag countryCode={session?.Meeting.Country.Code} />
 
-			<div className="flex flex-col justify-center">
+			<div style={{ display: "flex", flexDirection: "column", gap: 3, justifyContent: "center" }}>
 				{session ? (
-					<h1 className="truncate text-sm leading-none font-medium text-white">
+					<p
+						style={{
+							fontSize: 11,
+							fontWeight: 600,
+							lineHeight: 1,
+							color: "var(--f1-sub)",
+							letterSpacing: ".03em",
+							textTransform: "uppercase",
+							whiteSpace: "nowrap",
+						}}
+					>
 						{session.Meeting.Name}: {session.Name ?? "Unknown"}
 						{timingData?.SessionPart ? ` ${sessionPartPrefix(session.Name)}${timingData.SessionPart}` : ""}
-					</h1>
+					</p>
 				) : (
-					<div className="h-4 w-[250px] animate-pulse rounded-md bg-zinc-800" />
+					<div
+						style={{
+							height: 12, width: 200, borderRadius: 4,
+							background: "rgba(255,255,255,0.05)",
+							animation: "pulse 1.5s infinite",
+						}}
+					/>
 				)}
 
 				{timeRemaining !== undefined ? (
-					<p className="text-2xl leading-none font-extrabold">{timeRemaining}</p>
+					<p
+						style={{
+							fontSize: 26,
+							fontWeight: 900,
+							lineHeight: 1,
+							color: "var(--f1-text)",
+							fontVariantNumeric: "tabular-nums",
+							letterSpacing: "-.02em",
+						}}
+					>
+						{timeRemaining}
+					</p>
 				) : (
-					<div className="mt-1 h-6 w-[150px] animate-pulse rounded-md bg-zinc-800 font-semibold" />
+					<div
+						style={{
+							marginTop: 2, height: 26, width: 140, borderRadius: 4,
+							background: "rgba(255,255,255,0.05)",
+							animation: "pulse 1.5s infinite",
+						}}
+					/>
 				)}
 			</div>
 		</div>

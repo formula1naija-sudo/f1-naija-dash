@@ -168,31 +168,32 @@ export default function Page() {
 
 				<div className="grid grid-cols-1 gap-2 md:divide-y-0 lg:grid-cols-3">
 					{/* Race Control */}
-					<div className="flex h-[30rem] flex-col overflow-hidden rounded-lg border border-zinc-800/60">
-						<div className="flex shrink-0 items-center gap-2 border-b border-zinc-800/60 bg-zinc-900/60 px-3 py-2.5">
-							<span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">📻 Race Control</span>
+					<div className="flex h-[30rem] flex-col overflow-hidden rounded-lg" style={{ border: "1px solid var(--f1-border)", background: "rgba(255,255,255,0.01)" }}>
+						<div className="flex shrink-0 items-center gap-2 px-3 py-2.5" style={{ borderBottom: "1px solid var(--f1-border)" }}>
+							<span style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "#71717a" }}>📻 Race Control</span>
 						</div>
-						<div className="no-scrollbar flex-1 overflow-y-auto p-2">
+						<div className="no-scrollbar flex-1 overflow-y-auto">
 							<RaceControl />
 						</div>
 					</div>
 
 					{/* Team Radios */}
-					<div className="flex h-[30rem] flex-col overflow-hidden rounded-lg border border-zinc-800/60">
-						<div className="flex shrink-0 items-center gap-2 border-b border-zinc-800/60 bg-zinc-900/60 px-3 py-2.5">
-							<span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">🎙️ Team Radios</span>
+					<div className="flex h-[30rem] flex-col overflow-hidden rounded-lg" style={{ border: "1px solid var(--f1-border)", background: "rgba(255,255,255,0.01)" }}>
+						<div className="flex shrink-0 items-center gap-2 px-3 py-2.5" style={{ borderBottom: "1px solid var(--f1-border)" }}>
+							<span style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "#71717a" }}>🎙️ Team Radios</span>
 						</div>
-						<div className="no-scrollbar flex-1 overflow-y-auto p-2">
+						<div className="no-scrollbar flex-1 overflow-y-auto">
 							<TeamRadios />
 						</div>
 					</div>
 
 					{/* Track Violations */}
-					<div className="flex h-[30rem] flex-col overflow-hidden rounded-lg border border-zinc-800/60">
-						<div className="flex shrink-0 items-center gap-2 border-b border-zinc-800/60 bg-zinc-900/60 px-3 py-2.5">
-							<span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">⚠️ Track Violations</span>
+					<div className="flex h-[30rem] flex-col overflow-hidden rounded-lg" style={{ border: "1px solid var(--f1-border)", background: "rgba(255,255,255,0.01)" }}>
+						<div className="flex shrink-0 items-center gap-2 px-3 py-2.5" style={{ borderBottom: "1px solid var(--f1-border)" }}>
+							<span style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "#71717a" }}>⚠️ Track Violations</span>
+							<TrackViolationsBadge />
 						</div>
-						<div className="no-scrollbar flex-1 overflow-y-auto p-2">
+						<div className="no-scrollbar flex-1 overflow-y-auto">
 							<TrackViolations />
 						</div>
 					</div>
@@ -201,5 +202,31 @@ export default function Page() {
 				<Footer />
 			</div>
 		</div>
+	);
+}
+
+function TrackViolationsBadge() {
+	const messages = useDataStore((state) => state.state?.RaceControlMessages);
+
+	const total = messages?.Messages.filter(
+		(rcm) => rcm.Category === "Other" && rcm.Message.includes("TRACK LIMITS"),
+	).length ?? 0;
+
+	if (!total) return null;
+
+	return (
+		<span
+			style={{
+				marginLeft: "auto",
+				fontSize: 9, fontWeight: 700,
+				padding: "2px 7px",
+				borderRadius: 4,
+				color: "#e8001f",
+				background: "rgba(232,0,31,0.1)",
+				border: "1px solid rgba(232,0,31,0.25)",
+			}}
+		>
+			{total} total
+		</span>
 	);
 }

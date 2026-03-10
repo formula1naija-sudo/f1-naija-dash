@@ -1,9 +1,5 @@
 import type { Driver, TimingData } from "@/types/state.type";
 
-import { calculatePosition } from "@/lib/calculatePosition";
-
-import DriverTag from "@/components/driver/DriverTag";
-
 type Props = {
 	driver: Driver;
 	driverViolations: number;
@@ -11,30 +7,53 @@ type Props = {
 	driversTiming: TimingData | undefined;
 };
 
-export default function DriverViolations({ driver, driverViolations, maxViolations, driversTiming }: Props) {
+export default function DriverViolations({ driver, driverViolations, maxViolations }: Props) {
 	const pct = maxViolations > 0 ? (driverViolations / maxViolations) * 100 : 0;
+	const teamColor = driver.TeamColour ? `#${driver.TeamColour}` : "#52525b";
 
 	return (
-		<div className="flex items-center gap-2 px-2 py-2" key={`violation.${driver.RacingNumber}`}>
-			<DriverTag className="h-fit shrink-0" teamColor={driver.TeamColour} short={driver.Tla} />
-
-			<div className="flex min-w-0 flex-1 items-center gap-2">
-				<div className="h-1.5 flex-1 overflow-hidden rounded-full bg-zinc-800">
-					<div
-						className="h-full rounded-full transition-all duration-500"
-						style={{ width: `${pct}%`, background: "#e8001f" }}
-					/>
-				</div>
-				<span className="w-4 shrink-0 text-right text-sm font-semibold" style={{ color: "#e8001f" }}>
-					{driverViolations}
+		<div
+			style={{
+				display: "flex",
+				alignItems: "center",
+				gap: 10,
+				padding: "7px 10px",
+				borderBottom: "1px solid var(--f1-border-soft)",
+			}}
+		>
+			{/* TLA badge */}
+			<div
+				style={{
+					display: "inline-flex",
+					alignItems: "center",
+					justifyContent: "center",
+					padding: "3px 7px",
+					borderRadius: 5,
+					background: teamColor,
+					flexShrink: 0,
+					minWidth: 38,
+				}}
+			>
+				<span style={{ fontFamily: "monospace", fontSize: 10, fontWeight: 900, color: "#fff", letterSpacing: ".04em" }}>
+					{driver.Tla}
 				</span>
 			</div>
 
-			{driverViolations > 4 && driversTiming && (
-				<p className="shrink-0 text-xs text-zinc-500">
-					{calculatePosition(Math.round(driverViolations / 5) * 5, driver.RacingNumber, driversTiming)}th
-				</p>
-			)}
+			{/* Bar */}
+			<div style={{ flex: 1, height: 5, borderRadius: 3, background: "rgba(255,255,255,0.05)", overflow: "hidden" }}>
+				<div
+					style={{
+						height: "100%", borderRadius: 3, width: `${pct}%`,
+						background: "linear-gradient(90deg,#e8001f,rgba(232,0,31,0.5))",
+						transition: "width 0.5s ease",
+					}}
+				/>
+			</div>
+
+			{/* Count */}
+			<span style={{ fontSize: 12, fontWeight: 800, color: "#e8001f", minWidth: 14, textAlign: "right", flexShrink: 0 }}>
+				{driverViolations}
+			</span>
 		</div>
 	);
 }
