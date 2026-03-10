@@ -2,7 +2,6 @@
 
 import { type ReactNode, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 
 import Footer from "@/components/Footer";
@@ -97,17 +96,16 @@ export default function Layout({ children }: Props) {
         transition: "background .2s, border-color .2s",
       }}>
         <Link href="/" style={{
-          textDecoration: "none", display: "flex", alignItems: "center",
+          textDecoration: "none", display: "flex", alignItems: "center", gap: 6,
           WebkitTapHighlightColor: "transparent",
         }}>
-          <Image
-            src="/tag-logo.svg"
-            alt="F1 Naija"
-            width={72}
-            height={28}
-            style={{ objectFit: "contain" }}
-            priority
-          />
+          <span style={{
+            fontSize: 15, fontWeight: 900, letterSpacing: "-.02em", color: "var(--f1-text)",
+          }}>F1</span>
+          <span style={{
+            fontSize: 11, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase",
+            color: "#00d484",
+          }}>· Naija</span>
         </Link>
 
         {/* Desktop links */}
@@ -132,15 +130,10 @@ export default function Layout({ children }: Props) {
       {/* MOBILE MENU OVERLAY */}
       {menuOpen && (
         <div className="mobile-nav sm:hidden">
-          {/* Logo at top-left */}
-          <div style={{ position: "absolute", top: 18, left: 28 }}>
-            <Image
-              src="/tag-logo.svg"
-              alt="F1 Naija"
-              width={80}
-              height={30}
-              style={{ objectFit: "contain" }}
-            />
+          {/* Brand at top-left */}
+          <div style={{ position: "absolute", top: 22, left: 28, display: "flex", alignItems: "center", gap: 6 }}>
+            <span style={{ fontSize: 16, fontWeight: 900, letterSpacing: "-.02em", color: "var(--f1-text)" }}>F1</span>
+            <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "#00d484" }}>· Naija</span>
           </div>
           <button
             onClick={() => setMenuOpen(false)}

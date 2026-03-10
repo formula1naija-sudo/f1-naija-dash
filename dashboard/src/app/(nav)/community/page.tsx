@@ -1,5 +1,25 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
+type SocialStats = {
+  twitter: number;
+  instagram: number;
+  threads: number;
+  tiktok: number;
+  facebook: number;
+  fantasy: number;
+  impressions: string;
+  twitterLive: boolean;
+};
+
+function fmt(n: number): string {
+  if (!n) return "—";
+  if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + "M";
+  if (n >= 1_000) return (n / 1_000).toFixed(1) + "K";
+  return n.toLocaleString();
+}
+
 /* ── Shared hero section label ─────────────────────────────── */
 function EyebrowLabel({ text }: { text: string }) {
   return (
@@ -77,9 +97,9 @@ function CTAButton({
 
 /* ── Social channel card ───────────────────────────────────── */
 function SocialCard({
-  icon, platform, handle, followers, href,
+  icon, platform, handle, followers, href, live = false,
 }: {
-  icon: string; platform: string; handle: string; followers?: string; href: string;
+  icon: string; platform: string; handle: string; followers?: string; href: string; live?: boolean;
 }) {
   return (
     <a
@@ -109,7 +129,16 @@ function SocialCard({
       </div>
       {followers && (
         <div style={{ textAlign: "right" }}>
-          <div style={{ fontSize: 14, fontWeight: 800, color: "#00d484" }}>{followers}</div>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 5 }}>
+            {live && (
+              <span style={{
+                width: 5, height: 5, borderRadius: "50%",
+                background: "#00d484", boxShadow: "0 0 4px #00d484",
+                display: "inline-block", flexShrink: 0,
+              }} />
+            )}
+            <span style={{ fontSize: 14, fontWeight: 800, color: "#00d484" }}>{followers}</span>
+          </div>
           <div style={{ fontSize: 9, fontWeight: 600, color: "var(--f1-muted)", letterSpacing: ".08em", textTransform: "uppercase" }}>followers</div>
         </div>
       )}
@@ -133,6 +162,18 @@ function SectionCard({ children }: { children: React.ReactNode }) {
 
 /* ════════════════════════════════════════════════════════════ */
 export default function CommunityPage() {
+  const [stats, setStats] = useState<SocialStats | null>(null);
+
+  useEffect(() => {
+    fetch("/api/social-stats")
+      .then(r => r.json())
+      .then(setStats)
+      .catch(() => {/* silently use fallback UI */});
+  }, []);
+
+  // helper so we can show "loading" dots while fetching
+  const s = (n: number | undefined) => (stats ? fmt(n ?? 0) : "···");
+
   return (
     <div style={{ background: "var(--f1-bg-page)", color: "var(--f1-text)", minHeight: "100vh" }}>
 
@@ -195,11 +236,11 @@ export default function CommunityPage() {
         <div style={{
           display: "flex", flexWrap: "wrap", gap: 10,
         }}>
-          <StatPill value="6.6K"  label="X Followers" />
-          <StatPill value="5.3K"  label="Instagram Followers" />
-          <StatPill value="3K"    label="Threads Followers" />
-          <StatPill value="200+"  label="Fantasy Players" />
-          <StatPill value="1M+"   label="Monthly Impressions" />
+          <StatPill value={s(stats?.twitter)}   label="X Followers" />
+          <StatPill value={s(stats?.instagram)} label="Instagram Followers" />
+          <StatPill value={s(stats?.threads)}   label="Threads Followers" />
+          <StatPill value="200+"                label="Fantasy Players" />
+          <StatPill value="1M+"                 label="Monthly Impressions" />
         </div>
       </section>
 
@@ -226,7 +267,6 @@ export default function CommunityPage() {
             </p>
             <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
               <CTAButton href="https://fantasy.formula1.com/en/leagues/join/C1JYXEPWR10" label="Join the League" variant="primary" />
-              <CTAButton href="https://fantasy.formula1.com/en/leagues/join/C1JYXEPWR10" label="View Standings" variant="ghost" />
             </div>
           </SectionCard>
 
@@ -358,11 +398,11 @@ export default function CommunityPage() {
           gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))",
           gap: 10,
         }}>
-          <SocialCard icon="𝕏"  platform="X / Twitter"  handle="@f1_naija"  followers="6,637"  href="https://x.com/f1_naija" />
-          <SocialCard icon="📸" platform="Instagram"     handle="@f1_naija"  followers="5,352"  href="https://www.instagram.com/f1_naija/" />
-          <SocialCard icon="🧵" platform="Threads"       handle="@f1_naija"  followers="3K"     href="https://www.threads.com/@f1_naija" />
-          <SocialCard icon="📘" platform="Facebook"      handle="F1 Naija"                      href="https://www.facebook.com/f1naija/" />
-          <SocialCard icon="🎵" platform="TikTok"        handle="@f1.naija"                     href="https://www.tiktok.com/@f1.naija" />
+          <SocialCard icon="𝕏"  platform="X / Twitter"  handle="@f1_naija"  followers={stats ? fmt(stats.twitter)   : undefined}  href="https://x.com/f1_naija" live={stats?.twitterLive} />
+          <SocialCard icon="📸" platform="Instagram"     handle="@f1_naija"  followers={stats ? fmt(stats.instagram) : undefined}  href="https://www.instagram.com/f1_naija/" />
+          <SocialCard icon="🧵" platform="Threads"       handle="@f1_naija"  followers={stats ? fmt(stats.threads)   : undefined}  href="https://www.threads.com/@f1_naija" />
+          <SocialCard icon="📘" platform="Facebook"      handle="F1 Naija"                                                         href="https://www.facebook.com/f1naija/" />
+          <SocialCard icon="🎵" platform="TikTok"        handle="@f1.naija"                                                        href="https://www.tiktok.com/@f1.naija" />
         </div>
       </section>
 
