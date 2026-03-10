@@ -53,7 +53,7 @@ export default function DriverTire({ stints }: Props) {
 			{/* Lap count */}
 			<div>
 				<p style={{ fontSize: 11, fontWeight: 700, lineHeight: 1, color: "var(--f1-text)", whiteSpace: "nowrap" }}>
-					L {currentStint.TotalLaps ?? 0}{currentStint.New ? "" : <span style={{ color: "#52525b" }}>*</span>}
+					L {currentStint.TotalLaps ?? 0}{currentStint.New === "TRUE" ? "" : <span style={{ color: "#52525b" }}>*</span>}
 				</p>
 			</div>
 		</div>

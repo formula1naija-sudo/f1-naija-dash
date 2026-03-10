@@ -7,7 +7,6 @@ import Map from "@/components/dashboard/Map";
 import DriverDRS from "@/components/driver/DriverDRS";
 import DriverInfo from "@/components/driver/DriverInfo";
 import DriverGap from "@/components/driver/DriverGap";
-import DriverLapTime from "@/components/driver/DriverLapTime";
 
 import { sortPos } from "@/lib/sorting";
 
