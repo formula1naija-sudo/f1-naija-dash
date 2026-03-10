@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 
-export const dynamic = "force-dynamic";
+// ISR: cache the aggregated feed for 5 minutes on Vercel's edge/CDN.
+// Individual fetch() calls below also carry revalidate:300 so Next.js
+// caches each upstream response independently.
+export const revalidate = 300;
 
 const RSS_FEEDS = [
 	// English (existing)
@@ -118,17 +121,24 @@ function isF1Relevant(item: NewsItem): boolean {
 	return F1_POSITIVE_PATTERN.test(text);
 }
 
+const FEED_TIMEOUT_MS = 4_500;
+
 async function fetchFeed(feedUrl: string, source: string): Promise<NewsItem[]> {
+	const controller = new AbortController();
+	const timer = setTimeout(() => controller.abort(), FEED_TIMEOUT_MS);
 	try {
 		const res = await fetch(feedUrl, {
 			headers: { "User-Agent": "F1Naija-Dashboard/1.0 (+https://f1naija.com)" },
 			next: { revalidate: 300 },
+			signal: controller.signal,
 		});
 		if (!res.ok) return [];
 		const xml = await res.text();
 		return parseRSS(xml, source);
 	} catch {
 		return [];
+	} finally {
+		clearTimeout(timer);
 	}
 }
 
@@ -159,6 +169,14 @@ export async function GET() {
 	);
 	const finalItems = recent.length >= 3 ? recent : f1Items.slice(0, 50);
 
-	return NextResponse.json({ items: finalItems });
+	return NextResponse.json(
+		{ items: finalItems },
+		{
+			headers: {
+				// Browser + CDN: serve from cache up to 5 min, then stale-while-revalidate for 1 min
+				"Cache-Control": "s-maxage=300, stale-while-revalidate=60",
+			},
+		}
+	);
 }
 

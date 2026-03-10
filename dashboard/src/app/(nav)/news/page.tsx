@@ -182,23 +182,31 @@ export default function NewsPage() {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
   const fetchData = useCallback(async () => {
-    try {
-      const [newsRes, profileRes] = await Promise.allSettled([
-        fetch("/api/news"),
-        fetch("https://api.fxtwitter.com/f1_naija"),
-      ]);
-
-      if (newsRes.status === "fulfilled" && newsRes.value.ok) {
-        const data = await newsRes.value.json();
+    // Fetch news and profile independently — a slow Twitter API response
+    // must not delay the news grid from rendering.
+    const newsPromise = fetch("/api/news")
+      .then(async (res) => {
+        if (!res.ok) throw new Error("news fetch failed");
+        return res.json() as Promise<{ items: NewsItem[] }>;
+      })
+      .then((data) => {
         if (Array.isArray(data.items) && data.items.length > 0) {
           setNewsItems(data.items);
           setError(null);
           setVisibleCount(PAGE_SIZE);
         }
-      }
+      })
+      .catch(() => {
+        setError("Could not load news. Check back shortly.");
+      })
+      .finally(() => {
+        setLoading(false);
+      });
 
-      if (profileRes.status === "fulfilled" && profileRes.value.ok) {
-        const data = await profileRes.value.json();
+    const profilePromise = fetch("https://api.fxtwitter.com/f1_naija")
+      .then(async (res) => {
+        if (!res.ok) return;
+        const data = await res.json() as { user?: { name: string; screen_name: string; description: string; followers: number; tweets: number; avatar_url?: string } };
         if (data.user) {
           setProfile({
             name: data.user.name,
@@ -209,12 +217,11 @@ export default function NewsPage() {
             avatar_url: data.user.avatar_url,
           });
         }
-      }
-    } catch {
-      setError("Could not load news. Check back shortly.");
-    } finally {
-      setLoading(false);
-    }
+      })
+      .catch(() => { /* profile card is optional — fail silently */ });
+
+    // Run both but don't block one on the other
+    await Promise.allSettled([newsPromise, profilePromise]);
   }, []);
 
   useEffect(() => {
