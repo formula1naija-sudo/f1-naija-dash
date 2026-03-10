@@ -105,6 +105,10 @@ export default function StandingsPage() {
           from { opacity: 0; transform: translateY(16px); }
           to   { opacity: 1; transform: translateY(0); }
         }
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50%       { opacity: .4; }
+        }
         .stand-fade { animation: standFadeUp .55s ease both; }
         .stand-fade-1 { animation-delay: .1s; }
         .stand-fade-2 { animation-delay: .25s; }
@@ -155,11 +159,11 @@ export default function StandingsPage() {
             </span>
           </div>
           <div className="stand-fade stand-fade-2" style={{ lineHeight: .88 }}>
-            <div style={{ fontSize: "clamp(48px,7vw,96px)", fontWeight: 900, letterSpacing: "-.04em", color: "var(--f1-text)", lineHeight: .92 }}>
+            <div style={{ fontSize: "clamp(32px,7vw,96px)", fontWeight: 900, letterSpacing: "-.04em", color: "var(--f1-text)", lineHeight: .92 }}>
               Championship
             </div>
             <div style={{
-              fontSize: "clamp(48px,7vw,96px)", fontWeight: 900,
+              fontSize: "clamp(32px,7vw,96px)", fontWeight: 900,
               letterSpacing: "-.04em", lineHeight: .92,
               background: "linear-gradient(120deg,#f5a724 0%,#ffd580 50%,#00d484 100%)",
               WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
@@ -250,7 +254,7 @@ export default function StandingsPage() {
                     display: "flex", alignItems: "center", justifyContent: "center",
                     fontSize: 20, fontWeight: 900, color: "#f5a724", flexShrink: 0,
                   }}>1</div>
-                  <div style={{ flex: 1, minWidth: 160 }}>
+                  <div style={{ flex: 1, minWidth: 120 }}>
                     <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "#f5a724", marginBottom: 4 }}>Championship Leader</div>
                     <div style={{ fontSize: "clamp(16px,4vw,22px)", fontWeight: 900, letterSpacing: "-.02em" }}>
                       {d.Driver.givenName} <span style={{ color: "#f5a724" }}>{d.Driver.familyName}</span>
@@ -322,7 +326,7 @@ export default function StandingsPage() {
                     display: "flex", alignItems: "center", justifyContent: "center",
                     fontSize: 20, fontWeight: 900, color: "#f5a724", flexShrink: 0,
                   }}>1</div>
-                  <div style={{ flex: 1, minWidth: 160 }}>
+                  <div style={{ flex: 1, minWidth: 120 }}>
                     <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "#f5a724", marginBottom: 4 }}>Championship Leader</div>
                     <div style={{ fontSize: "clamp(16px,4vw,22px)", fontWeight: 900, letterSpacing: "-.02em" }}>
                       <span style={{ color: "#f5a724" }}>{c.Constructor.name}</span>

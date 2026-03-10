@@ -178,7 +178,7 @@ export default function Layout({ children }: Props) {
       )}
 
       {/* MAIN */}
-      <main className="container mx-auto max-w-(--breakpoint-lg) px-4">
+      <main className="container mx-auto max-w-5xl px-4">
         {children}
         <Footer />
       </main>

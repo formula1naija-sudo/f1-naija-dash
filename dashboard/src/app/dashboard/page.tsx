@@ -161,14 +161,14 @@ export default function Page() {
 						</div>
 					</div>
 
-					<div className="flex flex-1 2xl:max-h-[50rem]">
+					<div className="flex flex-1 min-h-[20rem] 2xl:max-h-[50rem]">
 						<MapFrame />
 					</div>
 				</div>
 
 				<div className="grid grid-cols-1 gap-2 md:divide-y-0 lg:grid-cols-3">
 					{/* Race Control */}
-					<div className="flex h-[30rem] flex-col overflow-hidden rounded-lg" style={{ border: "1px solid var(--f1-border)", background: "rgba(255,255,255,0.01)" }}>
+					<div className="flex h-[20rem] md:h-[30rem] flex-col overflow-hidden rounded-lg" style={{ border: "1px solid var(--f1-border)", background: "rgba(255,255,255,0.01)" }}>
 						<div className="flex shrink-0 items-center gap-2 px-3 py-2.5" style={{ borderBottom: "1px solid var(--f1-border)" }}>
 							<span style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "#71717a" }}>📻 Race Control</span>
 						</div>
@@ -178,7 +178,7 @@ export default function Page() {
 					</div>
 
 					{/* Team Radios */}
-					<div className="flex h-[30rem] flex-col overflow-hidden rounded-lg" style={{ border: "1px solid var(--f1-border)", background: "rgba(255,255,255,0.01)" }}>
+					<div className="flex h-[20rem] md:h-[30rem] flex-col overflow-hidden rounded-lg" style={{ border: "1px solid var(--f1-border)", background: "rgba(255,255,255,0.01)" }}>
 						<div className="flex shrink-0 items-center gap-2 px-3 py-2.5" style={{ borderBottom: "1px solid var(--f1-border)" }}>
 							<span style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "#71717a" }}>🎙️ Team Radios</span>
 						</div>
@@ -188,7 +188,7 @@ export default function Page() {
 					</div>
 
 					{/* Track Violations */}
-					<div className="flex h-[30rem] flex-col overflow-hidden rounded-lg" style={{ border: "1px solid var(--f1-border)", background: "rgba(255,255,255,0.01)" }}>
+					<div className="flex h-[20rem] md:h-[30rem] flex-col overflow-hidden rounded-lg" style={{ border: "1px solid var(--f1-border)", background: "rgba(255,255,255,0.01)" }}>
 						<div className="flex shrink-0 items-center gap-2 px-3 py-2.5" style={{ borderBottom: "1px solid var(--f1-border)" }}>
 							<span style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "#71717a" }}>⚠️ Track Violations</span>
 							<TrackViolationsBadge />

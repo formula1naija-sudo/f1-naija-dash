@@ -47,7 +47,7 @@ export default function ScheduleTZPicker() {
       }}>
         Times in
       </span>
-      <div style={{ display: "flex", gap: 2 }}>
+      <div style={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
         {TIMEZONES.map((tz, i) => (
           <button
             key={tz.zone}

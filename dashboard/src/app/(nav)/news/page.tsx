@@ -67,10 +67,12 @@ function NewsCard({ item, featured = false }: { item: NewsItem; featured?: boole
         height: "100%",
       }}
       onMouseEnter={e => {
+        if (!window.matchMedia("(hover:hover)").matches) return;
         (e.currentTarget as HTMLDivElement).style.borderColor = "rgba(0,212,132,.3)";
         if (featured) (e.currentTarget as HTMLDivElement).style.transform = "translateY(-2px)";
       }}
       onMouseLeave={e => {
+        if (!window.matchMedia("(hover:hover)").matches) return;
         (e.currentTarget as HTMLDivElement).style.borderColor = featured ? "rgba(0,212,132,.18)" : "rgba(255,255,255,.06)";
         (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)";
       }}

@@ -16,7 +16,7 @@ export default function Home() {
       </div>
 
       {/* ── HUB GRID ─────────────────────────────────────── */}
-      <section style={{ padding: "72px 0 60px" }}>
+      <section style={{ padding: "clamp(40px,7vw,72px) 0 clamp(36px,6vw,60px)" }}>
         <div style={{ marginBottom: 40 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
             <div style={{ width: 20, height: 1, background: "#00d484" }} />
@@ -31,7 +31,7 @@ export default function Home() {
 
         <div style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))",
+          gridTemplateColumns: "repeat(auto-fit,minmax(160px,1fr))",
           gap: 16,
         }}>
           {HUB_ITEMS.map((item) => (
@@ -46,10 +46,12 @@ export default function Home() {
                 height: "100%",
               }}
               onMouseEnter={e => {
+                if (!window.matchMedia("(hover:hover)").matches) return;
                 (e.currentTarget as HTMLDivElement).style.borderColor = "rgba(0,212,132,.3)";
                 (e.currentTarget as HTMLDivElement).style.transform = "translateY(-2px)";
               }}
               onMouseLeave={e => {
+                if (!window.matchMedia("(hover:hover)").matches) return;
                 (e.currentTarget as HTMLDivElement).style.borderColor = "var(--f1-border)";
                 (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)";
               }}
@@ -78,7 +80,7 @@ export default function Home() {
         <div style={{
           display: "grid",
           gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))",
-          gap: 40,
+          gap: "clamp(20px,4vw,40px)",
           alignItems: "center",
         }}>
           <div>
@@ -113,8 +115,8 @@ export default function Home() {
                   textDecoration: "none",
                   transition: "border-color .2s",
                 }}
-                onMouseEnter={e => (e.currentTarget.style.borderColor = "rgba(0,212,132,.3)")}
-                onMouseLeave={e => (e.currentTarget.style.borderColor = "var(--f1-border)")}
+                onMouseEnter={e => { if (window.matchMedia("(hover:hover)").matches) e.currentTarget.style.borderColor = "rgba(0,212,132,.3)"; }}
+                onMouseLeave={e => { if (window.matchMedia("(hover:hover)").matches) e.currentTarget.style.borderColor = "var(--f1-border)"; }}
               >
                 <span style={{ fontSize: 20 }}>{s.icon}</span>
                 <div>
