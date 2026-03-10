@@ -203,15 +203,14 @@ export default function HomeHero() {
             </div>
           </div>
 
-          <p className="hero-fade-2" style={{ fontSize: 15, lineHeight: 1.7, color: "var(--f1-muted)", maxWidth: 400, marginBottom: 32 }}>
-            The home of Formula 1 for{" "}
-            <strong style={{ color: "var(--f1-text)", fontWeight: 600 }}>Naija fans everywhere</strong>{" "}
-            — Lagos to London, Houston to Dubai.
+          <p className="hero-fade-2" style={{ fontSize: 15, lineHeight: 1.7, color: "var(--f1-muted)", maxWidth: 420, marginBottom: 32 }}>
+            Nigeria&apos;s #1 Formula 1 platform. Live timing, race data, and community — built for{" "}
+            <strong style={{ color: "var(--f1-text)", fontWeight: 600 }}>Naija fans everywhere.</strong>
           </p>
 
           <div className="hero-fade-2" style={{ display: "flex", gap: 12, marginBottom: 44, flexWrap: "wrap" }}>
-            <Link href="/dashboard" style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "12px 26px", borderRadius: 7, fontSize: 13, fontWeight: 700, background: "#00d484", color: "#04060e", textDecoration: "none", letterSpacing: ".03em" }}>🏁 Open Dashboard</Link>
-            <Link href="/schedule" style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "12px 26px", borderRadius: 7, fontSize: 13, fontWeight: 600, background: "transparent", color: "var(--f1-text)", textDecoration: "none", border: "1px solid rgba(255,255,255,.14)", letterSpacing: ".03em" }}>View Schedule</Link>
+            <Link href="/dashboard" style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "12px 26px", borderRadius: 7, fontSize: 13, fontWeight: 700, background: "#00d484", color: "#04060e", textDecoration: "none", letterSpacing: ".03em" }}>🏁 Open Live Dashboard</Link>
+            <Link href="/community" style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "12px 26px", borderRadius: 7, fontSize: 13, fontWeight: 600, background: "transparent", color: "var(--f1-text)", textDecoration: "none", border: "1px solid rgba(255,255,255,.14)", letterSpacing: ".03em" }}>Join the Community</Link>
           </div>
 
           <div className="hero-fade-3 flex items-center gap-3">

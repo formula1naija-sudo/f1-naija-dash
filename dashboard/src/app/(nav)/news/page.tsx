@@ -301,7 +301,7 @@ export default function NewsPage() {
           <div className="news-fade-1" style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
             <div style={{ width: 16, height: 1, background: "#00d484" }} />
             <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: "#00d484" }}>
-              Latest · F1 Global Feed
+              Breaking · F1 Global Headlines
             </span>
           </div>
 
@@ -321,7 +321,7 @@ export default function NewsPage() {
 
           <div className="news-fade-3" style={{ marginTop: 18, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
             <p style={{ fontSize: 12, color: "var(--f1-muted)", margin: 0 }}>
-              BBC, Autosport, The Race, Planet F1 &amp; more — all in one place.
+              Every major F1 outlet in one feed — BBC Sport, Autosport, The Race, Planet F1 &amp; more.
             </p>
             {notifStatus !== "unsupported" && notifStatus !== "ios-pwa-required" && (
               <button

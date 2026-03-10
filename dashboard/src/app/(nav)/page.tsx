@@ -21,11 +21,11 @@ export default function Home() {
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
             <div style={{ width: 20, height: 1, background: "#00d484" }} />
             <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: "#00d484" }}>
-              Everything F1
+              Everything F1, one platform
             </span>
           </div>
           <h2 style={{ fontSize: "clamp(28px,4vw,44px)", fontWeight: 900, letterSpacing: "-.025em", lineHeight: .95, margin: 0 }}>
-            Your F1 hub.
+            Your complete<br />F1 headquarters.
           </h2>
         </div>
 
@@ -86,14 +86,14 @@ export default function Home() {
               Built for the culture
             </p>
             <h2 style={{ fontSize: "clamp(24px,3.5vw,38px)", fontWeight: 900, letterSpacing: "-.02em", marginBottom: 16, lineHeight: 1 }}>
-              What&apos;s F1 Naija?
+              Nigeria&apos;s home<br />for Formula 1.
             </h2>
             <p style={{ fontSize: 14, color: "var(--f1-muted)", lineHeight: 1.75, marginBottom: 16 }}>
-              F1 Naija is Nigeria&apos;s leading Formula 1 community — built by fans, for fans.
-              Real-time telemetry, live timing, race data, standings, and more, all in one place.
+              F1 Naija is the #1 Formula 1 platform for Nigerian fans — delivering real-time telemetry,
+              live timing, race data, championship standings, and community, all under one roof.
             </p>
             <p style={{ fontSize: 14, color: "var(--f1-muted)", lineHeight: 1.75 }}>
-              Whether you&apos;re watching from Lagos, London, Houston or Dubai — F1 Naija has you covered.
+              Lagos. London. Houston. Dubai. Wherever you watch from, F1 Naija keeps you closer to the grid.
             </p>
           </div>
 
@@ -136,30 +136,37 @@ const HUB_ITEMS = [
     href: "/dashboard",
     icon: "📡",
     label: "Live Dashboard",
-    desc: "Real-time telemetry, gaps, sector times and tire data during active sessions.",
+    desc: "Race-pace telemetry, live gaps, sector times, and tyre data — exactly as it happens on track.",
   },
   {
     href: "/standings",
     icon: "🏆",
-    label: "Standings",
-    desc: "2026 driver and constructor championship standings, updated after every race.",
+    label: "Championship Standings",
+    desc: "Driver and constructor standings for the 2026 season, updated the moment each race ends.",
   },
   {
     href: "/schedule",
     icon: "📅",
-    label: "Race Schedule",
-    desc: "Full 2026 calendar with session times in WAT, GMT, EST and more.",
+    label: "Race Calendar",
+    desc: "Every round of the 2026 season with session times shown in WAT, GMT, EST, and your local timezone.",
   },
   {
     href: "/news",
     icon: "📰",
     label: "F1 News",
-    desc: "Latest headlines from BBC Sport, Autosport, The Race, Planet F1 and beyond.",
+    desc: "The headlines that matter — sourced from BBC Sport, Autosport, The Race, Planet F1, and more.",
+  },
+  {
+    href: "/community",
+    icon: "🇳🇬",
+    label: "Community",
+    desc: "Fantasy leagues, race-day threads, watch parties, and the largest Nigerian F1 fan community online.",
   },
 ];
 
 const SOCIAL_LINKS = [
-  { href: "https://x.com/f1_naija",              icon: "𝕏",  label: "Follow on X (Twitter)", handle: "@f1_naija" },
-  { href: "https://www.instagram.com/f1_naija/", icon: "📸", label: "Follow on Instagram",    handle: "@f1_naija" },
-  { href: "https://www.tiktok.com/@f1.naija",    icon: "🎵", label: "Follow on TikTok",       handle: "@f1.naija" },
+  { href: "https://x.com/f1_naija",              icon: "𝕏",  label: "X (Twitter) · 6.6K followers",  handle: "@f1_naija" },
+  { href: "https://www.instagram.com/f1_naija/", icon: "📸", label: "Instagram · 5.3K followers",     handle: "@f1_naija" },
+  { href: "https://www.threads.com/@f1_naija",   icon: "🧵", label: "Threads · 3K followers",         handle: "@f1_naija" },
+  { href: "https://www.tiktok.com/@f1.naija",    icon: "🎵", label: "TikTok",                          handle: "@f1.naija"  },
 ];
