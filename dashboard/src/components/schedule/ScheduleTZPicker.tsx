@@ -9,7 +9,7 @@ const TIMEZONES = [
 ];
 
 const TZ_STORAGE_KEY = "f1_schedule_tz";
-const TZ_EVENT = "f1-tz-change";
+const TZ_EVENT       = "f1-tz-change";
 
 export default function ScheduleTZPicker() {
   const [activeTZ, setActiveTZ] = useState<number>(() => {
@@ -29,20 +29,41 @@ export default function ScheduleTZPicker() {
   };
 
   return (
-    <div className="flex items-center gap-2 flex-wrap">
-      <span className="text-xs text-zinc-500 font-medium">Times in:</span>
-      <div className="flex gap-1">
+    <div style={{
+      display: "flex", alignItems: "center", gap: 6,
+      background: "var(--f1-card)",
+      border: "1px solid rgba(255,255,255,.06)",
+      borderRadius: 10,
+      padding: "5px 8px",
+    }}>
+      <span style={{
+        fontSize: 10, fontWeight: 600,
+        color: "#52525b",
+        textTransform: "uppercase", letterSpacing: ".06em",
+        paddingRight: 8,
+        borderRight: "1px solid rgba(255,255,255,.07)",
+        marginRight: 2,
+        whiteSpace: "nowrap",
+      }}>
+        Times in
+      </span>
+      <div style={{ display: "flex", gap: 2 }}>
         {TIMEZONES.map((tz, i) => (
           <button
             key={tz.zone}
             onClick={() => selectTZ(i)}
             title={tz.label}
-            className={
-              "flex-shrink-0 rounded-lg px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide transition-colors " +
-              (activeTZ === i
-                ? "bg-indigo-700/30 text-indigo-400"
-                : "text-zinc-500 hover:text-zinc-300")
-            }
+            style={{
+              background: activeTZ === i ? "rgba(0,212,132,.12)" : "transparent",
+              border: activeTZ === i ? "1px solid rgba(0,212,132,.28)" : "1px solid transparent",
+              borderRadius: 6,
+              padding: "4px 8px",
+              fontSize: 11, fontWeight: 600,
+              color: activeTZ === i ? "#00d484" : "#71717a",
+              cursor: "pointer",
+              transition: "all .15s",
+              whiteSpace: "nowrap",
+            }}
           >
             {tz.flag} {tz.abbr}
           </button>

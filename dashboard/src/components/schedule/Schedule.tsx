@@ -27,8 +27,8 @@ export default async function Schedule() {
 
 	if (!schedule) {
 		return (
-			<div className="flex h-44 flex-col items-center justify-center">
-				<p>Schedule not found</p>
+			<div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: 176 }}>
+				<p style={{ color: "var(--f1-muted)", fontSize: 13 }}>Schedule not found</p>
 			</div>
 		);
 	}
@@ -36,7 +36,12 @@ export default async function Schedule() {
 	const next = schedule.filter((round) => !round.over)[0];
 
 	return (
-		<div className="mb-20 grid grid-cols-1 gap-8 md:grid-cols-2">
+		<div style={{
+			display: "grid",
+			gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
+			gap: 12,
+			marginBottom: 80,
+		}}>
 			{schedule.map((round, roundI) => (
 				<Round nextName={next?.name} round={round} key={`round.${roundI}`} />
 			))}
