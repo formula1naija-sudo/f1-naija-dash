@@ -87,7 +87,7 @@ export default function Layout({ children }: Props) {
 
       {/* NAV */}
       <nav style={{
-        position: "sticky", top: 40, left: 0, zIndex: 40,
+        position: "sticky", top: 0, left: 0, zIndex: 40,
         display: "flex", alignItems: "center", justifyContent: "space-between",
         height: 48, padding: "0 16px",
         background: "var(--f1-nav)",

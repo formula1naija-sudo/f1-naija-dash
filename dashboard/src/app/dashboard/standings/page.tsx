@@ -165,7 +165,6 @@ const SkeletonItem = () => {
 			<div className="h-4 w-16 animate-pulse rounded-md bg-zinc-800" />
 			<div className="h-4 w-8 animate-pulse rounded-md bg-zinc-800" />
 			<div className="h-4 w-8 animate-pulse rounded-md bg-zinc-800" />
-			<div className="h-4 w-4 animate-pulse rounded-md bg-zinc-800" />
 		</div>
 	);
 };
