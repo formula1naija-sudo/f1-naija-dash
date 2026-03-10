@@ -58,20 +58,23 @@ export function WeatherMap() {
 	};
 
 	useEffect(() => {
+		if (!mapContainerRef.current || !meeting) return;
+
+		let cancelled = false;
+		let libMap: Map | null = null;
+
 		(async () => {
-			if (!mapContainerRef.current) return;
-
-			if (!meeting) return;
-
 			const [coordsC, coordsA] = await Promise.all([
 				fetchCoords(`${meeting.Country.Name}, ${meeting.Location} circuit`),
 				fetchCoords(`${meeting.Country.Name}, ${meeting.Location} autodrome`),
 			]);
 
+			if (cancelled) return;
+
 			const coords = coordsC || coordsA;
 
-			const libMap = new maplibregl.Map({
-				container: mapContainerRef.current,
+			libMap = new maplibregl.Map({
+				container: mapContainerRef.current!,
 				style: "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json",
 				center: coords ? [coords.lon, coords.lat] : undefined,
 				zoom: 10,
@@ -80,18 +83,25 @@ export function WeatherMap() {
 				},
 			});
 
+			mapRef.current = libMap;
+
 			libMap.on("load", async () => {
+				if (cancelled) return;
 				setLoading(false);
 
 				if (coords) {
-					new Marker().setLngLat([coords.lon, coords.lat]).addTo(libMap);
+					new Marker().setLngLat([coords.lon, coords.lat]).addTo(libMap!);
 				}
 
 				await handleMapLoad();
 			});
-
-			mapRef.current = libMap;
 		})();
+
+		return () => {
+			cancelled = true;
+			libMap?.remove();
+			mapRef.current = null;
+		};
 	}, [meeting]);
 
 	const setFrame = (idx: number) => {

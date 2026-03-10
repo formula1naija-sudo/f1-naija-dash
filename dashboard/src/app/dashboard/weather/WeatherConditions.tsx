@@ -199,7 +199,7 @@ export default function WeatherConditions() {
 					label="Track Temp"
 					value={trackTemp}
 					unit="°C"
-					accent={trackTemp > 50 ? "#f5a724" : trackTemp > 35 ? "#e8001f" : "var(--f1-text)"}
+					accent={trackTemp > 50 ? "#e8001f" : trackTemp > 35 ? "#f5a724" : "var(--f1-text)"}
 				/>
 				<StatRow
 					label="Air Temp"
