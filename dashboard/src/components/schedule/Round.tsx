@@ -92,7 +92,7 @@ export default function Round({ round, nextName }: Props) {
   return (
     <div style={{
       background: "var(--f1-card)",
-      border: `1px solid ${(isNext || isLive) ? "rgba(0,212,132,.22)" : "rgba(255,255,255,.06)"}`,
+      border: `1px solid ${isLive ? "rgba(245,167,36,.22)" : isNext ? "rgba(0,212,132,.22)" : "rgba(255,255,255,.06)"}`,
       borderRadius: 14,
       overflow: "hidden",
       opacity: round.over ? 0.45 : 1,
@@ -117,13 +117,13 @@ export default function Round({ round, nextName }: Props) {
         {/* Country + name */}
         <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
           <div style={{
-            width: 38, height: 26, flexShrink: 0,
+            width: 40, height: 28, flexShrink: 0,
             background: "rgba(255,255,255,.05)",
             border: "1px solid rgba(255,255,255,.07)",
             borderRadius: 5, overflow: "hidden",
             display: "flex", alignItems: "center", justifyContent: "center",
           }}>
-            <Flag countryCode={countryCode} className="h-full w-full" />
+            <Flag countryCode={countryCode} className="h-7 w-10" />
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 1, minWidth: 0 }}>
             <span style={{

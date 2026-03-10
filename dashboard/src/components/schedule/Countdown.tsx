@@ -123,11 +123,10 @@ export default function Countdown({ next, type }: Props) {
             }}>
               <div style={{ minHeight: 32, display: "flex", alignItems: "center", justifyContent: "center" }}>
                 {!mounted || value == null ? (
-                  <div style={{
-                    height: 28, width: 32, borderRadius: 6,
-                    background: "rgba(255,255,255,.06)",
-                    animation: "pulse 1.5s ease-in-out infinite",
-                  }} />
+                  <div
+                    className="animate-pulse"
+                    style={{ height: 28, width: 32, borderRadius: 6, background: "rgba(255,255,255,.06)" }}
+                  />
                 ) : (
                   <AnimatePresence mode="popLayout">
                     <motion.span
