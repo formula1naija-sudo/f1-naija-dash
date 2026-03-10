@@ -1,8 +1,9 @@
 'use client';
 
-import { type ReactNode } from 'react';
+import { type ReactNode, useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { AnimatePresence, motion } from 'motion/react';
+import Link from 'next/link';
 import { useDataEngine } from '@/hooks/useDataEngine';
 import { useWakeLock } from '@/hooks/useWakeLock';
 import { useStores } from '@/hooks/useStores';
@@ -23,6 +24,44 @@ import WhatsAppShare from '@/components/WhatsAppShare';
 import Watermark from '@/components/Watermark';
 import OneSignalInit from '@/components/OneSignalInit';
 import PushPrompt from '@/components/PushPrompt';
+
+type NextRace = { name: string; countryName: string; start: string };
+
+function useNextRace() {
+  const [nextRace, setNextRace] = useState<NextRace | null>(null);
+  useEffect(() => {
+    fetch('/api/schedule')
+      .then(r => r.ok ? r.json() : null)
+      .then((rounds: Array<{ countryName: string; name: string; start: string; end: string }> | null) => {
+        if (!rounds) return;
+        const now = Date.now();
+        const next = rounds.find(r => new Date(r.end).getTime() > now);
+        if (next) setNextRace({ name: next.name, countryName: next.countryName, start: next.start });
+      })
+      .catch(() => null);
+  }, []);
+  return nextRace;
+}
+
+function useCountdown(targetDate: string | null) {
+  const [parts, setParts] = useState({ days: 0, hours: 0, mins: 0, secs: 0 });
+  useEffect(() => {
+    if (!targetDate) return;
+    const tick = () => {
+      const diff = Math.max(0, new Date(targetDate).getTime() - Date.now());
+      setParts({
+        days: Math.floor(diff / 86_400_000),
+        hours: Math.floor((diff % 86_400_000) / 3_600_000),
+        mins: Math.floor((diff % 3_600_000) / 60_000),
+        secs: Math.floor((diff % 60_000) / 1_000),
+      });
+    };
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, [targetDate]);
+  return parts;
+}
 
 const NotificationPrompt = dynamic(() => import('@/components/NotificationPrompt'), { ssr: false });
 
@@ -71,17 +110,80 @@ export default function DashboardLayout({ children }: Props) {
           <div
             className={
               syncing && !ended
-                ? 'flex min-h-0 h-full flex-1 flex-col items-center justify-center gap-2 md:rounded-lg md:border'
+                ? 'flex min-h-0 h-full flex-1 flex-col items-center justify-center md:rounded-lg md:border'
                 : 'hidden'
             }
+            style={{ borderColor: 'var(--f1-border)' }}
           >
-            <h1 className="my-20 text-center text-5xl font-bold">Syncing...</h1>
-            <p>Please wait for {delay - maxDelay} seconds.</p>
-            <p>Or make your delay smaller.</p>
+            <NoSessionState />
           </div>
         </motion.div>
       </div>
     </>
+  );
+}
+
+function NoSessionState() {
+  const nextRace = useNextRace();
+  const countdown = useCountdown(nextRace?.start ?? null);
+
+  return (
+    <div style={{ textAlign: 'center', padding: '40px 24px', maxWidth: 440 }}>
+      {/* Icon */}
+      <div style={{ fontSize: 48, marginBottom: 20 }}>🏎️</div>
+
+      {/* Heading */}
+      <h2 style={{ fontSize: 'clamp(22px,4vw,30px)', fontWeight: 900, letterSpacing: '-.02em', color: 'var(--f1-text)', marginBottom: 8 }}>
+        No live session right now
+      </h2>
+      <p style={{ fontSize: 13, color: 'var(--f1-muted)', lineHeight: 1.6, marginBottom: 32 }}>
+        Live timing, gaps, and telemetry appear here during race weekends.
+      </p>
+
+      {/* Next race countdown */}
+      {nextRace && (
+        <div style={{
+          background: 'rgba(0,212,132,.06)', border: '1px solid rgba(0,212,132,.2)',
+          borderRadius: 14, padding: '20px 24px', marginBottom: 24,
+        }}>
+          <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: '#00d484', marginBottom: 8 }}>
+            Next up
+          </div>
+          <div style={{ fontSize: 18, fontWeight: 900, letterSpacing: '-.02em', color: 'var(--f1-text)', marginBottom: 16 }}>
+            {nextRace.countryName} Grand Prix
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: 12 }}>
+            {([
+              { v: countdown.days,  l: 'Days'  },
+              { v: countdown.hours, l: 'Hours' },
+              { v: countdown.mins,  l: 'Mins'  },
+              { v: countdown.secs,  l: 'Secs'  },
+            ] as { v: number; l: string }[]).map(({ v, l }) => (
+              <div key={l} style={{ textAlign: 'center', minWidth: 52 }}>
+                <div style={{ fontSize: 28, fontWeight: 900, color: 'var(--f1-text)', letterSpacing: '-.03em', lineHeight: 1 }}>
+                  {String(v).padStart(2, '0')}
+                </div>
+                <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: 'var(--f1-muted)', marginTop: 4 }}>
+                  {l}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <Link
+        href="/schedule"
+        style={{
+          display: 'inline-flex', alignItems: 'center', gap: 6,
+          padding: '11px 24px', borderRadius: 8, fontSize: 13, fontWeight: 700,
+          background: 'rgba(255,255,255,.05)', border: '1px solid rgba(255,255,255,.1)',
+          color: 'var(--f1-text)', textDecoration: 'none', letterSpacing: '.02em',
+        }}
+      >
+        View Full Schedule →
+      </Link>
+    </div>
   );
 }
 

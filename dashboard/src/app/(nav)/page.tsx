@@ -72,6 +72,133 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── COMMUNITY ────────────────────────────────────── */}
+      <section style={{
+        padding: "clamp(40px,7vw,72px) 0",
+        borderTop: "1px solid rgba(255,255,255,.06)",
+      }}>
+        <div style={{ marginBottom: 36 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
+            <div style={{ width: 20, height: 1, background: "#00d484" }} />
+            <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: "#00d484" }}>
+              The community
+            </span>
+          </div>
+          <h2 style={{ fontSize: "clamp(28px,4vw,44px)", fontWeight: 900, letterSpacing: "-.025em", lineHeight: .95, margin: 0 }}>
+            Join 5,000+ Naija<br />F1 fans.
+          </h2>
+        </div>
+
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))",
+          gap: 14,
+        }}>
+          {/* Fantasy League */}
+          <div style={{
+            background: "var(--f1-card)", border: "1px solid rgba(245,167,36,.2)",
+            borderRadius: 14, padding: "24px 22px",
+            display: "flex", flexDirection: "column", gap: 10,
+          }}>
+            <div style={{ fontSize: 28 }}>🏆</div>
+            <div style={{ fontSize: 15, fontWeight: 800, color: "var(--f1-text)" }}>Fantasy League</div>
+            <p style={{ fontSize: 12, color: "var(--f1-muted)", lineHeight: 1.6, margin: 0, flex: 1 }}>
+              200+ players and counting — pick your drivers, manage your team, and top the F1 Naija leaderboard.
+            </p>
+            <a
+              href="https://fantasy.formula1.com/en/leagues/join/C1JYXEPWR10"
+              target="_blank" rel="noopener noreferrer"
+              style={{
+                display: "inline-flex", alignItems: "center", gap: 6,
+                padding: "10px 18px", borderRadius: 7, fontSize: 12, fontWeight: 700,
+                background: "rgba(245,167,36,.15)", border: "1px solid rgba(245,167,36,.3)",
+                color: "#f5a724", textDecoration: "none", letterSpacing: ".03em",
+                alignSelf: "flex-start",
+              }}
+            >
+              Join the League →
+            </a>
+          </div>
+
+          {/* X Spaces */}
+          <div style={{
+            background: "var(--f1-card)", border: "1px solid rgba(255,255,255,.07)",
+            borderRadius: 14, padding: "24px 22px",
+            display: "flex", flexDirection: "column", gap: 10,
+          }}>
+            <div style={{ fontSize: 28 }}>🎙️</div>
+            <div style={{ fontSize: 15, fontWeight: 800, color: "var(--f1-text)" }}>X Spaces</div>
+            <p style={{ fontSize: 12, color: "var(--f1-muted)", lineHeight: 1.6, margin: 0, flex: 1 }}>
+              Catch our live race reactions on X Spaces — raw takes, qualifying analysis, and post-race debates.
+            </p>
+            <a
+              href="https://x.com/f1_naija"
+              target="_blank" rel="noopener noreferrer"
+              style={{
+                display: "inline-flex", alignItems: "center", gap: 6,
+                padding: "10px 18px", borderRadius: 7, fontSize: 12, fontWeight: 700,
+                background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.12)",
+                color: "var(--f1-text)", textDecoration: "none", letterSpacing: ".03em",
+                alignSelf: "flex-start",
+              }}
+            >
+              Follow @f1_naija →
+            </a>
+          </div>
+
+          {/* Watch Parties */}
+          <div style={{
+            background: "var(--f1-card)", border: "1px solid rgba(0,212,132,.15)",
+            borderRadius: 14, padding: "24px 22px",
+            display: "flex", flexDirection: "column", gap: 10,
+          }}>
+            <div style={{ fontSize: 28 }}>🇳🇬</div>
+            <div style={{ fontSize: 15, fontWeight: 800, color: "var(--f1-text)" }}>Lagos Watch Parties</div>
+            <p style={{ fontSize: 12, color: "var(--f1-muted)", lineHeight: 1.6, margin: 0, flex: 1 }}>
+              We host Lagos watch parties on race weekends. Follow us for the next event announcement.
+            </p>
+            <a
+              href="https://www.instagram.com/f1_naija/"
+              target="_blank" rel="noopener noreferrer"
+              style={{
+                display: "inline-flex", alignItems: "center", gap: 6,
+                padding: "10px 18px", borderRadius: 7, fontSize: 12, fontWeight: 700,
+                background: "rgba(0,212,132,.12)", border: "1px solid rgba(0,212,132,.25)",
+                color: "#00d484", textDecoration: "none", letterSpacing: ".03em",
+                alignSelf: "flex-start",
+              }}
+            >
+              Instagram ↗
+            </a>
+          </div>
+
+          {/* Race Day Threads */}
+          <div style={{
+            background: "var(--f1-card)", border: "1px solid rgba(255,255,255,.07)",
+            borderRadius: 14, padding: "24px 22px",
+            display: "flex", flexDirection: "column", gap: 10,
+          }}>
+            <div style={{ fontSize: 28 }}>🧵</div>
+            <div style={{ fontSize: 15, fontWeight: 800, color: "var(--f1-text)" }}>Race Day Threads</div>
+            <p style={{ fontSize: 12, color: "var(--f1-muted)", lineHeight: 1.6, margin: 0, flex: 1 }}>
+              Live race commentary and reactions on X and Threads — follow along every race weekend.
+            </p>
+            <Link
+              href="/community"
+              style={{
+                display: "inline-flex", alignItems: "center", gap: 6,
+                padding: "10px 18px", borderRadius: 7, fontSize: 12, fontWeight: 700,
+                background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.12)",
+                color: "var(--f1-text)", textDecoration: "none", letterSpacing: ".03em",
+                alignSelf: "flex-start",
+              }}
+            >
+              View Community →
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* ── ABOUT ────────────────────────────────────────── */}
       <section style={{
         padding: "56px 0",

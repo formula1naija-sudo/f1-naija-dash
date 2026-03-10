@@ -2,40 +2,74 @@
 
 import { useState, useEffect } from "react";
 
-const AUTO_DISMISS_MS = 30_000; // 30 seconds
+const STORAGE_KEY = "f1naija_banner_dismissed_v2";
 
 export default function AdBanner() {
-  const [dismissed, setDismissed] = useState(false);
+  // Start hidden to prevent flash before localStorage check
+  const [dismissed, setDismissed] = useState(true);
   const [fading, setFading] = useState(false);
 
   useEffect(() => {
-    const fadeTimer = setTimeout(() => setFading(true), AUTO_DISMISS_MS - 600);
-    const dismissTimer = setTimeout(() => setDismissed(true), AUTO_DISMISS_MS);
-    return () => {
-      clearTimeout(fadeTimer);
-      clearTimeout(dismissTimer);
-    };
+    if (!localStorage.getItem(STORAGE_KEY)) {
+      setDismissed(false);
+    }
   }, []);
+
+  function dismiss() {
+    setFading(true);
+    setTimeout(() => {
+      setDismissed(true);
+      localStorage.setItem(STORAGE_KEY, "1");
+    }, 400);
+  }
 
   if (dismissed) return null;
 
   return (
     <div
-      className="relative flex w-full flex-wrap items-center justify-center gap-3 bg-gradient-to-r from-emerald-700 via-emerald-600 to-emerald-700 px-10 py-2.5 transition-opacity duration-500"
-      style={{ opacity: fading ? 0 : 1 }}
+      className="relative flex w-full flex-wrap items-center justify-center gap-3 px-10 py-2.5"
+      style={{
+        opacity: fading ? 0 : 1,
+        transition: "opacity 0.4s",
+        background: "linear-gradient(90deg,rgba(0,212,132,.15) 0%,rgba(0,212,132,.08) 50%,rgba(0,212,132,.15) 100%)",
+        borderBottom: "1px solid rgba(0,212,132,.15)",
+      }}
     >
-      <span className="text-sm font-semibold text-white">
-        📢 Want your brand in front of F1 fans? Advertise with us
+      <span className="text-sm font-semibold" style={{ color: "var(--f1-text)" }}>
+        🇳🇬 Join 5,000+ Naija F1 fans
       </span>
-      <a
-        href="mailto:ads@f1naija.com"
-        className="rounded-md border border-white/30 bg-white/20 px-3 py-1 text-xs font-bold text-white transition hover:bg-white/30 active:scale-95"
-      >
-        ads@f1naija.com
-      </a>
+      <div className="flex items-center gap-2">
+        <a
+          href="https://www.instagram.com/f1_naija/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="rounded-md px-3 py-1 text-xs font-bold transition active:scale-95"
+          style={{
+            background: "rgba(0,212,132,.2)",
+            border: "1px solid rgba(0,212,132,.35)",
+            color: "#00d484",
+          }}
+        >
+          Instagram ↗
+        </a>
+        <a
+          href="https://x.com/f1_naija"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="rounded-md px-3 py-1 text-xs font-bold transition active:scale-95"
+          style={{
+            background: "rgba(255,255,255,.06)",
+            border: "1px solid rgba(255,255,255,.12)",
+            color: "var(--f1-text)",
+          }}
+        >
+          @f1_naija ↗
+        </a>
+      </div>
       <button
-        onClick={() => { setFading(true); setTimeout(() => setDismissed(true), 500); }}
-        className="absolute right-3 top-1/2 -translate-y-1/2 flex h-6 w-6 items-center justify-center rounded-full text-white/60 transition hover:bg-white/10 hover:text-white"
+        onClick={dismiss}
+        className="absolute right-3 top-1/2 -translate-y-1/2 flex h-6 w-6 items-center justify-center rounded-full transition"
+        style={{ color: "var(--f1-muted)" }}
         aria-label="Dismiss banner"
       >
         &#x2715;

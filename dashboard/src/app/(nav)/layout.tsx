@@ -18,6 +18,7 @@ const NAV_LINKS = [
   { href: "/news",      label: "News" },
   { href: "/standings", label: "Standings" },
   { href: "/community", label: "Community" },
+  { href: "/about",     label: "About" },
   { href: "/help",      label: "Help" },
 ];
 

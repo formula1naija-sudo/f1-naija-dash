@@ -11,7 +11,7 @@ export default function Footer() {
             <span style={{ color: "#00d484" }}>F1</span> Naija
           </span>
           <span className="text-zinc-700 text-xs">·</span>
-          <span className="text-[11px] text-zinc-600">v{process.env.NEXT_PUBLIC_VERSION ?? ""}</span>
+          <span className="text-[11px] text-zinc-600">2026</span>
         </div>
 
         {/* Nav links */}

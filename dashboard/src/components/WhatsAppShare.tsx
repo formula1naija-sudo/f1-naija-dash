@@ -1,13 +1,25 @@
 "use client";
 
+import { useDataStore } from "@/stores/useDataStore";
+
 export default function WhatsAppShare() {
+	const sessionName = useDataStore(
+		(s) => s.state?.SessionInfo?.Meeting?.Name
+			? s.state.SessionInfo.Meeting.Name + " GP"
+			: null,
+	);
+	const sessionType = useDataStore(
+		(s) => s.state?.SessionInfo?.Name ?? null,
+	);
+
 	const handleShare = () => {
-		const text = encodeURIComponent(
-			"🏎️ Follow this F1 race live on the F1 Naija dashboard!\n\n" +
-			"F1 live and direct! 🇳🇬\n\n" +
-			window.location.href
-		);
-		window.open(`https://wa.me/?text=${text}`, "_blank");
+		let text: string;
+		if (sessionName) {
+			text = `I'm watching ${sessionName}${sessionType ? " — " + sessionType : ""} live on F1 Naija! 🏁🇳🇬\n\nCheck it out: live.f1naija.com/dashboard`;
+		} else {
+			text = `🏎️ Check out the F1 Naija live timing dashboard!\n\nNigeria's #1 Formula 1 platform 🇳🇬\n\nlive.f1naija.com/dashboard`;
+		}
+		window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank");
 	};
 
 	return (
