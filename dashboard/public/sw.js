@@ -9,8 +9,8 @@ self.addEventListener('push', (e) => {
   let data = {
     title: '\u{1F3CE}\uFE0F F1 Naija',
     body: '',
-    icon: '/icon.png',
-    badge: '/icon.png',
+    icon: '/pwa-icon.png',
+    badge: '/pwa-icon.png',
     url: '/news',
   };
 

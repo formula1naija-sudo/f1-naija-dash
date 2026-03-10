@@ -23,7 +23,6 @@ import WhatsAppShare from '@/components/WhatsAppShare';
 import Watermark from '@/components/Watermark';
 import OneSignalInit from '@/components/OneSignalInit';
 import PushPrompt from '@/components/PushPrompt';
-import PushNotificationActivator from '@/components/PushNotificationActivator';
 
 const NotificationPrompt = dynamic(() => import('@/components/NotificationPrompt'), { ssr: false });
 
@@ -54,8 +53,7 @@ export default function DashboardLayout({ children }: Props) {
         <NotificationPrompt />
         <OneSignalInit />
         <PushPrompt />
-        <PushNotificationActivator />
-        {/* min-h-0: iOS Safari flex bug — without it, flex children can't shrink
+{/* min-h-0: iOS Safari flex bug — without it, flex children can't shrink
             below their content size, breaking the overflow-auto scroll region */}
         <motion.div layout="size" className="flex h-full min-h-0 w-full flex-1 flex-col md:gap-2">
           <DesktopStaticBar show={!syncing || ended} />
