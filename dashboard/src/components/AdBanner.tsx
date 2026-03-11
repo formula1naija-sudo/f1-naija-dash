@@ -1,19 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 const STORAGE_KEY = "f1naija_banner_dismissed_v2";
 
 export default function AdBanner() {
-  // Start hidden to prevent flash before localStorage check
-  const [dismissed, setDismissed] = useState(true);
+  // Lazy initializer — reads localStorage once on mount, no effect needed
+  const [dismissed, setDismissed] = useState<boolean>(() => {
+    if (typeof window === "undefined") return true;
+    return !!localStorage.getItem(STORAGE_KEY);
+  });
   const [fading, setFading] = useState(false);
-
-  useEffect(() => {
-    if (!localStorage.getItem(STORAGE_KEY)) {
-      setDismissed(false);
-    }
-  }, []);
 
   function dismiss() {
     setFading(true);

@@ -94,6 +94,7 @@ export default function Timeline({ frames, setFrame, playing, setPlaying }: Prop
 	const currentTime = startTime + time;
 
 	/* ── NOW marker position ── */
+	// eslint-disable-next-line react-hooks/purity
 	const nowUnix = Math.floor(Date.now() / 1000);
 	const nowProgress = clamp((nowUnix - startTime) / DURATION, 0, 1);
 

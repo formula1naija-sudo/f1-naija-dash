@@ -15,6 +15,8 @@ const TIMEZONES = [
   { zone: "Africa/Lagos",        flag: "🇳🇬", abbr: "WAT"  },
   { zone: "Africa/Accra",        flag: "🇬🇭", abbr: "GMT"  },
   { zone: "Africa/Johannesburg", flag: "🇿🇦", abbr: "SAST" },
+  { zone: "Africa/Nairobi",      flag: "🇰🇪", abbr: "EAT"  },
+  { zone: "Europe/London",       flag: "🇬🇧", abbr: "BST"  },
   { zone: "America/New_York",    flag: "🇺🇸", abbr: "ET"   },
 ];
 
@@ -250,9 +252,10 @@ export default function Round({ round, nextName }: Props) {
             <a
               href={gcUrl}
               target="_blank" rel="noopener noreferrer"
+              aria-label={`Add ${round.countryName} Grand Prix to Google Calendar`}
               style={{
                 flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 5,
-                padding: "8px 10px", borderRadius: 7, fontSize: 11, fontWeight: 700,
+                padding: "10px 10px", minHeight: 44, borderRadius: 7, fontSize: 11, fontWeight: 700,
                 background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.09)",
                 color: "var(--f1-muted)", textDecoration: "none", whiteSpace: "nowrap",
               }}
@@ -262,9 +265,10 @@ export default function Round({ round, nextName }: Props) {
             <a
               href={waUrl}
               target="_blank" rel="noopener noreferrer"
+              aria-label={`Share ${round.countryName} Grand Prix on WhatsApp`}
               style={{
                 flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 5,
-                padding: "8px 10px", borderRadius: 7, fontSize: 11, fontWeight: 700,
+                padding: "10px 10px", minHeight: 44, borderRadius: 7, fontSize: 11, fontWeight: 700,
                 background: "rgba(37,211,102,.08)", border: "1px solid rgba(37,211,102,.2)",
                 color: "#25d366", textDecoration: "none", whiteSpace: "nowrap",
               }}

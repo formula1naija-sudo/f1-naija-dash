@@ -34,9 +34,9 @@
 	--f1-border:        rgba(255,255,255,0.07);
 	--f1-border-mid:    rgba(255,255,255,0.12);
 	--f1-border-soft:   rgba(255,255,255,0.025);
-	/* Text */
+	/* Text — muted bumped to #7a8daa (4.5:1 contrast on dark bg, WCAG AA) */
 	--f1-text:          #edf2ff;
-	--f1-muted:         #5a6888;
+	--f1-muted:         #7a8daa;
 	--f1-sub:           #a1a1aa;
 	/* Hero grid lines */
 	--f1-grid-line:     rgba(255,255,255,0.018);
@@ -91,6 +91,32 @@
 /* Body background driven by theme */
 body {
 	background-color: var(--f1-bg);
+	/* Crisp font rendering on all platforms */
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	text-rendering: optimizeLegibility;
+}
+
+/* Smooth scrolling everywhere */
+html {
+	scroll-behavior: smooth;
+}
+
+/* ─── Elevation system (card shadows) ──────────────────────── */
+.shadow-card {
+	box-shadow: 0 1px 3px rgba(0,0,0,.4), 0 4px 16px rgba(0,0,0,.25);
+}
+.shadow-card-hover {
+	box-shadow: 0 4px 24px rgba(0,0,0,.4), 0 12px 40px rgba(0,0,0,.3);
+}
+.shadow-glow-green {
+	box-shadow: 0 0 24px rgba(0,212,132,.15), 0 4px 16px rgba(0,0,0,.3);
+}
+.shadow-glow-gold {
+	box-shadow: 0 0 24px rgba(245,167,36,.15), 0 4px 16px rgba(0,0,0,.3);
+}
+.shadow-glow-purple {
+	box-shadow: 0 0 24px rgba(156,80,245,.2), 0 4px 16px rgba(0,0,0,.3);
 }
 
 @layer utilities {

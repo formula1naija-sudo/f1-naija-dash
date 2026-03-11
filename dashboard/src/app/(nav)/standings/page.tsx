@@ -33,19 +33,25 @@ type ConstructorStanding = {
 
 
 const teamColors: { [key: string]: string } = {
+  // 2026 teams
+  mclaren:       "#FF8000",
+  ferrari:       "#EF1A2D",
   red_bull:      "#3671C6",
-  mclaren:       "#FF8700",
-  ferrari:       "#E8002D",
   mercedes:      "#27F4D2",
-  aston_martin:  "#229971",
-  alpine:        "#0093CC",
-  rb:            "#6692FF",
-  racing_bulls:  "#6692FF",
+  williams:      "#00A0DD",
+  aston_martin:  "#00594F",
+  alpine:        "#2173B8",
   haas:          "#B6BABD",
-  williams:      "#64C4FF",
-  sauber:        "#52E252",
-  kick_sauber:   "#52E252",
-  cadillac:      "#C8102E",
+  // Audi replaces Sauber/Kick Sauber — API might use either ID
+  audi:          "#C0002A",
+  sauber:        "#C0002A",
+  kick_sauber:   "#C0002A",
+  // Racing Bulls (formerly AlphaTauri / RB)
+  racing_bulls:  "#6692FF",
+  rb:            "#6692FF",
+  alphatauri:    "#6692FF",
+  // Cadillac (new 2026 entrant)
+  cadillac:      "#C8AA32",
 };
 
 function getTeamColor(constructorId: string): string {

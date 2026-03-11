@@ -180,7 +180,15 @@ export default function NewsPage() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [notifStatus, setNotifStatus] = useState<NotifStatus>("idle");
+  const [notifStatus, setNotifStatus] = useState<NotifStatus>(() => {
+    if (typeof window === "undefined" || !("Notification" in window)) return "unsupported";
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const isStandalone = (window.navigator as { standalone?: boolean }).standalone === true;
+    if (isIOS && !isStandalone) return "ios-pwa-required";
+    if (Notification.permission === "granted") return "subscribed";
+    if (Notification.permission === "denied") return "denied";
+    return "idle";
+  });
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
   const fetchData = useCallback(async () => {
@@ -239,17 +247,7 @@ export default function NewsPage() {
     return () => clearInterval(interval);
   }, [fetchData]);
 
-  useEffect(() => {
-    if (typeof window === "undefined" || !("Notification" in window)) {
-      setNotifStatus("unsupported");
-      return;
-    }
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    const isStandalone = (window.navigator as { standalone?: boolean }).standalone === true;
-    if (isIOS && !isStandalone) { setNotifStatus("ios-pwa-required"); return; }
-    if (Notification.permission === "granted") setNotifStatus("subscribed");
-    else if (Notification.permission === "denied") setNotifStatus("denied");
-  }, []);
+
 
   const handleNotifToggle = async () => {
     if (notifStatus === "subscribed") {

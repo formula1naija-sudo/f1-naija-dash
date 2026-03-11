@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import HomeHero from "@/components/HomeHero";
 import RaceCountdown from "@/components/RaceCountdown";
 import Link from "next/link";
@@ -14,15 +14,13 @@ const STATS = [
 
 export default function Home() {
   const [notifState, setNotifState] = useState<"idle" | "asking" | "granted" | "denied">("idle");
-  const [notifVisible, setNotifVisible] = useState(false);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    if (localStorage.getItem("f1naija_notif_dismissed")) return;
-    if (!("Notification" in window)) return;
-    if (Notification.permission === "granted") return;
-    setNotifVisible(true);
-  }, []);
+  const [notifVisible, setNotifVisible] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    if (localStorage.getItem("f1naija_notif_dismissed")) return false;
+    if (!("Notification" in window)) return false;
+    if (Notification.permission === "granted") return false;
+    return true;
+  });
 
   async function requestNotifications() {
     if (!("Notification" in window)) return;
@@ -346,61 +344,51 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── ABOUT ────────────────────────────────────────── */}
+      {/* ── FOOTER CTA ───────────────────────────────────── */}
       <section style={{
-        padding: "56px 0",
+        padding: "clamp(32px,5vw,52px) 0",
         borderTop: "1px solid rgba(255,255,255,.06)",
+        display: "flex", flexWrap: "wrap", alignItems: "center",
+        justifyContent: "space-between", gap: 24,
       }}>
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))",
-          gap: "clamp(20px,4vw,40px)",
-          alignItems: "center",
-        }}>
-          <div>
-            <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: "#00d484", marginBottom: 12 }}>
-              Built for the culture
-            </p>
-            <h2 style={{ fontSize: "clamp(24px,3.5vw,38px)", fontWeight: 900, letterSpacing: "-.02em", marginBottom: 16, lineHeight: 1 }}>
-              Nigeria&apos;s home<br />for Formula 1.
-            </h2>
-            <p style={{ fontSize: 14, color: "var(--f1-muted)", lineHeight: 1.75, marginBottom: 16 }}>
-              F1 Naija is the #1 Formula 1 platform for Nigerian fans — delivering real-time telemetry,
-              live timing, race data, championship standings, and community, all under one roof.
-            </p>
-            <p style={{ fontSize: 14, color: "var(--f1-muted)", lineHeight: 1.75 }}>
-              Lagos. London. Houston. Dubai. Wherever you watch from, F1 Naija keeps you closer to the grid.
-            </p>
-          </div>
+        <div>
+          <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: "#00d484", marginBottom: 10 }}>
+            Built for the culture
+          </p>
+          <h2 style={{ fontSize: "clamp(20px,3vw,30px)", fontWeight: 900, letterSpacing: "-.02em", lineHeight: 1.1, marginBottom: 12 }}>
+            Nigeria&apos;s home for Formula 1.
+          </h2>
+          <Link href="/about" style={{
+            display: "inline-flex", alignItems: "center", gap: 6,
+            fontSize: 13, fontWeight: 700, color: "#00d484", textDecoration: "none",
+          }}>
+            Read our story →
+          </Link>
+        </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            {SOCIAL_LINKS.map((s) => (
-              <a
-                key={s.href}
-                href={s.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  display: "flex", alignItems: "center", gap: 12,
-                  padding: "14px 18px",
-                  background: "var(--f1-card)",
-                  border: "1px solid rgba(255,255,255,.07)",
-                  borderRadius: 10,
-                  textDecoration: "none",
-                  transition: "border-color .2s",
-                }}
-                onMouseEnter={e => { if (window.matchMedia("(hover:hover)").matches) e.currentTarget.style.borderColor = "rgba(0,212,132,.3)"; }}
-                onMouseLeave={e => { if (window.matchMedia("(hover:hover)").matches) e.currentTarget.style.borderColor = "var(--f1-border)"; }}
-              >
-                <span style={{ fontSize: 20 }}>{s.icon}</span>
-                <div>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: "var(--f1-text)" }}>{s.label}</div>
-                  <div style={{ fontSize: 11, color: "var(--f1-muted)" }}>{s.handle}</div>
-                </div>
-                <div style={{ marginLeft: "auto", fontSize: 10, color: "#00d484" }}>↗</div>
-              </a>
-            ))}
-          </div>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+          {SOCIAL_LINKS.map((s) => (
+            <a
+              key={s.href}
+              href={s.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={s.label}
+              style={{
+                display: "inline-flex", alignItems: "center", gap: 8,
+                padding: "10px 16px", minHeight: 44,
+                background: "var(--f1-card)",
+                border: "1px solid rgba(255,255,255,.07)",
+                borderRadius: 10, textDecoration: "none",
+                transition: "border-color .2s",
+              }}
+              onMouseEnter={e => { if (window.matchMedia("(hover:hover)").matches) e.currentTarget.style.borderColor = "rgba(0,212,132,.3)"; }}
+              onMouseLeave={e => { if (window.matchMedia("(hover:hover)").matches) e.currentTarget.style.borderColor = "var(--f1-border)"; }}
+            >
+              <span style={{ fontSize: 18 }}>{s.icon}</span>
+              <span style={{ fontSize: 12, fontWeight: 600, color: "var(--f1-muted)" }}>{s.handle}</span>
+            </a>
+          ))}
         </div>
       </section>
     </div>

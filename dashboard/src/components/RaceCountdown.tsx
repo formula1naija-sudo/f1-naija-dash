@@ -56,6 +56,8 @@ const TIMEZONES: TZConfig[] = [
   { zone: "Africa/Lagos",        label: "Nigeria",      flag: "🇳🇬", abbr: "WAT"  },
   { zone: "Africa/Accra",        label: "Ghana",        flag: "🇬🇭", abbr: "GMT"  },
   { zone: "Africa/Johannesburg", label: "South Africa", flag: "🇿🇦", abbr: "SAST" },
+  { zone: "Africa/Nairobi",      label: "Kenya",        flag: "🇰🇪", abbr: "EAT"  },
+  { zone: "Europe/London",       label: "UK",           flag: "🇬🇧", abbr: "BST"  },
   { zone: "America/New_York",    label: "USA (East)",   flag: "🇺🇸", abbr: "ET"   },
 ];
 
@@ -206,28 +208,36 @@ export default function RaceCountdown() {
         </div>
       </div>
 
-      <div className="mb-7 flex justify-center gap-2 sm:gap-3">
+      <div
+        className="mb-7 flex justify-center gap-2 sm:gap-3"
+        role="timer"
+        aria-label={`${timeLeft.days} days, ${timeLeft.hours} hours, ${timeLeft.mins} minutes, ${timeLeft.secs} seconds until ${nextRace.name}`}
+        aria-live="off"
+      >
         <CountdownUnit value={timeLeft.days} label="Days" />
-        <span className="self-start pt-3 text-2xl font-light text-zinc-700">:</span>
+        <span className="self-start pt-3 text-2xl font-light text-zinc-700" aria-hidden="true">:</span>
         <CountdownUnit value={timeLeft.hours} label="Hours" />
-        <span className="self-start pt-3 text-2xl font-light text-zinc-700">:</span>
+        <span className="self-start pt-3 text-2xl font-light text-zinc-700" aria-hidden="true">:</span>
         <CountdownUnit value={timeLeft.mins} label="Mins" />
-        <span className="self-start pt-3 text-2xl font-light text-zinc-700">:</span>
+        <span className="self-start pt-3 text-2xl font-light text-zinc-700" aria-hidden="true">:</span>
         <CountdownUnit value={timeLeft.secs} label="Secs" />
       </div>
 
       <div>
-        <div className="mb-3 flex gap-1 overflow-x-auto pb-1">
+        <div className="mb-3 flex gap-1 overflow-x-auto pb-1" role="group" aria-label="Select timezone">
           {TIMEZONES.map((tz, i) => (
             <button
               key={tz.zone}
               onClick={() => setActiveTZ(i)}
+              aria-pressed={activeTZ === i}
+              aria-label={`Show times in ${tz.label} (${tz.abbr})`}
               className={
-                "flex-shrink-0 rounded-lg px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wide transition-colors " +
+                "flex-shrink-0 rounded-lg px-3 text-[11px] font-semibold uppercase tracking-wide transition-colors " +
                 (activeTZ === i
                   ? "bg-emerald-700/30 text-emerald-400"
                   : "text-zinc-500 hover:text-zinc-300")
               }
+              style={{ minHeight: 44, minWidth: 44 }}
             >
               {tz.flag} {tz.abbr}
             </button>
