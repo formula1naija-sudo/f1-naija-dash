@@ -90,7 +90,7 @@ export default function Home() {
               <div style={{ fontSize: 13, fontWeight: 700, color: "var(--f1-text)", marginBottom: 2 }}>
                 Get race day alerts
               </div>
-              <div style={{ fontSize: 11, color: "var(--f1-muted)" }}>
+              <div style={{ fontSize: 11, color: "var(--f1-muted)" }} lang="pcm">
                 We go ping you when session starts — no wahala
               </div>
             </div>

@@ -411,27 +411,29 @@ export default function NaijaIndexPage() {
             </span>
           </div>
 
-          <div className="ni-hero" style={{ marginBottom: 20 }}>
-            <div style={{
+          <h1 className="ni-hero" style={{ marginBottom: 20, margin: "0 0 20px", fontWeight: "inherit" }}>
+            <span style={{
+              display: "block",
               fontSize: "clamp(38px,6vw,80px)", fontWeight: 900,
               letterSpacing: "-.04em", lineHeight: .9,
               color: "var(--f1-text)",
             }}>
               Naija Driver
-            </div>
-            <div style={{
+            </span>
+            <span style={{
+              display: "block",
               fontSize: "clamp(38px,6vw,80px)", fontWeight: 900,
               letterSpacing: "-.04em", lineHeight: .9,
               background: "linear-gradient(120deg,#9c50f5 0%,#c084fc 45%,#00d484 100%)",
               WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
             }}>
               Index 2026
-            </div>
-          </div>
+            </span>
+          </h1>
 
           <p className="ni-sub" style={{ fontSize: 14, color: "var(--f1-muted)", maxWidth: 520, lineHeight: 1.75 }}>
             All 22 F1 drivers — 11 teams — rated by pace, racecraft, consistency, hype factor and potential.
-            Community verdicts. Pidgin energy. Updated through the season.
+            Community verdicts. <span lang="pcm">Pidgin energy.</span> Updated through the season.
           </p>
 
           {/* Team quick-stats */}
@@ -635,7 +637,7 @@ export default function NaijaIndexPage() {
                     fontSize: 13, color: "var(--f1-text)",
                     fontStyle: "italic", lineHeight: 1.65, margin: 0,
                   }}>
-                    &ldquo;{driver.verdict}&rdquo;
+                    &ldquo;<span lang="pcm">{driver.verdict}</span>&rdquo;
                   </p>
                 </div>
               </div>
@@ -669,7 +671,7 @@ export default function NaijaIndexPage() {
             fontSize: "clamp(18px,2.5vw,24px)", fontWeight: 900,
             color: "var(--f1-text)", marginBottom: 10,
           }}>
-            You disagree? Come argue am.
+            You disagree? <span lang="pcm">Come argue am.</span>
           </div>
           <p style={{ fontSize: 13, color: "var(--f1-muted)", lineHeight: 1.75, marginBottom: 24, maxWidth: 400, margin: "0 auto 24px" }}>
             Drop your own ratings and hot takes on X. We read everything — tag @f1_naija and make your voice count.

@@ -52,19 +52,20 @@ export default async function SchedulePage() {
             </span>
           </div>
 
-          <div className="sch-fade-2" style={{ lineHeight: .9 }}>
-            <div style={{ fontSize: "clamp(40px,6vw,84px)", fontWeight: 900, letterSpacing: "-.04em", color: "var(--f1-text)", lineHeight: .92 }}>
+          <h1 className="sch-fade-2" style={{ lineHeight: .9, margin: 0, fontWeight: "inherit" }}>
+            <span style={{ display: "block", fontSize: "clamp(40px,6vw,84px)", fontWeight: 900, letterSpacing: "-.04em", color: "var(--f1-text)", lineHeight: .92 }}>
               Race
-            </div>
-            <div style={{
+            </span>
+            <span style={{
+              display: "block",
               fontSize: "clamp(40px,6vw,84px)", fontWeight: 900,
               letterSpacing: "-.04em", lineHeight: .92,
               background: "linear-gradient(120deg,#008751 0%,#00d484 50%,#00f0a0 100%)",
               WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
             }}>
               Schedule.
-            </div>
-          </div>
+            </span>
+          </h1>
 
           <p className="sch-fade-3" style={{ marginTop: 18, fontSize: 12, color: "var(--f1-muted)", margin: "18px 0 0" }}>
             All sessions. All timezones. Straight to the point.

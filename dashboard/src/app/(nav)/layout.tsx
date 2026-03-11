@@ -271,7 +271,21 @@ export default function Layout({ children }: Props) {
         .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
         .hamburger.open span:nth-child(2) { opacity: 0; }
         .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+        /* ── Skip-to-main-content link (a11y) ── */
+        .skip-link {
+          position: absolute; top: -60px; left: 16px; z-index: 200;
+          padding: 8px 16px; border-radius: 6px;
+          background: #00d484; color: #04060e;
+          font-size: 13px; font-weight: 700;
+          text-decoration: none;
+          transition: top .15s;
+          white-space: nowrap;
+        }
+        .skip-link:focus { top: 16px; }
       `}</style>
+
+      {/* ── SKIP LINK ────────────────────────────────────── */}
+      <a href="#main-content" className="skip-link">Skip to main content</a>
 
       <AdBanner />
 

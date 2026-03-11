@@ -57,19 +57,20 @@ export default function AboutPage() {
               Built for the culture
             </span>
           </div>
-          <div className="about-2" style={{ lineHeight: .92, marginBottom: 18 }}>
-            <div style={{ fontSize: "clamp(40px,6vw,80px)", fontWeight: 900, letterSpacing: "-.04em", color: "var(--f1-text)", lineHeight: .92 }}>
+          <h1 className="about-2" style={{ lineHeight: .92, marginBottom: 18, margin: "0 0 18px", fontWeight: "inherit" }}>
+            <span style={{ display: "block", fontSize: "clamp(40px,6vw,80px)", fontWeight: 900, letterSpacing: "-.04em", color: "var(--f1-text)", lineHeight: .92 }}>
               About
-            </div>
-            <div style={{
+            </span>
+            <span style={{
+              display: "block",
               fontSize: "clamp(40px,6vw,80px)", fontWeight: 900,
               letterSpacing: "-.04em", lineHeight: .92,
               background: "linear-gradient(120deg,#00d484 0%,#00f0a0 50%,#f5a724 100%)",
               WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
             }}>
               F1 Naija.
-            </div>
-          </div>
+            </span>
+          </h1>
           <p className="about-3" style={{ fontSize: 14, color: "var(--f1-muted)", maxWidth: 520, lineHeight: 1.7, margin: 0 }}>
             Nigeria&apos;s #1 Formula 1 platform — live timing, race data, standings, and community, built for Naija fans everywhere.
           </p>

@@ -53,7 +53,7 @@ export default function FavoriteDrivers() {
 								whileTap={{ scale: 0.95 }}
 								onClick={() => removeFavoriteDriver(driverNumber)}
 							>
-								<Image src={xIcon} alt="x" width={30} />
+								<Image src={xIcon} alt="Remove driver" width={30} />
 							</motion.button>
 						</div>
 					);

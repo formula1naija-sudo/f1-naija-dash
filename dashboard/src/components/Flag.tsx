@@ -12,7 +12,7 @@ export default function Flag({ countryCode, className }: Props) {
 			{countryCode ? (
 				<Image
 					src={`/country-flags/${countryCode.toLowerCase()}.${"svg"}`}
-					alt={countryCode}
+					alt={`${countryCode} flag`}
 					width={64}
 					height={48}
 					className="overflow-hidden rounded-lg"

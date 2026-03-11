@@ -221,18 +221,19 @@ export default function CommunityPage() {
 
         <div style={{ position: "relative", zIndex: 1 }}>
           <EyebrowLabel text="F1 Naija · The Community" />
-          <div style={{ lineHeight: .92, marginBottom: 20 }}>
-            <div style={{ fontSize: "clamp(40px,6vw,80px)", fontWeight: 900, letterSpacing: "-.04em" }}>
+          <h1 style={{ lineHeight: .92, marginBottom: 20, margin: "0 0 20px", fontWeight: "inherit" }}>
+            <span style={{ display: "block", fontSize: "clamp(40px,6vw,80px)", fontWeight: 900, letterSpacing: "-.04em", color: "var(--f1-text)" }}>
               The Naija
-            </div>
-            <div style={{
+            </span>
+            <span style={{
+              display: "block",
               fontSize: "clamp(40px,6vw,80px)", fontWeight: 900, letterSpacing: "-.04em",
               background: "linear-gradient(120deg,#00d484 0%,#7affd4 50%,#00d484 100%)",
               WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
             }}>
               F1 Community.
-            </div>
-          </div>
+            </span>
+          </h1>
           <p style={{
             fontSize: "clamp(14px,1.8vw,17px)", color: "var(--f1-muted)",
             lineHeight: 1.65, maxWidth: 560, margin: 0,

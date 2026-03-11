@@ -327,19 +327,20 @@ export default function NewsPage() {
             </span>
           </div>
 
-          <div className="news-fade-2" style={{ lineHeight: .9 }}>
-            <div style={{ fontSize: "clamp(40px,6vw,84px)", fontWeight: 900, letterSpacing: "-.04em", color: "var(--f1-text)", lineHeight: .92 }}>
+          <h1 className="news-fade-2" style={{ lineHeight: .9, margin: 0, fontWeight: "inherit" }}>
+            <span style={{ display: "block", fontSize: "clamp(40px,6vw,84px)", fontWeight: 900, letterSpacing: "-.04em", color: "var(--f1-text)", lineHeight: .92 }}>
               F1 News
-            </div>
-            <div style={{
+            </span>
+            <span style={{
+              display: "block",
               fontSize: "clamp(40px,6vw,84px)", fontWeight: 900,
               letterSpacing: "-.04em", lineHeight: .92,
               background: "linear-gradient(120deg,#00d484 0%,#00f0a0 50%,#f5a724 100%)",
               WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
             }}>
               Straight Up.
-            </div>
-          </div>
+            </span>
+          </h1>
 
           <div className="news-fade-3" style={{ marginTop: 18, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
             <p style={{ fontSize: 12, color: "var(--f1-muted)", margin: 0 }}>

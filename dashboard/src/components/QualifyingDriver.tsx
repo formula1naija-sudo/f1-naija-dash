@@ -59,7 +59,7 @@ export default function DriverQuali({
 					)}
 
 					{currentStint && unknownCompound && (
-						<Image src={`/tires/unknown.svg`} width={32} height={32} alt={"unknown"} />
+						<Image src={`/tires/unknown.svg`} width={32} height={32} alt="Unknown tyre compound" />
 					)}
 
 					{!currentStint && <div className="h-8 w-8 animate-pulse rounded-md bg-zinc-800 font-semibold" />}
