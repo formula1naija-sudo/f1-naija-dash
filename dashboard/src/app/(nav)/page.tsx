@@ -1,19 +1,137 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import HomeHero from "@/components/HomeHero";
 import RaceCountdown from "@/components/RaceCountdown";
 import Link from "next/link";
 
+const STATS = [
+  { value: "5K+",   label: "Instagram followers" },
+  { value: "6.6K+", label: "X followers" },
+  { value: "1M+",   label: "Monthly impressions" },
+  { value: "200+",  label: "Fantasy players" },
+];
+
 export default function Home() {
+  const [notifState, setNotifState] = useState<"idle" | "asking" | "granted" | "denied">("idle");
+  const [notifVisible, setNotifVisible] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (localStorage.getItem("f1naija_notif_dismissed")) return;
+    if (!("Notification" in window)) return;
+    if (Notification.permission === "granted") return;
+    setNotifVisible(true);
+  }, []);
+
+  async function requestNotifications() {
+    if (!("Notification" in window)) return;
+    setNotifState("asking");
+    const perm = await Notification.requestPermission();
+    setNotifState(perm === "granted" ? "granted" : "denied");
+    if (perm !== "default") {
+      localStorage.setItem("f1naija_notif_dismissed", "1");
+      setTimeout(() => setNotifVisible(false), 2000);
+    }
+  }
+
+  function dismissNotif() {
+    localStorage.setItem("f1naija_notif_dismissed", "1");
+    setNotifVisible(false);
+  }
+
   return (
     <div style={{ background: "var(--f1-bg-page)", color: "var(--f1-text)", minHeight: "100vh" }}>
       {/* ── HERO ─────────────────────────────────────────── */}
       <HomeHero />
 
+      {/* ── SOCIAL PROOF STATS BAR ───────────────────────── */}
+      <div style={{
+        display: "flex", flexWrap: "wrap", justifyContent: "center", alignItems: "center",
+        gap: "clamp(24px,6vw,72px)",
+        padding: "clamp(18px,3vw,28px) 0",
+        borderTop: "1px solid rgba(255,255,255,.06)",
+        borderBottom: "1px solid rgba(255,255,255,.04)",
+      }}>
+        {STATS.map(s => (
+          <div key={s.label} style={{ textAlign: "center" }}>
+            <div style={{
+              fontSize: "clamp(22px,3.5vw,36px)", fontWeight: 900,
+              color: "#00d484", letterSpacing: "-.035em", lineHeight: 1,
+            }}>
+              {s.value}
+            </div>
+            <div style={{
+              fontSize: 10, color: "var(--f1-muted)",
+              textTransform: "uppercase", letterSpacing: ".1em", marginTop: 4,
+            }}>
+              {s.label}
+            </div>
+          </div>
+        ))}
+      </div>
+
       {/* ── RACE COUNTDOWN ───────────────────────────────── */}
-      <div style={{ borderTop: "1px solid rgba(255,255,255,.06)" }}>
+      <div style={{ borderBottom: "1px solid rgba(255,255,255,.06)" }}>
         <RaceCountdown />
       </div>
+
+      {/* ── PUSH NOTIFICATION BANNER ─────────────────────── */}
+      {notifVisible && (
+        <div style={{
+          display: "flex", flexWrap: "wrap", alignItems: "center",
+          justifyContent: "space-between", gap: 12,
+          padding: "clamp(12px,2vw,16px) 0",
+          borderBottom: "1px solid rgba(0,212,132,.08)",
+          background: "rgba(0,212,132,.04)",
+          transition: "opacity .3s",
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <span style={{ fontSize: 22 }}>🔔</span>
+            <div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: "var(--f1-text)", marginBottom: 2 }}>
+                Get race day alerts
+              </div>
+              <div style={{ fontSize: 11, color: "var(--f1-muted)" }}>
+                We go ping you when session starts — no wahala
+              </div>
+            </div>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
+            {notifState === "idle" && (
+              <button
+                onClick={requestNotifications}
+                style={{
+                  padding: "8px 18px", borderRadius: 7, fontSize: 12, fontWeight: 700,
+                  background: "rgba(0,212,132,.18)", border: "1px solid rgba(0,212,132,.35)",
+                  color: "#00d484", cursor: "pointer",
+                }}
+              >
+                Enable Alerts
+              </button>
+            )}
+            {notifState === "asking" && (
+              <span style={{ fontSize: 12, color: "#00d484" }}>Waiting...</span>
+            )}
+            {notifState === "granted" && (
+              <span style={{ fontSize: 12, color: "#00d484" }}>✓ Race alerts on!</span>
+            )}
+            {notifState === "denied" && (
+              <span style={{ fontSize: 12, color: "var(--f1-muted)" }}>Blocked in browser settings</span>
+            )}
+            <button
+              onClick={dismissNotif}
+              aria-label="Dismiss notification prompt"
+              style={{
+                fontSize: 14, color: "var(--f1-muted)", cursor: "pointer",
+                background: "none", border: "none", padding: "4px 8px", lineHeight: 1,
+              }}
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* ── HUB GRID ─────────────────────────────────────── */}
       <section style={{ padding: "clamp(40px,7vw,72px) 0 clamp(36px,6vw,60px)" }}>
@@ -87,6 +205,9 @@ export default function Home() {
           <h2 style={{ fontSize: "clamp(28px,4vw,44px)", fontWeight: 900, letterSpacing: "-.025em", lineHeight: .95, margin: 0 }}>
             Join 5,000+ Naija<br />F1 fans.
           </h2>
+          <p style={{ fontSize: 13, color: "var(--f1-muted)", marginTop: 12, lineHeight: 1.6 }}>
+            Oya, join the gang — the biggest Nigerian F1 community online.
+          </p>
         </div>
 
         <div style={{
@@ -195,6 +316,32 @@ export default function Home() {
             >
               View Community →
             </Link>
+          </div>
+
+          {/* WhatsApp Community */}
+          <div style={{
+            background: "var(--f1-card)", border: "1px solid rgba(37,211,102,.18)",
+            borderRadius: 14, padding: "24px 22px",
+            display: "flex", flexDirection: "column", gap: 10,
+          }}>
+            <div style={{ fontSize: 28 }}>💬</div>
+            <div style={{ fontSize: 15, fontWeight: 800, color: "var(--f1-text)" }}>WhatsApp Community</div>
+            <p style={{ fontSize: 12, color: "var(--f1-muted)", lineHeight: 1.6, margin: 0, flex: 1 }}>
+              Race alerts, score updates, and pure Naija F1 banter — straight to your phone. Oya join us!
+            </p>
+            <a
+              href="https://chat.whatsapp.com/F1NaijaGroup"
+              target="_blank" rel="noopener noreferrer"
+              style={{
+                display: "inline-flex", alignItems: "center", gap: 6,
+                padding: "10px 18px", borderRadius: 7, fontSize: 12, fontWeight: 700,
+                background: "rgba(37,211,102,.12)", border: "1px solid rgba(37,211,102,.25)",
+                color: "#25D366", textDecoration: "none", letterSpacing: ".03em",
+                alignSelf: "flex-start",
+              }}
+            >
+              Join on WhatsApp →
+            </a>
           </div>
         </div>
       </section>

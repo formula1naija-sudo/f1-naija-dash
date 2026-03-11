@@ -16,17 +16,25 @@ export default function Footer() {
 
         {/* Nav links */}
         <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-zinc-500">
-          <Link href="/"          className="hover:text-white transition-colors">Home</Link>
+          <Link href="/"           className="hover:text-white transition-colors">Home</Link>
           <span className="text-zinc-800">·</span>
-          <Link href="/dashboard" className="hover:text-white transition-colors">Dashboard</Link>
+          <Link href="/dashboard"  className="hover:text-white transition-colors">Dashboard</Link>
           <span className="text-zinc-800">·</span>
-          <Link href="/schedule"  className="hover:text-white transition-colors">Schedule</Link>
+          <Link href="/schedule"   className="hover:text-white transition-colors">Schedule</Link>
           <span className="text-zinc-800">·</span>
-          <Link href="/standings" className="hover:text-white transition-colors">Standings</Link>
+          <Link href="/standings"  className="hover:text-white transition-colors">Standings</Link>
           <span className="text-zinc-800">·</span>
-          <Link href="/community" className="hover:text-white transition-colors">Community</Link>
+          <Link href="/community"  className="hover:text-white transition-colors">Community</Link>
           <span className="text-zinc-800">·</span>
-          <Link href="/help"      className="hover:text-white transition-colors">Help</Link>
+          <Link href="/fantasy"    className="hover:text-white transition-colors">Fantasy</Link>
+          <span className="text-zinc-800">·</span>
+          <Link href="/partner"    className="hover:text-white transition-colors">Partner</Link>
+          <span className="text-zinc-800">·</span>
+          <Link href="/start-here" className="hover:text-white transition-colors">Start Here</Link>
+          <span className="text-zinc-800">·</span>
+          <Link href="/about"      className="hover:text-white transition-colors">About</Link>
+          <span className="text-zinc-800">·</span>
+          <Link href="/help"       className="hover:text-white transition-colors">Help</Link>
         </div>
 
         {/* Social links */}

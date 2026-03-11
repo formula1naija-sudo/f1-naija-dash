@@ -12,14 +12,15 @@ type Props = {
 };
 
 const NAV_LINKS = [
-  { href: "/",          label: "Home" },
-  { href: "/dashboard", label: "Dashboard" },
-  { href: "/schedule",  label: "Schedule" },
-  { href: "/news",      label: "News" },
-  { href: "/standings", label: "Standings" },
-  { href: "/community", label: "Community" },
-  { href: "/about",     label: "About" },
-  { href: "/help",      label: "Help" },
+  { href: "/",           label: "Home" },
+  { href: "/dashboard",  label: "Dashboard" },
+  { href: "/schedule",   label: "Schedule" },
+  { href: "/news",       label: "News" },
+  { href: "/standings",  label: "Standings" },
+  { href: "/community",  label: "Community" },
+  { href: "/fantasy",    label: "Fantasy" },
+  { href: "/about",      label: "About" },
+  { href: "/help",       label: "Help" },
 ];
 
 export default function Layout({ children }: Props) {

@@ -87,6 +87,13 @@ function getSessionLabel(kind: string): string {
   return labels[kind] || kind;
 }
 
+const HOW_TO_WATCH = [
+  { provider: "DStv",    channel: "SuperSport F1 · Channel 208" },
+  { provider: "Canal+",  channel: "Canal+ Sport" },
+  { provider: "F1 TV",   channel: "f1.com/subscribe" },
+  { provider: "ShowMax", channel: "showmax.com (streaming)" },
+];
+
 function CountdownUnit({ value, label }: { value: number; label: string }) {
   return (
     <div className="flex flex-col items-center">
@@ -262,6 +269,24 @@ export default function RaceCountdown() {
               </div>
             );
           })}
+        </div>
+      </div>
+
+      {/* ── HOW TO WATCH IN NIGERIA ─────────────────────── */}
+      <div style={{
+        marginTop: 20, paddingTop: 16,
+        borderTop: "1px solid rgba(255,255,255,.07)",
+      }}>
+        <p className="mb-2.5 text-[11px] font-semibold uppercase tracking-widest text-zinc-500">
+          📺 How to watch in Nigeria
+        </p>
+        <div className="flex flex-col gap-2">
+          {HOW_TO_WATCH.map(item => (
+            <div key={item.provider} className="flex items-center justify-between rounded-lg border border-white/5 bg-white/[0.02] px-3 py-2">
+              <span className="text-xs font-semibold text-zinc-200">{item.provider}</span>
+              <span className="text-xs text-zinc-500">{item.channel}</span>
+            </div>
+          ))}
         </div>
       </div>
     </div>

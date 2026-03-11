@@ -214,6 +214,66 @@ export default function Round({ round, nextName }: Props) {
           </div>
         ))}
       </div>
+
+      {/* ── ACTIONS: Add to Calendar + WhatsApp ─────────── */}
+      {!round.over && (() => {
+        const raceSession = round.sessions.find(
+          s => s.kind === "Race" || s.kind === "Sprint Race" || s.kind === "Sprint"
+        );
+        if (!raceSession) return null;
+
+        // Google Calendar URL
+        const fmt = (d: Date) => d.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+        const gcTitle = encodeURIComponent(`${round.countryName} Grand Prix — F1 Naija`);
+        const gcDates = `${fmt(new Date(raceSession.start))}/${fmt(new Date(raceSession.end))}`;
+        const gcDetails = encodeURIComponent(`Watch live on F1 Naija 🇳🇬\nlive.f1naija.com/dashboard\n\nNigeria: DStv SuperSport F1 (Ch. 208)`);
+        const gcUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${gcTitle}&dates=${gcDates}&details=${gcDetails}`;
+
+        // WhatsApp share
+        const watTime = new Date(raceSession.start).toLocaleString("en-US", {
+          timeZone: "Africa/Lagos",
+          weekday: "short", month: "short", day: "numeric",
+          hour: "2-digit", minute: "2-digit", hour12: true,
+        });
+        const waText = encodeURIComponent(
+          `🏎️ ${round.countryName} Grand Prix\n📅 ${watTime} WAT\n\n` +
+          `Watch live on F1 Naija 🇳🇬\nlive.f1naija.com/dashboard`
+        );
+        const waUrl = `https://wa.me/?text=${waText}`;
+
+        return (
+          <div style={{
+            display: "flex", gap: 8,
+            padding: "10px 16px 14px",
+            borderTop: "1px solid rgba(255,255,255,.05)",
+          }}>
+            <a
+              href={gcUrl}
+              target="_blank" rel="noopener noreferrer"
+              style={{
+                flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 5,
+                padding: "8px 10px", borderRadius: 7, fontSize: 11, fontWeight: 700,
+                background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.09)",
+                color: "var(--f1-muted)", textDecoration: "none", whiteSpace: "nowrap",
+              }}
+            >
+              📅 Add to Calendar
+            </a>
+            <a
+              href={waUrl}
+              target="_blank" rel="noopener noreferrer"
+              style={{
+                flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 5,
+                padding: "8px 10px", borderRadius: 7, fontSize: 11, fontWeight: 700,
+                background: "rgba(37,211,102,.08)", border: "1px solid rgba(37,211,102,.2)",
+                color: "#25d366", textDecoration: "none", whiteSpace: "nowrap",
+              }}
+            >
+              💬 Share on WhatsApp
+            </a>
+          </div>
+        );
+      })()}
     </div>
   );
 }

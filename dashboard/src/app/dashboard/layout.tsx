@@ -134,10 +134,10 @@ function NoSessionState() {
 
       {/* Heading */}
       <h2 style={{ fontSize: 'clamp(22px,4vw,30px)', fontWeight: 900, letterSpacing: '-.02em', color: 'var(--f1-text)', marginBottom: 8 }}>
-        No live session right now
+        No live session — e don finish
       </h2>
       <p style={{ fontSize: 13, color: 'var(--f1-muted)', lineHeight: 1.6, marginBottom: 32 }}>
-        Live timing, gaps, and telemetry appear here during race weekends.
+        Live timing, gaps, and telemetry go show here when race weekend dey. Come back when the action starts!
       </p>
 
       {/* Next race countdown */}
