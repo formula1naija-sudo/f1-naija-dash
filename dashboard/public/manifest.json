@@ -1,12 +1,18 @@
 {
-  "name": "F1 Naija",
+  "name": "F1 Naija Live",
   "short_name": "F1 Naija",
-  "description": "F1 Naija Live Dashboard – Real-time Formula 1 timing and telemetry",
+  "description": "Nigeria's #1 Formula 1 platform — real-time timing, live telemetry, standings, schedule & community for Naija F1 fans everywhere.",
   "start_url": "/dashboard",
+  "scope": "/",
+  "id": "f1-naija-live",
   "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
   "background_color": "#09090b",
   "theme_color": "#008751",
-  "orientation": "portrait-primary",
+  "orientation": "any",
+  "lang": "en-NG",
+  "dir": "ltr",
+  "categories": ["sports", "news", "entertainment"],
   "icons": [
     {
       "src": "/pwa-icon.png",
@@ -20,5 +26,40 @@
       "type": "image/png",
       "purpose": "maskable"
     }
-  ]
+  ],
+  "shortcuts": [
+    {
+      "name": "Live Dashboard",
+      "short_name": "Live",
+      "description": "Open the live F1 timing dashboard",
+      "url": "/dashboard",
+      "icons": [{ "src": "/pwa-icon.png", "sizes": "96x96", "type": "image/png" }]
+    },
+    {
+      "name": "Race Schedule",
+      "short_name": "Schedule",
+      "description": "2026 F1 season calendar in WAT",
+      "url": "/schedule",
+      "icons": [{ "src": "/pwa-icon.png", "sizes": "96x96", "type": "image/png" }]
+    },
+    {
+      "name": "Championship Standings",
+      "short_name": "Standings",
+      "description": "Driver and constructor championship standings",
+      "url": "/standings",
+      "icons": [{ "src": "/pwa-icon.png", "sizes": "96x96", "type": "image/png" }]
+    },
+    {
+      "name": "F1 News",
+      "short_name": "News",
+      "description": "Latest Formula 1 news and headlines",
+      "url": "/news",
+      "icons": [{ "src": "/pwa-icon.png", "sizes": "96x96", "type": "image/png" }]
+    }
+  ],
+  "prefer_related_applications": false,
+  "related_applications": [],
+  "edge_side_panel": {
+    "preferred_width": 480
+  }
 }

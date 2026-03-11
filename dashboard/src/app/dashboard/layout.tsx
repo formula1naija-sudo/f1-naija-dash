@@ -20,10 +20,11 @@ import TrackInfo from '@/components/TrackInfo';
 import DelayInput from '@/components/DelayInput';
 import DelayTimer from '@/components/DelayTimer';
 import ConnectionStatus from '@/components/ConnectionStatus';
-import WhatsAppShare from '@/components/WhatsAppShare';
-import Watermark from '@/components/Watermark';
-import OneSignalInit from '@/components/OneSignalInit';
-import PushPrompt from '@/components/PushPrompt';
+// Non-critical components: lazy-loaded to keep first-paint bundle lean
+const WhatsAppShare  = dynamic(() => import('@/components/WhatsAppShare'),  { ssr: false });
+const Watermark      = dynamic(() => import('@/components/Watermark'),      { ssr: false });
+const OneSignalInit  = dynamic(() => import('@/components/OneSignalInit'),  { ssr: false });
+const PushPrompt     = dynamic(() => import('@/components/PushPrompt'),     { ssr: false });
 
 type NextRace = { name: string; countryName: string; start: string };
 

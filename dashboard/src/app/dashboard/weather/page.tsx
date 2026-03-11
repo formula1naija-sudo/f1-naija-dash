@@ -1,4 +1,10 @@
-import { WeatherMap } from "@/app/dashboard/weather/map";
+"use client";
+import dynamic from "next/dynamic";
+// WeatherMap uses maplibre-gl (~500KB) — lazy-load so it does not bloat the main bundle
+const WeatherMap = dynamic(
+  () => import("@/app/dashboard/weather/map").then(m => ({ default: m.WeatherMap })),
+  { ssr: false, loading: () => <div style={{ height: 300, background: "rgba(255,255,255,0.03)", borderRadius: 8, margin: 16 }} /> }
+);
 import WeatherConditions from "@/app/dashboard/weather/WeatherConditions";
 
 export default function WeatherPage() {

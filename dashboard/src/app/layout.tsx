@@ -19,6 +19,11 @@ export default function RootLayout({ children }: Props) {
     <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable} font-sans text-white`}>
       <head>
         <EnvScript />
+        {/* Resource hints — improves connection speed to live data & assets */}
+        <link rel="dns-prefetch" href="https://livetiming.formula1.com" />
+        <link rel="preconnect" href="https://livetiming.formula1.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://media.formula1.com" />
+        <link rel="preconnect" href="https://media.formula1.com" crossOrigin="anonymous" />
         {/* PWA meta tags */}
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#09090b" />
