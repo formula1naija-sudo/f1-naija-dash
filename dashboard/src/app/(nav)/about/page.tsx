@@ -3,32 +3,31 @@
 import Link from "next/link";
 
 const STATS = [
-  { value: "5,000+", label: "Instagram followers" },
-  { value: "6,600+", label: "X (Twitter) followers" },
-  { value: "1M+",    label: "Monthly impressions" },
-  { value: "200+",   label: "Fantasy league players" },
+  { value: "6,600+",  label: "X (Twitter) followers" },
+  { value: "5,300+",  label: "Instagram followers"   },
+  { value: "3,000+",  label: "Threads followers"     },
+  { value: "1M+",     label: "Monthly impressions"   },
+  { value: "200+",    label: "Fantasy league players" },
+  { value: "16,000+", label: "Total audience"        },
+];
+
+const AUDIENCE = [
+  { flag: "🇳🇬", label: "Nigeria" },
+  { flag: "🇬🇧", label: "United Kingdom" },
+  { flag: "🇺🇸", label: "United States" },
+  { flag: "🌍", label: "West African diaspora" },
 ];
 
 const SOCIALS = [
-  { href: "https://x.com/f1_naija",              icon: "𝕏",  label: "X (Twitter)", handle: "@f1_naija" },
-  { href: "https://www.instagram.com/f1_naija/", icon: "📸", label: "Instagram",   handle: "@f1_naija" },
-  { href: "https://www.threads.com/@f1_naija",   icon: "🧵", label: "Threads",     handle: "@f1_naija" },
-  { href: "https://www.tiktok.com/@f1.naija",    icon: "🎵", label: "TikTok",      handle: "@f1.naija" },
+  { href: "https://x.com/f1_naija",              icon: "𝕏",  label: "X (Twitter)", handle: "@f1_naija", stat: "6.6K" },
+  { href: "https://www.instagram.com/f1_naija/", icon: "📸", label: "Instagram",   handle: "@f1_naija", stat: "5.3K" },
+  { href: "https://www.threads.com/@f1_naija",   icon: "🧵", label: "Threads",     handle: "@f1_naija", stat: "3K"   },
+  { href: "https://www.tiktok.com/@f1.naija",    icon: "🎵", label: "TikTok",      handle: "@f1.naija", stat: ""     },
 ];
 
 export default function AboutPage() {
   return (
     <div style={{ background: "var(--f1-bg-page)", color: "var(--f1-text)", minHeight: "100vh" }}>
-      <style>{`
-        @keyframes aboutFadeUp {
-          from { opacity: 0; transform: translateY(16px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-        .about-1 { animation: aboutFadeUp .5s ease .05s both; }
-        .about-2 { animation: aboutFadeUp .5s ease .15s both; }
-        .about-3 { animation: aboutFadeUp .5s ease .25s both; }
-        .about-4 { animation: aboutFadeUp .5s ease .35s both; }
-      `}</style>
 
       {/* ── PAGE HERO ── */}
       <div style={{
@@ -36,6 +35,7 @@ export default function AboutPage() {
         padding: "clamp(40px,7vw,72px) 0 clamp(32px,5vw,52px)",
         borderBottom: "1px solid rgba(255,255,255,.06)",
       }}>
+        {/* Grid backdrop */}
         <div style={{
           position: "absolute", inset: 0, pointerEvents: "none",
           backgroundImage: "linear-gradient(rgba(255,255,255,.016) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.016) 1px,transparent 1px)",
@@ -51,13 +51,14 @@ export default function AboutPage() {
         }}>NAIJA</div>
 
         <div style={{ position: "relative", zIndex: 1 }}>
-          <div className="about-1" style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
             <div style={{ width: 16, height: 1, background: "#00d484" }} />
             <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: "#00d484" }}>
-              Built for the culture
+              Media &amp; Partnership Enquiries
             </span>
           </div>
-          <h1 className="about-2" style={{ lineHeight: .92, marginBottom: 18, margin: "0 0 18px", fontWeight: "inherit" }}>
+
+          <h1 style={{ lineHeight: .92, margin: "0 0 18px", fontWeight: "inherit" }}>
             <span style={{ display: "block", fontSize: "clamp(40px,6vw,80px)", fontWeight: 900, letterSpacing: "-.04em", color: "var(--f1-text)", lineHeight: .92 }}>
               About
             </span>
@@ -71,157 +72,147 @@ export default function AboutPage() {
               F1 Naija.
             </span>
           </h1>
-          <p className="about-3" style={{ fontSize: 14, color: "var(--f1-muted)", maxWidth: 520, lineHeight: 1.7, margin: 0 }}>
-            Nigeria&apos;s #1 Formula 1 platform — live timing, race data, standings, and community, built for Naija fans everywhere.
+
+          <p style={{ fontSize: 15, color: "var(--f1-muted)", maxWidth: 600, lineHeight: 1.75, margin: 0 }}>
+            F1 Naija is Nigeria&apos;s leading Formula 1 media platform — a real-time live timing dashboard,
+            WAT-first race scheduling, curated F1 news, and the largest community of Nigerian F1 fans online.
+            We reach over <strong style={{ color: "var(--f1-text)" }}>one million monthly impressions</strong> across
+            an audience of <strong style={{ color: "var(--f1-text)" }}>16,000+ followers</strong> spanning Nigeria,
+            the UK, the US, and the wider diaspora.
           </p>
         </div>
       </div>
 
       <div style={{ padding: "clamp(32px,5vw,60px) 0 80px" }}>
 
-        {/* ── STORY ── */}
-        <section style={{ marginBottom: "clamp(40px,6vw,64px)" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
-            <div style={{ width: 3, height: 16, background: "#00d484", borderRadius: 2 }} />
-            <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--f1-muted)" }}>
-              Our Story
-            </span>
-          </div>
-          <div style={{
-            background: "var(--f1-card)", border: "1px solid rgba(255,255,255,.07)",
-            borderRadius: 14, padding: "clamp(20px,4vw,36px)",
-          }}>
-            <p style={{ fontSize: 15, lineHeight: 1.8, color: "var(--f1-muted)", margin: "0 0 16px" }}>
-              F1 Naija started with a simple question: <strong style={{ color: "var(--f1-text)" }}>why isn&apos;t there a Formula 1 platform made for us?</strong> Nigerian fans have always been passionate about the sport — watching races at odd WAT hours, running fantasy leagues in WhatsApp groups, debating strategy in comment sections. But nothing existed that spoke to our culture.
-            </p>
-            <p style={{ fontSize: 15, lineHeight: 1.8, color: "var(--f1-muted)", margin: 0 }}>
-              So we built it. F1 Naija launched as a community and social media presence before growing into a full live-timing platform. Today it&apos;s home to thousands of Nigerian F1 fans across Lagos, London, Houston, Dubai, and everywhere in between.
-            </p>
-          </div>
-        </section>
-
-        {/* ── STATS ── */}
-        <section style={{ marginBottom: "clamp(40px,6vw,64px)" }}>
+        {/* ── REACH & AUDIENCE ── */}
+        <section aria-label="Reach and audience" style={{ marginBottom: "clamp(40px,6vw,64px)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
             <div style={{ width: 3, height: 16, background: "#f5a724", borderRadius: 2 }} />
             <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--f1-muted)" }}>
-              By the numbers
+              Reach &amp; audience
             </span>
           </div>
           <div style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit,minmax(140px,1fr))",
-            gap: 12,
+            gridTemplateColumns: "repeat(auto-fit,minmax(130px,1fr))",
+            gap: 10, marginBottom: 20,
           }}>
             {STATS.map(s => (
               <div key={s.label} style={{
                 background: "var(--f1-card)", border: "1px solid rgba(255,255,255,.07)",
-                borderRadius: 12, padding: "20px 18px", textAlign: "center",
+                borderRadius: 12, padding: "18px 16px", textAlign: "center",
               }}>
-                <div style={{ fontSize: "clamp(26px,4vw,40px)", fontWeight: 900, letterSpacing: "-.025em", color: "#00d484", lineHeight: 1 }}>
+                <div style={{ fontSize: "clamp(22px,3.5vw,36px)", fontWeight: 900, letterSpacing: "-.025em", color: "#00d484", lineHeight: 1 }}>
                   {s.value}
                 </div>
-                <div style={{ fontSize: 11, color: "var(--f1-muted)", marginTop: 6, lineHeight: 1.4 }}>
+                <div style={{ fontSize: 11, color: "var(--f1-muted)", marginTop: 5, lineHeight: 1.4 }}>
                   {s.label}
                 </div>
               </div>
             ))}
           </div>
+
+          {/* Audience breakdown */}
+          <div style={{
+            background: "var(--f1-card)", border: "1px solid rgba(255,255,255,.07)",
+            borderRadius: 12, padding: "18px 20px",
+          }}>
+            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase", color: "var(--f1-muted)", marginBottom: 12 }}>
+              Key markets
+            </div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+              {AUDIENCE.map(a => (
+                <span key={a.label} style={{
+                  display: "inline-flex", alignItems: "center", gap: 6,
+                  padding: "6px 14px", borderRadius: 20,
+                  background: "rgba(255,255,255,.05)", border: "1px solid rgba(255,255,255,.08)",
+                  fontSize: 12, fontWeight: 600, color: "var(--f1-text)",
+                }}>
+                  {a.flag} {a.label}
+                </span>
+              ))}
+            </div>
+          </div>
         </section>
 
-        {/* ── WHAT MAKES US DIFFERENT ── */}
-        <section style={{ marginBottom: "clamp(40px,6vw,64px)" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+        {/* ── WHAT WE DO — prose, no feature cards ── */}
+        <section aria-label="What we do" style={{ marginBottom: "clamp(40px,6vw,64px)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
             <div style={{ width: 3, height: 16, background: "#00d484", borderRadius: 2 }} />
             <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--f1-muted)" }}>
-              What makes us different
-            </span>
-          </div>
-          <p style={{ fontSize: 13, color: "var(--f1-muted)", lineHeight: 1.7, marginBottom: 20, maxWidth: 560 }}>
-            There are plenty of F1 sites. There&apos;s only one built for Nigerians.
-          </p>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))", gap: 12 }}>
-            {[
-              {
-                icon: "⏰",
-                accent: "#f5a724",
-                title: "WAT-first timing",
-                desc: "Every session time — qualifying, sprint, race — shown in West Africa Time. No more converting from CET or EST at 2am.",
-              },
-              {
-                icon: "🇳🇬",
-                accent: "#00d484",
-                title: "Nigerian fan perspective",
-                desc: "We cover the grid the way Naija fans see it — strong opinions, community debates, and context that matters to us.",
-              },
-              {
-                icon: "📡",
-                accent: "#e8001f",
-                title: "Live timing, built in-house",
-                desc: "Our live dashboard pulls real F1 telemetry data directly. Gaps, sectors, tyre compounds — not a rehash of someone else's data.",
-              },
-              {
-                icon: "🎙️",
-                accent: "#9c50f5",
-                title: "Race-day community",
-                desc: "X Spaces live on race weekends. Watch parties in Lagos. Threads running lap by lap. We watch together — always.",
-              },
-              {
-                icon: "🆓",
-                accent: "#00d484",
-                title: "Free, independent, fan-built",
-                desc: "No paywalls, no sponsorship bias. F1 Naija is built and run by Nigerian F1 fans — for Nigerian F1 fans.",
-              },
-              {
-                icon: "💬",
-                accent: "#25D366",
-                title: "Your language, your vibe",
-                desc: "Pidgin welcome. We don&apos;t write like a press release — we write like we&apos;re watching the race with you.",
-              },
-            ].map(item => (
-              <div key={item.title} style={{
-                background: "var(--f1-card)", borderRadius: 12, padding: "20px",
-                border: "1px solid rgba(255,255,255,.07)",
-                borderLeft: `3px solid ${item.accent}`,
-              }}>
-                <div style={{ fontSize: 22, marginBottom: 10 }}>{item.icon}</div>
-                <div style={{ fontSize: 13, fontWeight: 800, color: "var(--f1-text)", marginBottom: 6 }}>{item.title}</div>
-                <p style={{ fontSize: 12, color: "var(--f1-muted)", lineHeight: 1.65, margin: 0 }}
-                  dangerouslySetInnerHTML={{ __html: item.desc }}
-                />
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* ── CONTACT ── */}
-        <section style={{ marginBottom: "clamp(40px,6vw,64px)" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
-            <div style={{ width: 3, height: 16, background: "#f5a724", borderRadius: 2 }} />
-            <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--f1-muted)" }}>
-              Get in touch
+              What we do
             </span>
           </div>
           <div style={{
-            display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))", gap: 12,
+            background: "var(--f1-card)", border: "1px solid rgba(255,255,255,.07)",
+            borderRadius: 14, padding: "clamp(20px,4vw,32px)",
           }}>
-            <a
-              href="mailto:ads@f1naija.com"
-              style={{
-                display: "flex", alignItems: "center", gap: 14,
-                background: "var(--f1-card)", border: "1px solid rgba(255,255,255,.07)",
-                borderRadius: 12, padding: "18px 20px", textDecoration: "none",
-                transition: "border-color .2s",
-              }}
-              onMouseEnter={e => { if (window.matchMedia("(hover:hover)").matches) e.currentTarget.style.borderColor = "rgba(0,212,132,.3)"; }}
-              onMouseLeave={e => { if (window.matchMedia("(hover:hover)").matches) e.currentTarget.style.borderColor = "rgba(255,255,255,.07)"; }}
-            >
-              <div style={{ fontSize: 24, flexShrink: 0 }}>📩</div>
-              <div>
-                <div style={{ fontSize: 13, fontWeight: 700, color: "var(--f1-text)", marginBottom: 3 }}>Partnerships &amp; Advertising</div>
-                <div style={{ fontSize: 12, color: "#00d484" }}>ads@f1naija.com</div>
-              </div>
-            </a>
+            <p style={{ fontSize: 14, color: "var(--f1-muted)", lineHeight: 1.85, margin: 0, maxWidth: 640 }}>
+              We operate a <strong style={{ color: "var(--f1-text)" }}>free real-time live timing dashboard</strong> powered
+              by official F1 telemetry — showing live positions, gaps, tyre strategy, sector data, and DRS for every
+              session. Alongside that, we publish a <strong style={{ color: "var(--f1-text)" }}>WAT-first race calendar</strong>,
+              a curated multi-source news feed, and a <strong style={{ color: "var(--f1-text)" }}>fantasy league</strong> with
+              200+ active players. On race weekends we run live X Spaces and race-day threads; we also organise
+              Lagos watch parties for grand prix events.
+            </p>
+          </div>
+        </section>
+
+        {/* ── PARTNERSHIPS ── */}
+        <section aria-label="Partnerships and press" style={{ marginBottom: "clamp(40px,6vw,64px)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
+            <div style={{ width: 3, height: 16, background: "#f5a724", borderRadius: 2 }} />
+            <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--f1-muted)" }}>
+              Partnerships &amp; press
+            </span>
+          </div>
+          <div style={{
+            background: "rgba(245,167,36,.05)", border: "1px solid rgba(245,167,36,.18)",
+            borderRadius: 14, padding: "clamp(20px,4vw,32px)",
+          }}>
+            <p style={{ fontSize: 14, color: "var(--f1-muted)", lineHeight: 1.75, margin: "0 0 20px", maxWidth: 540 }}>
+              We work with brands, media organisations, and race venues looking to reach engaged Nigerian F1 fans.
+              For sponsorship, content partnerships, advertising, or media enquiries, reach out directly.
+            </p>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 10, alignItems: "center" }}>
+              <a
+                href="mailto:ads@f1naija.com"
+                style={{
+                  display: "inline-flex", alignItems: "center", gap: 8,
+                  padding: "11px 22px", borderRadius: 8, fontSize: 13, fontWeight: 700,
+                  background: "rgba(245,167,36,.15)", border: "1px solid rgba(245,167,36,.35)",
+                  color: "#f5a724", textDecoration: "none", letterSpacing: ".03em",
+                  minHeight: 44,
+                }}
+              >
+                📩 ads@f1naija.com
+              </a>
+              <Link
+                href="/partner"
+                style={{
+                  display: "inline-flex", alignItems: "center", gap: 6,
+                  padding: "11px 22px", borderRadius: 8, fontSize: 13, fontWeight: 600,
+                  background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.1)",
+                  color: "var(--f1-text)", textDecoration: "none",
+                  minHeight: 44,
+                }}
+              >
+                View Partnership Packages →
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* ── CHANNELS ── */}
+        <section aria-label="Social channels" style={{ marginBottom: "clamp(40px,6vw,64px)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
+            <div style={{ width: 3, height: 16, background: "#00d484", borderRadius: 2 }} />
+            <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--f1-muted)" }}>
+              Find us
+            </span>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))", gap: 10 }}>
             {SOCIALS.map(s => (
               <a
                 key={s.href}
@@ -231,18 +222,20 @@ export default function AboutPage() {
                 style={{
                   display: "flex", alignItems: "center", gap: 14,
                   background: "var(--f1-card)", border: "1px solid rgba(255,255,255,.07)",
-                  borderRadius: 12, padding: "18px 20px", textDecoration: "none",
+                  borderRadius: 12, padding: "16px 18px", textDecoration: "none",
                   transition: "border-color .2s",
                 }}
                 onMouseEnter={e => { if (window.matchMedia("(hover:hover)").matches) e.currentTarget.style.borderColor = "rgba(0,212,132,.3)"; }}
                 onMouseLeave={e => { if (window.matchMedia("(hover:hover)").matches) e.currentTarget.style.borderColor = "rgba(255,255,255,.07)"; }}
               >
                 <div style={{ fontSize: 22, flexShrink: 0 }}>{s.icon}</div>
-                <div>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: "var(--f1-text)", marginBottom: 3 }}>{s.label}</div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: "var(--f1-text)" }}>{s.label}</div>
                   <div style={{ fontSize: 12, color: "var(--f1-muted)" }}>{s.handle}</div>
                 </div>
-                <div style={{ marginLeft: "auto", fontSize: 10, color: "#00d484" }}>↗</div>
+                {s.stat && (
+                  <div style={{ fontSize: 12, fontWeight: 700, color: "#00d484", flexShrink: 0 }}>{s.stat}</div>
+                )}
               </a>
             ))}
           </div>
@@ -264,6 +257,7 @@ export default function AboutPage() {
               display: "inline-flex", alignItems: "center", gap: 7,
               padding: "12px 26px", borderRadius: 7, fontSize: 13, fontWeight: 700,
               background: "#00d484", color: "#04060e", textDecoration: "none",
+              minHeight: 44,
             }}>
               🏁 Open Live Dashboard
             </Link>
@@ -272,6 +266,7 @@ export default function AboutPage() {
               padding: "12px 26px", borderRadius: 7, fontSize: 13, fontWeight: 600,
               background: "transparent", color: "var(--f1-text)", textDecoration: "none",
               border: "1px solid rgba(255,255,255,.14)",
+              minHeight: 44,
             }}>
               Join the Community
             </Link>

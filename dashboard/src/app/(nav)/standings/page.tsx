@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 
 type DriverStanding = {
   position: string;
@@ -110,10 +111,6 @@ export default function StandingsPage() {
         @keyframes standFadeUp {
           from { opacity: 0; transform: translateY(16px); }
           to   { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50%       { opacity: .4; }
         }
         .stand-fade { animation: standFadeUp .55s ease both; }
         .stand-fade-1 { animation-delay: .1s; }
@@ -289,23 +286,27 @@ export default function StandingsPage() {
                 const pos = parseInt(d.position);
                 const isTop3 = pos <= 3;
                 return (
-                  <div key={d.Driver.driverId} className="stand-row" style={{
-                    position: "relative", display: "grid", gridTemplateColumns: "2.5rem 4px 1fr auto auto",
-                    gap: "0 12px", alignItems: "center", overflow: "hidden", borderRadius: 10, padding: "12px",
-                    border: "1px solid",
-                    borderColor: isTop3 ? "rgba(0,212,132,.12)" : "rgba(255,255,255,.05)",
-                    background: isTop3 ? "rgba(0,212,132,.04)" : "rgba(255,255,255,.02)",
-                  }}>
-                    <div style={{ position: "absolute", top: 0, left: 0, height: "100%", width: `${barPct}%`, background: teamColor, opacity: .06, transition: "width .8s ease" }} />
-                    <div style={{ position: "relative", zIndex: 1, fontSize: 13, fontWeight: 800, textAlign: "center", color: pos === 1 ? "#f5a724" : pos === 2 ? "#c0c8d8" : pos === 3 ? "#cd7f32" : "#52525b" }}>{d.position}</div>
-                    <div style={{ position: "relative", zIndex: 1, height: 24, width: 4, borderRadius: 2, background: teamColor, flexShrink: 0 }} />
-                    <div style={{ position: "relative", zIndex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: 11, color: "var(--f1-muted)", lineHeight: 1 }}>{d.Driver.givenName}</div>
-                      <div style={{ fontSize: 14, fontWeight: 800, letterSpacing: "-.01em", lineHeight: 1.2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{d.Driver.familyName}</div>
+                  <Link key={d.Driver.driverId} href={`/drivers/${d.Driver.driverId}`} style={{ textDecoration: "none", display: "block" }}>
+                    <div className="stand-row" style={{
+                      position: "relative", display: "grid", gridTemplateColumns: "2.5rem 4px 1fr auto auto",
+                      gap: "0 12px", alignItems: "center", overflow: "hidden", borderRadius: 10, padding: "12px",
+                      border: "1px solid",
+                      borderColor: isTop3 ? "rgba(0,212,132,.12)" : "rgba(255,255,255,.05)",
+                      background: isTop3 ? "rgba(0,212,132,.04)" : "rgba(255,255,255,.02)",
+                      cursor: "pointer",
+                    }}>
+                      <div style={{ position: "absolute", top: 0, left: 0, height: "100%", width: `${barPct}%`, background: teamColor, opacity: .06, transition: "width .8s ease" }} />
+                      <div style={{ position: "relative", zIndex: 1, fontSize: 13, fontWeight: 800, textAlign: "center", color: pos === 1 ? "#f5a724" : pos === 2 ? "#c0c8d8" : pos === 3 ? "#cd7f32" : "#52525b" }}>{d.position}</div>
+                      <div style={{ position: "relative", zIndex: 1, height: 24, width: 4, borderRadius: 2, background: teamColor, flexShrink: 0 }} />
+                      <div style={{ position: "relative", zIndex: 1, minWidth: 0 }}>
+                        <div style={{ fontSize: 11, color: "var(--f1-muted)", lineHeight: 1 }}>{d.Driver.givenName}</div>
+                        <div style={{ fontSize: 14, fontWeight: 800, letterSpacing: "-.01em", lineHeight: 1.2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{d.Driver.familyName}</div>
+                        <div style={{ fontSize: 10, color: "var(--f1-muted)", marginTop: 1, opacity: 0.7 }}>{d.Constructors?.[0]?.name}</div>
+                      </div>
+                      <div style={{ position: "relative", zIndex: 1, fontFamily: "monospace", fontSize: 14, fontWeight: 700, textAlign: "right", color: "var(--f1-text)" }}>{d.points}</div>
+                      <div style={{ position: "relative", zIndex: 1, fontFamily: "monospace", fontSize: 12, textAlign: "right", color: "var(--f1-muted)" }}>{d.wins}</div>
                     </div>
-                    <div style={{ position: "relative", zIndex: 1, fontFamily: "monospace", fontSize: 14, fontWeight: 700, textAlign: "right", color: "var(--f1-text)" }}>{d.points}</div>
-                    <div style={{ position: "relative", zIndex: 1, fontFamily: "monospace", fontSize: 12, textAlign: "right", color: "var(--f1-muted)" }}>{d.wins}</div>
-                  </div>
+                  </Link>
                 );
               })}
             </div>
@@ -359,20 +360,26 @@ export default function StandingsPage() {
                 const pos = parseInt(c.position);
                 const isTop3 = pos <= 3;
                 return (
-                  <div key={c.Constructor.constructorId} className="stand-row" style={{
-                    position: "relative", display: "grid", gridTemplateColumns: "2.5rem 4px 1fr auto auto",
-                    gap: "0 12px", alignItems: "center", overflow: "hidden", borderRadius: 10, padding: "14px 12px",
-                    border: "1px solid",
-                    borderColor: isTop3 ? "rgba(0,212,132,.12)" : "rgba(255,255,255,.05)",
-                    background: isTop3 ? "rgba(0,212,132,.04)" : "rgba(255,255,255,.02)",
-                  }}>
-                    <div style={{ position: "absolute", top: 0, left: 0, height: "100%", width: `${barPct}%`, background: teamColor, opacity: .06 }} />
-                    <div style={{ position: "relative", zIndex: 1, fontSize: 13, fontWeight: 800, textAlign: "center", color: pos === 1 ? "#f5a724" : pos === 2 ? "#c0c8d8" : pos === 3 ? "#cd7f32" : "#52525b" }}>{c.position}</div>
-                    <div style={{ position: "relative", zIndex: 1, height: 24, width: 4, borderRadius: 2, background: teamColor, flexShrink: 0 }} />
-                    <div style={{ position: "relative", zIndex: 1, fontSize: 14, fontWeight: 800, letterSpacing: "-.01em", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{c.Constructor.name}</div>
-                    <div style={{ position: "relative", zIndex: 1, fontFamily: "monospace", fontSize: 14, fontWeight: 700, textAlign: "right", color: "var(--f1-text)" }}>{c.points}</div>
-                    <div style={{ position: "relative", zIndex: 1, fontFamily: "monospace", fontSize: 12, textAlign: "right", color: "var(--f1-muted)" }}>{c.wins}</div>
-                  </div>
+                  <Link key={c.Constructor.constructorId} href={`/teams/${c.Constructor.constructorId}`} style={{ textDecoration: "none", display: "block" }}>
+                    <div className="stand-row" style={{
+                      position: "relative", display: "grid", gridTemplateColumns: "2.5rem 4px 1fr auto auto",
+                      gap: "0 12px", alignItems: "center", overflow: "hidden", borderRadius: 10, padding: "14px 12px",
+                      border: "1px solid",
+                      borderColor: isTop3 ? "rgba(0,212,132,.12)" : "rgba(255,255,255,.05)",
+                      background: isTop3 ? "rgba(0,212,132,.04)" : "rgba(255,255,255,.02)",
+                      cursor: "pointer",
+                    }}>
+                      <div style={{ position: "absolute", top: 0, left: 0, height: "100%", width: `${barPct}%`, background: teamColor, opacity: .06 }} />
+                      <div style={{ position: "relative", zIndex: 1, fontSize: 13, fontWeight: 800, textAlign: "center", color: pos === 1 ? "#f5a724" : pos === 2 ? "#c0c8d8" : pos === 3 ? "#cd7f32" : "#52525b" }}>{c.position}</div>
+                      <div style={{ position: "relative", zIndex: 1, height: 24, width: 4, borderRadius: 2, background: teamColor, flexShrink: 0 }} />
+                      <div style={{ position: "relative", zIndex: 1, minWidth: 0 }}>
+                        <div style={{ fontSize: 14, fontWeight: 800, letterSpacing: "-.01em", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{c.Constructor.name}</div>
+                        <div style={{ fontSize: 10, color: "var(--f1-muted)", marginTop: 1, opacity: 0.7 }}>{c.Constructor.nationality}</div>
+                      </div>
+                      <div style={{ position: "relative", zIndex: 1, fontFamily: "monospace", fontSize: 14, fontWeight: 700, textAlign: "right", color: "var(--f1-text)" }}>{c.points}</div>
+                      <div style={{ position: "relative", zIndex: 1, fontFamily: "monospace", fontSize: 12, textAlign: "right", color: "var(--f1-muted)" }}>{c.wins}</div>
+                    </div>
+                  </Link>
                 );
               })}
             </div>

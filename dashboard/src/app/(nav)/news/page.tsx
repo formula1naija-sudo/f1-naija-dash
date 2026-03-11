@@ -218,7 +218,7 @@ export default function NewsPage() {
         }
       })
       .catch(() => {
-        setError("Could not load news. Check back shortly.");
+        setError("wahala");
       })
       .finally(() => {
         setLoading(false);
@@ -254,6 +254,12 @@ export default function NewsPage() {
 
 
   const handleNotifToggle = async () => {
+    // Guard: Service Worker API may be absent even when Notification API exists
+    // (e.g. some older desktop browsers). Without this check, .ready hangs forever.
+    if (!("serviceWorker" in navigator)) {
+      setNotifStatus("unsupported");
+      return;
+    }
     if (notifStatus === "subscribed") {
       const reg = await navigator.serviceWorker.ready;
       const sub = await reg.pushManager.getSubscription();
@@ -358,7 +364,7 @@ export default function NewsPage() {
                   borderColor: notifStatus === "subscribed" ? "rgba(0,212,132,.4)" : "rgba(255,255,255,.1)",
                   background: notifStatus === "subscribed" ? "rgba(0,212,132,.08)" : "rgba(255,255,255,.04)",
                   color: notifStatus === "subscribed" ? "#00d484" : notifStatus === "denied" ? "#52525b" : "var(--f1-text)",
-                  minHeight: 40, WebkitTapHighlightColor: "transparent",
+                  minHeight: 44, WebkitTapHighlightColor: "transparent",
                 }}
               >
                 {notifStatus === "subscribed" ? "✓ Alerts on" : notifStatus === "denied" ? "Blocked" : "🔔 Alerts"}
@@ -416,7 +422,7 @@ export default function NewsPage() {
                 border: "1px solid rgba(255,255,255,.12)",
                 background: "rgba(255,255,255,.04)", color: "var(--f1-text)",
                 textDecoration: "none", whiteSpace: "nowrap",
-                minHeight: 40, WebkitTapHighlightColor: "transparent",
+                minHeight: 44, WebkitTapHighlightColor: "transparent",
                 alignSelf: "flex-start",
               }}
             >
@@ -443,13 +449,20 @@ export default function NewsPage() {
             gap: 12, padding: "60px 20px", color: "var(--f1-muted)", textAlign: "center",
           }}>
             <div style={{ fontSize: 36 }}>📡</div>
-            <p style={{ fontSize: 14 }}>{error}</p>
+            <p style={{ fontSize: 15, fontWeight: 700, color: "var(--f1-text)" }}>
+              <span lang="pcm">Wahala dey o — couldn&apos;t load news.</span>
+            </p>
+            <p style={{ fontSize: 13, lineHeight: 1.6 }}>
+              Try again, or catch the latest on{" "}
+              <a href="https://x.com/f1_naija" target="_blank" rel="noopener noreferrer"
+                style={{ color: "#00d484", textDecoration: "none" }}>X @f1_naija</a>
+            </p>
             <button
               onClick={fetchData}
               style={{
                 padding: "9px 20px", borderRadius: 8, fontSize: 12, fontWeight: 700,
                 border: "1px solid rgba(0,212,132,.3)", background: "rgba(0,212,132,.08)",
-                color: "#00d484", cursor: "pointer", minHeight: 40,
+                color: "#00d484", cursor: "pointer", minHeight: 44,
               }}
             >Try again</button>
           </div>

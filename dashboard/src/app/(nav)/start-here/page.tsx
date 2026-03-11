@@ -131,7 +131,7 @@ export default function StartHerePage() {
       <div style={{ padding: "clamp(32px,5vw,60px) 0 80px" }}>
 
         {/* ── F1 BASICS ── */}
-        <section style={{ marginBottom: "clamp(40px,6vw,64px)" }}>
+        <section aria-label="F1 basics" style={{ marginBottom: "clamp(40px,6vw,64px)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
             <div style={{ width: 3, height: 16, background: "#00d484", borderRadius: 2 }} />
             <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--f1-muted)" }}>
@@ -153,7 +153,7 @@ export default function StartHerePage() {
         </section>
 
         {/* ── NAIJA FAN GUIDE ── */}
-        <section style={{ marginBottom: "clamp(40px,6vw,64px)" }}>
+        <section aria-label="The Naija fan guide" style={{ marginBottom: "clamp(40px,6vw,64px)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
             <div style={{ width: 3, height: 16, background: "#f5a724", borderRadius: 2 }} />
             <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--f1-muted)" }}>
@@ -182,7 +182,7 @@ export default function StartHerePage() {
         </section>
 
         {/* ── GLOSSARY ── */}
-        <section style={{ marginBottom: "clamp(40px,6vw,64px)" }}>
+        <section aria-label="F1 jargon decoder" style={{ marginBottom: "clamp(40px,6vw,64px)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
             <div style={{ width: 3, height: 16, background: "#00d484", borderRadius: 2 }} />
             <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--f1-muted)" }}>
@@ -216,14 +216,14 @@ export default function StartHerePage() {
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center" }}>
             <Link href="/dashboard" style={{
               display: "inline-flex", alignItems: "center", gap: 7,
-              padding: "12px 26px", borderRadius: 7, fontSize: 13, fontWeight: 700,
+              padding: "12px 26px", minHeight: 44, borderRadius: 7, fontSize: 13, fontWeight: 700,
               background: "#00d484", color: "#04060e", textDecoration: "none",
             }}>
               🏁 Open Live Dashboard
             </Link>
             <Link href="/schedule" style={{
               display: "inline-flex", alignItems: "center", gap: 7,
-              padding: "12px 26px", borderRadius: 7, fontSize: 13, fontWeight: 600,
+              padding: "12px 26px", minHeight: 44, borderRadius: 7, fontSize: 13, fontWeight: 600,
               background: "transparent", color: "var(--f1-text)", textDecoration: "none",
               border: "1px solid rgba(255,255,255,.14)",
             }}>

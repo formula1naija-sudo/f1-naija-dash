@@ -67,7 +67,7 @@ export default async function SchedulePage() {
             </span>
           </h1>
 
-          <p className="sch-fade-3" style={{ marginTop: 18, fontSize: 12, color: "var(--f1-muted)", margin: "18px 0 0" }}>
+          <p className="sch-fade-3" style={{ fontSize: 12, color: "var(--f1-muted)", margin: "18px 0 0" }}>
             All sessions. All timezones. Straight to the point.
           </p>
         </div>

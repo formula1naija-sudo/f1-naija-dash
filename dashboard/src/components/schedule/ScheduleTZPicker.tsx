@@ -58,11 +58,13 @@ export default function ScheduleTZPicker() {
               border: activeTZ === i ? "1px solid rgba(0,212,132,.28)" : "1px solid transparent",
               borderRadius: 6,
               padding: "4px 8px",
+              minHeight: 36,
               fontSize: 11, fontWeight: 600,
               color: activeTZ === i ? "#00d484" : "#71717a",
               cursor: "pointer",
               transition: "all .15s",
               whiteSpace: "nowrap",
+              touchAction: "manipulation",
             }}
           >
             {tz.flag} {tz.abbr}

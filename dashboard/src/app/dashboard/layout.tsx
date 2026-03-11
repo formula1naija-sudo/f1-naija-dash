@@ -79,7 +79,13 @@ export default function DashboardLayout({ children }: Props) {
   useWakeLock();
   usePushNotifications(); // single notification hub — covers all events
   // Run immediately — not lazy-loaded, fires on every WebSocket update
-  const ended = useDataStore(({ state }) => state?.SessionStatus?.Status === 'Ends');
+  const ended         = useDataStore(({ state }) => state?.SessionStatus?.Status === 'Ends');
+  // Show the no-session state when the WebSocket has loaded data but no session is active.
+  // 'Started' = live session running; everything else means nothing to watch right now.
+  const sessionStatus   = useDataStore(({ state }) => state?.SessionStatus?.Status);
+  const dataLoaded      = useDataStore(({ state }) => state !== undefined);
+  const noActiveSession = connected && dataLoaded && sessionStatus !== 'Started';
+  const showNoSession   = noActiveSession || (syncing && !ended);
 
   return (
     <>
@@ -96,11 +102,11 @@ export default function DashboardLayout({ children }: Props) {
 {/* min-h-0: iOS Safari flex bug — without it, flex children can't shrink
             below their content size, breaking the overflow-auto scroll region */}
         <motion.div layout="size" className="flex h-full min-h-0 w-full flex-1 flex-col md:gap-2">
-          <DesktopStaticBar show={!syncing || ended} />
-          <MobileStaticBar show={!syncing || ended} connected={connected} />
+          <DesktopStaticBar show={!showNoSession} />
+          <MobileStaticBar show={!showNoSession} connected={connected} />
           <div
             className={
-              !syncing || ended
+              !showNoSession
                 ? 'no-scrollbar min-h-0 w-full flex-1 overflow-auto md:rounded-lg'
                 : 'hidden'
             }
@@ -110,7 +116,7 @@ export default function DashboardLayout({ children }: Props) {
           </div>
           <div
             className={
-              syncing && !ended
+              showNoSession
                 ? 'flex min-h-0 h-full flex-1 flex-col items-center justify-center md:rounded-lg md:border'
                 : 'hidden'
             }
@@ -141,10 +147,10 @@ function NoSessionState() {
       <div style={{ fontSize: 48, marginBottom: 20 }}>🏎️</div>
 
       {/* Heading */}
-      <h2 style={{ fontSize: 'clamp(22px,4vw,30px)', fontWeight: 900, letterSpacing: '-.02em', color: 'var(--f1-text)', marginBottom: 8 }}>
+      <h2 lang="pcm" style={{ fontSize: 'clamp(22px,4vw,30px)', fontWeight: 900, letterSpacing: '-.02em', color: 'var(--f1-text)', marginBottom: 8 }}>
         No live session — e don finish
       </h2>
-      <p style={{ fontSize: 13, color: 'var(--f1-muted)', lineHeight: 1.6, marginBottom: 32 }}>
+      <p lang="pcm" style={{ fontSize: 13, color: 'var(--f1-muted)', lineHeight: 1.6, marginBottom: 32 }}>
         Live timing, gaps, and telemetry go show here when race weekend dey. Come back when the action starts!
       </p>
 
@@ -262,6 +268,21 @@ function MobileStaticBar({ show, connected }: { show: boolean; connected: boolea
     <div className="flex w-full items-center justify-between overflow-hidden p-2 md:hidden" style={{ borderBottom: "1px solid var(--f1-border)" }}>
       <div className="flex items-center gap-2">
         <SidenavButton key="mobile" onClick={() => open()} />
+        {/* Back to main site */}
+        <Link
+          href="/"
+          style={{
+            display: "flex", alignItems: "center", gap: 4,
+            padding: "4px 10px", borderRadius: 6, height: 32,
+            background: "rgba(255,255,255,.05)", border: "1px solid rgba(255,255,255,.1)",
+            fontSize: 11, fontWeight: 700, color: "var(--f1-muted)",
+            textDecoration: "none", letterSpacing: ".02em", flexShrink: 0,
+            WebkitTapHighlightColor: "transparent",
+          }}
+          aria-label="Back to F1 Naija"
+        >
+          ‹ F1 Naija
+        </Link>
         <DelayInput saveDelay={500} />
         <DelayTimer />
         <ConnectionStatus connected={connected} />
@@ -283,6 +304,23 @@ function DesktopStaticBar({ show }: { show: boolean }) {
             <SessionInfo />
           </motion.div>
         </AnimatePresence>
+        {/* Back to main site */}
+        <Link
+          href="/"
+          style={{
+            display: "flex", alignItems: "center", gap: 4,
+            padding: "4px 10px", borderRadius: 6, height: 30,
+            background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.09)",
+            fontSize: 11, fontWeight: 700, color: "var(--f1-muted)",
+            textDecoration: "none", letterSpacing: ".02em", flexShrink: 0,
+            transition: "border-color .15s",
+          }}
+          aria-label="Back to F1 Naija"
+          onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(0,212,132,.3)"; e.currentTarget.style.color = "#00d484"; }}
+          onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,.09)"; e.currentTarget.style.color = "var(--f1-muted)"; }}
+        >
+          ‹ F1 Naija
+        </Link>
       </div>
       <div className="hidden md:items-center lg:flex">{show && <WeatherInfo />}</div>
       <div className="flex justify-end">{show && <TrackInfo />}</div>

@@ -191,7 +191,7 @@ export default function HelpPage() {
         </div>
 
         {/* ── COLOURS ── */}
-        <section id="colors" style={{ marginBottom: 56 }}>
+        <section id="colors" aria-label="Colour Coding" style={{ marginBottom: 56 }}>
           <div className="help-section-tag">Colours</div>
           <h2 className="help-h2">Colour Coding</h2>
           <p className="help-p" style={{ marginBottom: 24 }}>
@@ -225,7 +225,7 @@ export default function HelpPage() {
         </section>
 
         {/* ── LEADERBOARD ── */}
-        <section id="leaderboard" style={{ marginBottom: 56 }}>
+        <section id="leaderboard" aria-label="Driver Row Backgrounds" style={{ marginBottom: 56 }}>
           <div className="help-section-tag">Leaderboard</div>
           <h2 className="help-h2">Driver Row Backgrounds</h2>
           <p className="help-p" style={{ marginBottom: 24 }}>
@@ -252,7 +252,7 @@ export default function HelpPage() {
         </section>
 
         {/* ── DRS & PIT ── */}
-        <section id="drs" style={{ marginBottom: 56 }}>
+        <section id="drs" aria-label="DRS and Pit Indicator" style={{ marginBottom: 56 }}>
           <div className="help-section-tag">DRS & PIT</div>
           <h2 className="help-h2">DRS & Pit Indicator</h2>
           <p className="help-p" style={{ marginBottom: 8 }}>
@@ -284,7 +284,7 @@ export default function HelpPage() {
         </section>
 
         {/* ── TYRES ── */}
-        <section id="tires" style={{ marginBottom: 56 }}>
+        <section id="tires" aria-label="Tyre Compounds" style={{ marginBottom: 56 }}>
           <div className="help-section-tag">Tyres</div>
           <h2 className="help-h2">Tyre Compounds</h2>
           <p className="help-p" style={{ marginBottom: 16 }}>
@@ -324,7 +324,7 @@ export default function HelpPage() {
         </section>
 
         {/* ── DELAY ── */}
-        <section id="delay" style={{ marginBottom: 56 }}>
+        <section id="delay" aria-label="Sync With Your Stream" style={{ marginBottom: 56 }}>
           <div className="help-section-tag">Delay Control</div>
           <h2 className="help-h2">Sync With Your Stream</h2>
           <p className="help-p" style={{ marginBottom: 12 }}>
@@ -361,7 +361,7 @@ export default function HelpPage() {
         </section>
 
         {/* ── PEDALS ── */}
-        <section id="pedals" style={{ marginBottom: 56 }}>
+        <section id="pedals" aria-label="Pedal and RPM Bars" style={{ marginBottom: 56 }}>
           <div className="help-section-tag">Driver Telemetry</div>
           <h2 className="help-h2">Pedal & RPM Bars</h2>
           <p className="help-p" style={{ marginBottom: 24 }}>
@@ -388,7 +388,7 @@ export default function HelpPage() {
         </section>
 
         {/* ── WEATHER ── */}
-        <section id="weather" style={{ marginBottom: 40 }}>
+        <section id="weather" aria-label="Track Conditions" style={{ marginBottom: 40 }}>
           <div className="help-section-tag">Weather</div>
           <h2 className="help-h2">Track Conditions</h2>
           <p className="help-p" style={{ marginBottom: 24 }}>

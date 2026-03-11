@@ -51,14 +51,26 @@ const config: NextConfig = {
 		],
 	},
 	headers: async () => frameDisableHeaders,
-  async rewrites() {
-    return [
-      {
-        source: "/api/realtime",
-        destination: "https://rt-api.f1-dash.com/api/realtime",
-      },
-    ];
-  },
+	async rewrites() {
+		return [
+			{
+				source: "/api/realtime",
+				destination: "https://rt-api.f1-dash.com/api/realtime",
+			},
+		];
+	},
+	async redirects() {
+		return [
+			// Pages absorbed into Community
+			{ source: "/start-here",  destination: "/community", permanent: true },
+			{ source: "/naija-index", destination: "/community", permanent: true },
+			{ source: "/fantasy",     destination: "/community", permanent: true },
+			{ source: "/help",        destination: "/community", permanent: true },
+			// Standalone data pages → closest nav equivalent
+			{ source: "/results",     destination: "/standings", permanent: true },
+			{ source: "/drivers",     destination: "/community", permanent: true },
+		];
+	},
 };
 
 export default config;

@@ -150,16 +150,15 @@ function TikTokLogo() {
 const liveTimingItems: NavItem[] = [
 	{ href: "/dashboard",           name: "Dashboard",  icon: GridIcon    },
 	{ href: "/dashboard/track-map", name: "Track Map",  icon: MapIcon     },
-	{ href: "/dashboard/standings", name: "Race Order", icon: TrophyIcon  },
+	{ href: "/dashboard/standings", name: "Standings",  icon: TrophyIcon  },
 	{ href: "/dashboard/weather",   name: "Weather",    icon: CloudIcon   },
 ];
 
 const exploreItems: NavItem[] = [
-	{ href: "/",           name: "Home",        icon: HomeIcon      },
-	{ href: "/news",       name: "News",        icon: NewspaperIcon },
-	{ href: "/standings",  name: "Standings",   icon: TrophyIcon    },
-	{ href: "/schedule",   name: "Schedule",    icon: CalendarIcon  },
-	{ href: "/community",  name: "Community",   icon: CommunityIcon },
+	{ href: "/",          name: "Home",      icon: HomeIcon      },
+	{ href: "/news",      name: "News",      icon: NewspaperIcon },
+	{ href: "/community", name: "Community", icon: CommunityIcon },
+	{ href: "/schedule",  name: "Schedule",  icon: CalendarIcon  },
 ];
 
 const moreItems: NavItem[] = [

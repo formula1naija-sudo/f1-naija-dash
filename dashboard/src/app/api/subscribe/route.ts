@@ -14,7 +14,9 @@ export async function POST(req: NextRequest) {
     headers: { "content-type": "application/json" },
     body,
   });
-  return NextResponse.json(await res.json(), { status: res.status });
+  let data: unknown = {};
+  try { data = await res.json(); } catch { /* non-JSON body from push service — ignore */ }
+  return NextResponse.json(data, { status: res.status });
 }
 
 export async function DELETE(req: NextRequest) {
@@ -27,7 +29,9 @@ export async function DELETE(req: NextRequest) {
     headers: { "content-type": "application/json" },
     body,
   });
-  return NextResponse.json(await res.json(), { status: res.status });
+  let data: unknown = {};
+  try { data = await res.json(); } catch { /* non-JSON body from push service — ignore */ }
+  return NextResponse.json(data, { status: res.status });
 }
 
 export async function GET() {

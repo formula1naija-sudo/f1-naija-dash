@@ -15,9 +15,9 @@ export default function WhatsAppShare() {
 	const handleShare = () => {
 		let text: string;
 		if (sessionName) {
-			text = `I'm watching ${sessionName}${sessionType ? " — " + sessionType : ""} live on F1 Naija! 🏁🇳🇬\n\nCheck it out: live.f1naija.com/dashboard`;
+			text = `I'm watching ${sessionName}${sessionType ? " — " + sessionType : ""} live on F1 Naija! 🏁🇳🇬\n\nCheck it out: f1-naija.vercel.app/dashboard`;
 		} else {
-			text = `🏎️ Check out the F1 Naija live timing dashboard!\n\nNigeria's #1 Formula 1 platform 🇳🇬\n\nlive.f1naija.com/dashboard`;
+			text = `🏎️ Check out the F1 Naija live timing dashboard!\n\nNigeria's #1 Formula 1 platform 🇳🇬\n\nf1-naija.vercel.app/dashboard`;
 		}
 		window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank");
 	};

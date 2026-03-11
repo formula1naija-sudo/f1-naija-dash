@@ -1,17 +1,14 @@
 import Link from "next/link";
 
 const NAV_LINKS = [
-  { href: "/",            label: "Home" },
-  { href: "/dashboard",   label: "Dashboard" },
-  { href: "/schedule",    label: "Schedule" },
-  { href: "/standings",   label: "Standings" },
-  { href: "/community",   label: "Community" },
-  { href: "/fantasy",     label: "Fantasy" },
-  { href: "/partner",     label: "Partner" },
-  { href: "/naija-index", label: "Naija Index" },
-  { href: "/start-here",  label: "Start Here" },
-  { href: "/about",       label: "About" },
-  { href: "/help",        label: "Help" },
+  { href: "/",           label: "Home"       },
+  { href: "/dashboard",  label: "Dashboard"  },
+  { href: "/schedule",   label: "Schedule"   },
+  { href: "/news",       label: "News"       },
+  { href: "/standings",  label: "Standings"  },
+  { href: "/community",  label: "Community"  },
+  { href: "/about",      label: "About"      },
+  { href: "/partner",    label: "Partner"    },
 ];
 
 const TEAM_COLORS = [

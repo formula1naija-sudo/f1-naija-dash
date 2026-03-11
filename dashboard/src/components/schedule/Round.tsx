@@ -219,16 +219,17 @@ export default function Round({ round, nextName }: Props) {
 
       {/* ── ACTIONS: Add to Calendar + WhatsApp ─────────── */}
       {!round.over && (() => {
-        const raceSession = round.sessions.find(
-          s => s.kind === "Race" || s.kind === "Sprint Race" || s.kind === "Sprint"
-        );
+        // Prefer Sunday Race; fall back to Sprint Race / Sprint on sprint weekends
+        const raceSession =
+          round.sessions.find(s => s.kind === "Race") ??
+          round.sessions.find(s => s.kind === "Sprint Race" || s.kind === "Sprint");
         if (!raceSession) return null;
 
         // Google Calendar URL
         const fmt = (d: Date) => d.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
         const gcTitle = encodeURIComponent(`${round.countryName} Grand Prix — F1 Naija`);
         const gcDates = `${fmt(new Date(raceSession.start))}/${fmt(new Date(raceSession.end))}`;
-        const gcDetails = encodeURIComponent(`Watch live on F1 Naija 🇳🇬\nlive.f1naija.com/dashboard\n\nNigeria: DStv SuperSport F1 (Ch. 208)`);
+        const gcDetails = encodeURIComponent(`Watch live on F1 Naija 🇳🇬\nf1-naija.vercel.app/dashboard\n\nNigeria: DStv SuperSport F1 (Ch. 208)`);
         const gcUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${gcTitle}&dates=${gcDates}&details=${gcDetails}`;
 
         // WhatsApp share
@@ -239,7 +240,7 @@ export default function Round({ round, nextName }: Props) {
         });
         const waText = encodeURIComponent(
           `🏎️ ${round.countryName} Grand Prix\n📅 ${watTime} WAT\n\n` +
-          `Watch live on F1 Naija 🇳🇬\nlive.f1naija.com/dashboard`
+          `Watch live on F1 Naija 🇳🇬\nf1-naija.vercel.app/dashboard`
         );
         const waUrl = `https://wa.me/?text=${waText}`;
 

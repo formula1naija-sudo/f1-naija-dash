@@ -1,195 +1,22 @@
 "use client";
 
-import { useState } from "react";
 import HomeHero from "@/components/HomeHero";
 import RaceCountdown from "@/components/RaceCountdown";
 import Link from "next/link";
 
-const STATS = [
-  { value: "5K+",   label: "Instagram followers" },
-  { value: "6.6K+", label: "X followers" },
-  { value: "1M+",   label: "Monthly impressions" },
-  { value: "200+",  label: "Fantasy players" },
-];
-
 export default function Home() {
-  const [notifState, setNotifState] = useState<"idle" | "asking" | "granted" | "denied">("idle");
-  const [notifVisible, setNotifVisible] = useState<boolean>(() => {
-    if (typeof window === "undefined") return false;
-    if (localStorage.getItem("f1naija_notif_dismissed")) return false;
-    if (!("Notification" in window)) return false;
-    if (Notification.permission === "granted") return false;
-    return true;
-  });
-
-  async function requestNotifications() {
-    if (!("Notification" in window)) return;
-    setNotifState("asking");
-    const perm = await Notification.requestPermission();
-    setNotifState(perm === "granted" ? "granted" : "denied");
-    if (perm !== "default") {
-      localStorage.setItem("f1naija_notif_dismissed", "1");
-      setTimeout(() => setNotifVisible(false), 2000);
-    }
-  }
-
-  function dismissNotif() {
-    localStorage.setItem("f1naija_notif_dismissed", "1");
-    setNotifVisible(false);
-  }
-
   return (
     <div style={{ background: "var(--f1-bg-page)", color: "var(--f1-text)", minHeight: "100vh" }}>
       {/* ── HERO ─────────────────────────────────────────── */}
       <HomeHero />
-
-      {/* ── SOCIAL PROOF STATS BAR ───────────────────────── */}
-      <div style={{
-        display: "flex", flexWrap: "wrap", justifyContent: "center", alignItems: "center",
-        gap: "clamp(24px,6vw,72px)",
-        padding: "clamp(18px,3vw,28px) 0",
-        borderTop: "1px solid rgba(255,255,255,.06)",
-        borderBottom: "1px solid rgba(255,255,255,.04)",
-      }}>
-        {STATS.map(s => (
-          <div key={s.label} style={{ textAlign: "center" }}>
-            <div style={{
-              fontSize: "clamp(22px,3.5vw,36px)", fontWeight: 900,
-              color: "#00d484", letterSpacing: "-.035em", lineHeight: 1,
-            }}>
-              {s.value}
-            </div>
-            <div style={{
-              fontSize: 10, color: "var(--f1-muted)",
-              textTransform: "uppercase", letterSpacing: ".1em", marginTop: 4,
-            }}>
-              {s.label}
-            </div>
-          </div>
-        ))}
-      </div>
 
       {/* ── RACE COUNTDOWN ───────────────────────────────── */}
       <div style={{ borderBottom: "1px solid rgba(255,255,255,.06)" }}>
         <RaceCountdown />
       </div>
 
-      {/* ── PUSH NOTIFICATION BANNER ─────────────────────── */}
-      {notifVisible && (
-        <div style={{
-          display: "flex", flexWrap: "wrap", alignItems: "center",
-          justifyContent: "space-between", gap: 12,
-          padding: "clamp(12px,2vw,16px) 0",
-          borderBottom: "1px solid rgba(0,212,132,.08)",
-          background: "rgba(0,212,132,.04)",
-          transition: "opacity .3s",
-        }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <span style={{ fontSize: 22 }}>🔔</span>
-            <div>
-              <div style={{ fontSize: 13, fontWeight: 700, color: "var(--f1-text)", marginBottom: 2 }}>
-                Get race day alerts
-              </div>
-              <div style={{ fontSize: 11, color: "var(--f1-muted)" }} lang="pcm">
-                We go ping you when session starts — no wahala
-              </div>
-            </div>
-          </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
-            {notifState === "idle" && (
-              <button
-                onClick={requestNotifications}
-                style={{
-                  padding: "8px 18px", borderRadius: 7, fontSize: 12, fontWeight: 700,
-                  background: "rgba(0,212,132,.18)", border: "1px solid rgba(0,212,132,.35)",
-                  color: "#00d484", cursor: "pointer",
-                }}
-              >
-                Enable Alerts
-              </button>
-            )}
-            {notifState === "asking" && (
-              <span style={{ fontSize: 12, color: "#00d484" }}>Waiting...</span>
-            )}
-            {notifState === "granted" && (
-              <span style={{ fontSize: 12, color: "#00d484" }}>✓ Race alerts on!</span>
-            )}
-            {notifState === "denied" && (
-              <span style={{ fontSize: 12, color: "var(--f1-muted)" }}>Blocked in browser settings</span>
-            )}
-            <button
-              onClick={dismissNotif}
-              aria-label="Dismiss notification prompt"
-              style={{
-                fontSize: 14, color: "var(--f1-muted)", cursor: "pointer",
-                background: "none", border: "none", padding: "4px 8px", lineHeight: 1,
-              }}
-            >
-              ✕
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* ── HUB GRID ─────────────────────────────────────── */}
-      <section style={{ padding: "clamp(40px,7vw,72px) 0 clamp(36px,6vw,60px)" }}>
-        <div style={{ marginBottom: 40 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
-            <div style={{ width: 20, height: 1, background: "#00d484" }} />
-            <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: "#00d484" }}>
-              Everything F1, one platform
-            </span>
-          </div>
-          <h2 style={{ fontSize: "clamp(28px,4vw,44px)", fontWeight: 900, letterSpacing: "-.025em", lineHeight: .95, margin: 0 }}>
-            Your complete<br />F1 headquarters.
-          </h2>
-        </div>
-
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit,minmax(160px,1fr))",
-          gap: 16,
-        }}>
-          {HUB_ITEMS.map((item) => (
-            <Link key={item.href} href={item.href} style={{ textDecoration: "none" }}>
-              <div style={{
-                background: "var(--f1-card)",
-                border: "1px solid rgba(255,255,255,.07)",
-                borderRadius: 14,
-                padding: "26px 24px",
-                transition: "border-color .2s, transform .2s",
-                cursor: "pointer",
-                height: "100%",
-              }}
-              onMouseEnter={e => {
-                if (!window.matchMedia("(hover:hover)").matches) return;
-                (e.currentTarget as HTMLDivElement).style.borderColor = "rgba(0,212,132,.3)";
-                (e.currentTarget as HTMLDivElement).style.transform = "translateY(-2px)";
-              }}
-              onMouseLeave={e => {
-                if (!window.matchMedia("(hover:hover)").matches) return;
-                (e.currentTarget as HTMLDivElement).style.borderColor = "var(--f1-border)";
-                (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)";
-              }}
-              >
-                <div style={{ fontSize: 28, marginBottom: 12 }}>{item.icon}</div>
-                <div style={{ fontSize: 15, fontWeight: 800, letterSpacing: "-.01em", marginBottom: 6, color: "var(--f1-text)" }}>
-                  {item.label}
-                </div>
-                <p style={{ fontSize: 12, color: "var(--f1-muted)", lineHeight: 1.6, margin: 0 }}>
-                  {item.desc}
-                </p>
-                <div style={{ marginTop: 16, fontSize: 11, fontWeight: 700, color: "#00d484", letterSpacing: ".06em" }}>
-                  OPEN →
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
-
       {/* ── COMMUNITY ────────────────────────────────────── */}
-      <section style={{
+      <section aria-label="Join the community" style={{
         padding: "clamp(40px,7vw,72px) 0",
         borderTop: "1px solid rgba(255,255,255,.06)",
       }}>
@@ -203,7 +30,7 @@ export default function Home() {
           <h2 style={{ fontSize: "clamp(28px,4vw,44px)", fontWeight: 900, letterSpacing: "-.025em", lineHeight: .95, margin: 0 }}>
             Join 5,000+ Naija<br />F1 fans.
           </h2>
-          <p style={{ fontSize: 13, color: "var(--f1-muted)", marginTop: 12, lineHeight: 1.6 }}>
+          <p lang="pcm" style={{ fontSize: 13, color: "var(--f1-muted)", marginTop: 12, lineHeight: 1.6 }}>
             Oya, join the gang — the biggest Nigerian F1 community online.
           </p>
         </div>
@@ -229,7 +56,7 @@ export default function Home() {
               target="_blank" rel="noopener noreferrer"
               style={{
                 display: "inline-flex", alignItems: "center", gap: 6,
-                padding: "10px 18px", borderRadius: 7, fontSize: 12, fontWeight: 700,
+                padding: "10px 18px", minHeight: 44, borderRadius: 7, fontSize: 12, fontWeight: 700,
                 background: "rgba(245,167,36,.15)", border: "1px solid rgba(245,167,36,.3)",
                 color: "#f5a724", textDecoration: "none", letterSpacing: ".03em",
                 alignSelf: "flex-start",
@@ -255,7 +82,7 @@ export default function Home() {
               target="_blank" rel="noopener noreferrer"
               style={{
                 display: "inline-flex", alignItems: "center", gap: 6,
-                padding: "10px 18px", borderRadius: 7, fontSize: 12, fontWeight: 700,
+                padding: "10px 18px", minHeight: 44, borderRadius: 7, fontSize: 12, fontWeight: 700,
                 background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.12)",
                 color: "var(--f1-text)", textDecoration: "none", letterSpacing: ".03em",
                 alignSelf: "flex-start",
@@ -281,7 +108,7 @@ export default function Home() {
               target="_blank" rel="noopener noreferrer"
               style={{
                 display: "inline-flex", alignItems: "center", gap: 6,
-                padding: "10px 18px", borderRadius: 7, fontSize: 12, fontWeight: 700,
+                padding: "10px 18px", minHeight: 44, borderRadius: 7, fontSize: 12, fontWeight: 700,
                 background: "rgba(0,212,132,.12)", border: "1px solid rgba(0,212,132,.25)",
                 color: "#00d484", textDecoration: "none", letterSpacing: ".03em",
                 alignSelf: "flex-start",
@@ -306,7 +133,7 @@ export default function Home() {
               href="/community"
               style={{
                 display: "inline-flex", alignItems: "center", gap: 6,
-                padding: "10px 18px", borderRadius: 7, fontSize: 12, fontWeight: 700,
+                padding: "10px 18px", minHeight: 44, borderRadius: 7, fontSize: 12, fontWeight: 700,
                 background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.12)",
                 color: "var(--f1-text)", textDecoration: "none", letterSpacing: ".03em",
                 alignSelf: "flex-start",
@@ -342,7 +169,7 @@ export default function Home() {
       </section>
 
       {/* ── FOOTER CTA ───────────────────────────────────── */}
-      <section style={{
+      <section aria-label="Get started with F1 Naija" style={{
         padding: "clamp(32px,5vw,52px) 0",
         borderTop: "1px solid rgba(255,255,255,.06)",
         display: "flex", flexWrap: "wrap", alignItems: "center",
@@ -391,39 +218,6 @@ export default function Home() {
     </div>
   );
 }
-
-const HUB_ITEMS = [
-  {
-    href: "/dashboard",
-    icon: "📡",
-    label: "Live Dashboard",
-    desc: "Race-pace telemetry, live gaps, sector times, and tyre data — exactly as it happens on track.",
-  },
-  {
-    href: "/standings",
-    icon: "🏆",
-    label: "Championship Standings",
-    desc: "Driver and constructor standings for the 2026 season, updated the moment each race ends.",
-  },
-  {
-    href: "/schedule",
-    icon: "📅",
-    label: "Race Calendar",
-    desc: "Every round of the 2026 season with session times shown in WAT, GMT, EST, and your local timezone.",
-  },
-  {
-    href: "/news",
-    icon: "📰",
-    label: "F1 News",
-    desc: "The headlines that matter — sourced from BBC Sport, Autosport, The Race, Planet F1, and more.",
-  },
-  {
-    href: "/community",
-    icon: "🇳🇬",
-    label: "Community",
-    desc: "Fantasy leagues, race-day threads, watch parties, and the largest Nigerian F1 fan community online.",
-  },
-];
 
 const SOCIAL_LINKS = [
   { href: "https://x.com/f1_naija",              icon: "𝕏",  label: "X (Twitter) · 6.6K followers",  handle: "@f1_naija" },

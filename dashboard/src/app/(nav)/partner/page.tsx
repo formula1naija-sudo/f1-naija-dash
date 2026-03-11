@@ -136,7 +136,7 @@ export default function PartnerPage() {
       <div style={{ padding: "clamp(32px,5vw,60px) 0 80px" }}>
 
         {/* ── AUDIENCE ── */}
-        <section style={{ marginBottom: "clamp(40px,6vw,64px)" }}>
+        <section aria-label="Our audience" style={{ marginBottom: "clamp(40px,6vw,64px)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
             <div style={{ width: 3, height: 16, background: "#00d484", borderRadius: 2 }} />
             <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--f1-muted)" }}>
@@ -161,7 +161,7 @@ export default function PartnerPage() {
         </section>
 
         {/* ── STATS ── */}
-        <section style={{ marginBottom: "clamp(40px,6vw,64px)" }}>
+        <section aria-label="Platform reach" style={{ marginBottom: "clamp(40px,6vw,64px)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
             <div style={{ width: 3, height: 16, background: "#f5a724", borderRadius: 2 }} />
             <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--f1-muted)" }}>
@@ -190,7 +190,7 @@ export default function PartnerPage() {
         </section>
 
         {/* ── PACKAGES ── */}
-        <section style={{ marginBottom: "clamp(40px,6vw,64px)" }}>
+        <section aria-label="Partnership packages" style={{ marginBottom: "clamp(40px,6vw,64px)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
             <div style={{ width: 3, height: 16, background: "#00d484", borderRadius: 2 }} />
             <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--f1-muted)" }}>
@@ -265,7 +265,7 @@ export default function PartnerPage() {
               href="mailto:ads@f1naija.com"
               style={{
                 display: "inline-flex", alignItems: "center", gap: 7,
-                padding: "12px 26px", borderRadius: 7, fontSize: 13, fontWeight: 700,
+                padding: "12px 26px", minHeight: 44, borderRadius: 7, fontSize: 13, fontWeight: 700,
                 background: "#00d484", color: "#04060e", textDecoration: "none",
               }}
             >
@@ -273,7 +273,7 @@ export default function PartnerPage() {
             </a>
             <Link href="/about" style={{
               display: "inline-flex", alignItems: "center", gap: 7,
-              padding: "12px 26px", borderRadius: 7, fontSize: 13, fontWeight: 600,
+              padding: "12px 26px", minHeight: 44, borderRadius: 7, fontSize: 13, fontWeight: 600,
               background: "transparent", color: "var(--f1-text)", textDecoration: "none",
               border: "1px solid rgba(255,255,255,.14)",
             }}>
