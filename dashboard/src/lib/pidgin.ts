@@ -13,16 +13,17 @@ const RULES: [RegExp, string][] = [
 	[/green flag/i,                        "Green light! Make una go! 🟢"],
 	[/race resum/i,                        "Race don resume — buckle up! 🟢"],
 
+	// Virtual Safety Car — MUST come before generic Safety Car rules
+	// ("VIRTUAL SAFETY CAR DEPLOYED" contains "safety car deployed" as a substring)
+	[/virtual safety car deployed/i,       "Virtual Safety Car don activate — slow down! 🟡"],
+	[/virtual safety car ending/i,         "VSC don end — prepare to push! 🟡"],
+	[/virtual safety car/i,               "Na Virtual Safety Car dem call 🟡"],
+
 	// Safety Car
 	[/safety car deployed/i,               "Safety Car don enter track o! 🟡"],
 	[/safety car in this lap/i,            "Safety Car go enter this lap 🟡"],
 	[/safety car period end/i,             "Safety Car don leave track! Time to attack! 🏎️"],
 	[/safety car/i,                        "Na Safety Car situation 🟡"],
-
-	// Virtual Safety Car
-	[/virtual safety car deployed/i,       "Virtual Safety Car don activate — slow down! 🟡"],
-	[/virtual safety car ending/i,         "VSC don end — prepare to push! 🟡"],
-	[/virtual safety car/i,               "Na Virtual Safety Car dem call 🟡"],
 
 	// DRS
 	[/drs enabled/i,                       "DRS don open — overtake season! 🏎️💨"],

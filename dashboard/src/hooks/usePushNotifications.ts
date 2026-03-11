@@ -143,6 +143,13 @@ export function usePushNotifications() {
     if (sessionName !== p.sessionName && sessionName) {
       PRIORITY.NORMAL("🏁 Session Starting", sessionName);
       p.sessionName = sessionName;
+      // Reset per-session state so stale data from a previous session
+      // (retired cars, pit status, positions) does not bleed into the new one
+      p.positions        = {};
+      p.retired          = new Set();
+      p.inPit            = new Set();
+      p.p1Driver         = null;
+      p.fastestLapDriver = null;
     }
     if (!p.sessionActive && sessionActive) {
       PRIORITY.NORMAL("🏁 Session Live", `${sessionName ?? "Session"} is now underway`);

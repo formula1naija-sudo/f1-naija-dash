@@ -12,6 +12,7 @@ import { useSettingsStore } from '@/stores/useSettingsStore';
 import { useSidebarStore } from '@/stores/useSidebarStore';
 import { useDataStore } from '@/stores/useDataStore';
 import { useNotifications } from '@/hooks/useNotifications';
+import { usePushNotifications } from '@/hooks/usePushNotifications';
 import Sidebar from '@/components/Sidebar';
 import SidenavButton from '@/components/SidenavButton';
 import SessionInfo from '@/components/SessionInfo';
@@ -78,6 +79,7 @@ export default function DashboardLayout({ children }: Props) {
   const syncing = delay > maxDelay;
   useWakeLock();
   useNotifications();
+  usePushNotifications();
   // Run immediately — not lazy-loaded, fires on every WebSocket update
   const ended = useDataStore(({ state }) => state?.SessionStatus?.Status === 'Ends');
 

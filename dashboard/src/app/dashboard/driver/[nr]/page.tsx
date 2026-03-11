@@ -28,6 +28,8 @@ export default function DriverPage() {
 	const sessionPart     = useDataStore((s) => s.state?.TimingData?.SessionPart);
 	const timingStats     = useDataStore((s) => s.state?.TimingStats?.Lines?.[nr]);
 	const carMetrics      = useSettingsStore((s) => s.carMetrics);
+	// true once the session has sent us a DriverList — distinguishes 'loading' from 'not found'
+	const driverListLoaded = useDataStore((s) => s.state?.DriverList !== undefined);
 
 	// ── derived ─────────────────────────────────────────────────────
 	const teamHex    = driver?.TeamColour ? `#${driver.TeamColour}` : "#3f3f46";
@@ -38,7 +40,7 @@ export default function DriverPage() {
 	const pitOut     = timingDriver?.PitOut ?? false;
 
 	// ── not-found guard ─────────────────────────────────────────────
-	if (driver === null) {
+	if (driverListLoaded && !driver) {
 		return (
 			<div className="flex h-full flex-col items-center justify-center gap-3">
 				<p style={{ fontSize: 18, fontWeight: 700, color: "var(--f1-text)" }}>Driver not found</p>
@@ -275,7 +277,7 @@ export default function DriverPage() {
 												<span style={{ fontSize: 10, fontWeight: 600, color: "var(--f1-text)" }}>
 													{stint.Compound ?? "Unknown"}
 												</span>
-												{stint.New === "TRUE" && (
+												{String(stint.New).toLowerCase() === "true" && (
 													<span style={{
 														fontSize: 8, fontWeight: 700, color: "#00d484",
 														background: "rgba(0,212,132,0.1)",
