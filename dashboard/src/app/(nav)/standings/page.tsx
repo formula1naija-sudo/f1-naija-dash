@@ -275,7 +275,7 @@ export default function StandingsPage() {
               );
             })()}
 
-            <div style={{ display: "grid", gridTemplateColumns: "2.5rem 4px 1fr auto auto", gap: "0 12px", padding: "0 12px 8px", fontSize: 9, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "#3a4560" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "2.5rem 4px 1fr auto auto", gap: "0 12px", padding: "0 12px 8px", fontSize: 9, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "#52525b" }}>
               <span>Pos</span><span /><span>Driver</span>
               <span style={{ textAlign: "right" }}>Pts</span>
               <span style={{ textAlign: "right" }}>W</span>
@@ -347,7 +347,7 @@ export default function StandingsPage() {
               );
             })()}
 
-            <div style={{ display: "grid", gridTemplateColumns: "2.5rem 4px 1fr auto auto", gap: "0 12px", padding: "0 12px 8px", fontSize: 9, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "#3a4560" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "2.5rem 4px 1fr auto auto", gap: "0 12px", padding: "0 12px 8px", fontSize: 9, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "#52525b" }}>
               <span>Pos</span><span /><span>Constructor</span>
               <span style={{ textAlign: "right" }}>Pts</span>
               <span style={{ textAlign: "right" }}>W</span>
