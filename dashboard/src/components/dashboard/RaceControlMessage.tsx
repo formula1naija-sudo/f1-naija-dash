@@ -4,6 +4,7 @@ import { utc } from "moment";
 import type { Message } from "@/types/state.type";
 
 import { useSettingsStore } from "@/stores/useSettingsStore";
+import { pidginTranslate } from "@/lib/pidgin";
 
 import { toTrackTime } from "@/lib/toTrackTime";
 
@@ -29,11 +30,13 @@ const flagAccent = (flag: string | undefined): { color: string; dot: string } =>
 
 export function RaceControlMessage({ msg, gmtOffset }: Props) {
 	const favoriteDriver = useSettingsStore((state) => state.favoriteDrivers.includes(getDriverNumber(msg) ?? ""));
+	const pidginMode = useSettingsStore((state) => state.pidginMode);
 
 	const localTime = utc(msg.Utc).local().format("HH:mm:ss");
 	const trackTime = utc(toTrackTime(msg.Utc, gmtOffset)).format("HH:mm");
 
 	const { color, dot } = flagAccent(msg.Flag);
+	const pidginLine = pidginMode ? pidginTranslate(msg.Message) : null;
 
 	return (
 		<motion.li
@@ -94,6 +97,33 @@ export function RaceControlMessage({ msg, gmtOffset }: Props) {
 				>
 					{msg.Message}
 				</p>
+
+				{/* Naija Verdict — Pidgin translation */}
+				{pidginLine && (
+					<p
+						style={{
+							fontSize: 10,
+							fontWeight: 600,
+							lineHeight: 1.35,
+							color: "#008751",
+							margin: 0,
+							display: "flex",
+							alignItems: "center",
+							gap: 4,
+						}}
+					>
+						<span style={{
+							display: "inline-flex", alignItems: "center", justifyContent: "center",
+							width: 14, height: 14, borderRadius: "50%",
+							background: "rgba(0,135,81,0.15)",
+							border: "1px solid rgba(0,135,81,0.35)",
+							fontSize: 7, fontWeight: 900,
+							color: "#008751",
+							flexShrink: 0,
+						}}>🇳🇬</span>
+						{pidginLine}
+					</p>
+				)}
 			</div>
 		</motion.li>
 	);

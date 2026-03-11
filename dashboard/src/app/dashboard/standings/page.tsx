@@ -4,6 +4,8 @@ import { useMemo } from "react";
 import { useDataStore } from "@/stores/useDataStore";
 
 import NumberDiff from "@/components/NumberDiff";
+import WATClock from "@/components/WATClock";
+import NaijaWatch from "@/components/NaijaWatch";
 import Image from "next/image";
 
 export default function Standings() {
@@ -44,13 +46,16 @@ export default function Standings() {
 							Live Prediction
 						</span>
 					</div>
-					<div style={{ lineHeight: 0.92 }}>
-						<span style={{ fontSize: "clamp(28px,5vw,56px)", fontWeight: 900, letterSpacing: "-.04em", color: "var(--f1-text)" }}>Race </span>
-						<span style={{
-							fontSize: "clamp(28px,5vw,56px)", fontWeight: 900, letterSpacing: "-.04em",
-							background: "linear-gradient(120deg,#f5a724 0%,#ffd580 50%,#00d484 100%)",
-							WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
-						}}>Standings.</span>
+					<div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
+						<div style={{ lineHeight: 0.92 }}>
+							<span style={{ fontSize: "clamp(28px,5vw,56px)", fontWeight: 900, letterSpacing: "-.04em", color: "var(--f1-text)" }}>Race </span>
+							<span style={{
+								fontSize: "clamp(28px,5vw,56px)", fontWeight: 900, letterSpacing: "-.04em",
+								background: "linear-gradient(120deg,#f5a724 0%,#ffd580 50%,#00d484 100%)",
+								WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
+							}}>Standings.</span>
+						</div>
+						<WATClock showDate />
 					</div>
 				</div>
 			</div>
@@ -175,6 +180,11 @@ export default function Standings() {
 
 				</div>
 			)}
+
+			{/* ── NAIJA WATCH ── */}
+			<div style={{ borderTop: "1px solid var(--f1-border-soft)", flexShrink: 0 }}>
+				<NaijaWatch />
+			</div>
 		</div>
 	);
 }

@@ -6,6 +6,7 @@ import { useDataStore } from "@/stores/useDataStore";
 import { useSettingsStore } from "@/stores/useSettingsStore";
 
 import Flag from "@/components/Flag";
+import WATClock from "@/components/WATClock";
 
 const sessionPartPrefix = (name: string) => {
 	switch (name) {
@@ -142,6 +143,11 @@ export default function SessionInfo() {
 						DRS {drsEnabled ? "OPEN" : "CLOSED"}
 					</span>
 				)}
+
+				{/* Task 31: WAT clock — always visible so Nigerian fans know their local time */}
+				<span style={{ marginLeft: "auto", flexShrink: 0 }}>
+					<WATClock compact />
+				</span>
 			</div>
 
 			{/* Task 24: Session progress bar (race only, when lap data available) */}

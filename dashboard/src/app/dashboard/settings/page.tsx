@@ -97,6 +97,26 @@ export default function SettingsPage() {
 				</div>
 			</div>
 
+			{/* ── SECTION: Naija Mode ── */}
+			<div style={{ marginBottom: 32 }}>
+				<div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
+					<div style={{ width: 3, height: 16, background: "#008751", borderRadius: 2, flexShrink: 0 }} />
+					<h2 style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--f1-muted)" }}>
+						Naija Mode 🇳🇬
+					</h2>
+				</div>
+
+				<div className="flex flex-col gap-3">
+					<div className="flex gap-2">
+						<Toggle enabled={settings.pidginMode} setEnabled={(v) => settings.setPidginMode(v)} />
+						<div>
+							<p className="text-zinc-500">Pidgin Commentary Mode</p>
+							<p className="text-xs text-zinc-600">Adds Naija Pidgin translations below Race Control messages</p>
+						</div>
+					</div>
+				</div>
+			</div>
+
 			{/* ── SECTION: Race Control ── */}
 			<div style={{ marginBottom: 32 }}>
 				<div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>

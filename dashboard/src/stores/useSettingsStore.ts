@@ -43,6 +43,9 @@ type SettingsStore = {
 
 	delayIsPaused: boolean;
 	setDelayIsPaused: (delayIsPaused: boolean) => void;
+
+	pidginMode: boolean;
+	setPidginMode: (pidginMode: boolean) => void;
 };
 
 export const useSettingsStore = create<SettingsStore>()(
@@ -89,6 +92,9 @@ export const useSettingsStore = create<SettingsStore>()(
 
 				delayIsPaused: true,
 				setDelayIsPaused: (delayIsPaused: boolean) => set({ delayIsPaused }),
+
+				pidginMode: false,
+				setPidginMode: (pidginMode: boolean) => set({ pidginMode }),
 			}),
 			{
 				name: "settings-storage",
