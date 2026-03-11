@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { useDataStore } from "@/stores/useDataStore";
 
 import NumberDiff from "@/components/NumberDiff";
@@ -8,10 +9,18 @@ import Image from "next/image";
 export default function Standings() {
 	const driverStandings = useDataStore((state) => state.state?.ChampionshipPrediction?.Drivers);
 	const teamStandings = useDataStore((state) => state.state?.ChampionshipPrediction?.Teams);
-
 	const drivers = useDataStore((state) => state.state?.DriverList);
-
 	const isRace = useDataStore((state) => state.state?.SessionInfo?.Type === "Race");
+
+	// Build team-name → TeamColour map from the live DriverList
+	const teamColorMap = useMemo<Record<string, string>>(() => {
+		if (!drivers) return {};
+		const map: Record<string, string> = {};
+		Object.values(drivers).forEach(d => {
+			if (d.TeamName && d.TeamColour) map[d.TeamName] = d.TeamColour;
+		});
+		return map;
+	}, [drivers]);
 
 	return (
 		<div className="flex h-full flex-col">
@@ -54,7 +63,8 @@ export default function Standings() {
 				</div>
 			) : (
 				<div className="grid min-h-0 flex-1 grid-cols-1 divide-y divide-zinc-800 overflow-auto lg:grid-cols-2 lg:divide-x lg:divide-y-0">
-					{/* Drivers */}
+
+					{/* ── Driver Championship ── */}
 					<div className="p-4">
 						<div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
 							<div style={{ width: 3, height: 16, background: "#00d484", borderRadius: 2, flexShrink: 0 }} />
@@ -67,34 +77,42 @@ export default function Standings() {
 							{!driverStandings &&
 								new Array(20).fill("").map((_, index) => <SkeletonItem key={`driver.loading.${index}`} />)}
 
-							{driverStandings &&
-								drivers &&
+							{driverStandings && drivers &&
 								Object.values(driverStandings)
 									.sort((a, b) => a.PredictedPosition - b.PredictedPosition)
 									.map((driver) => {
 										const driverDetails = drivers[driver.RacingNumber];
-
-										if (!driverDetails) {
-											return null;
-										}
+										if (!driverDetails) return null;
+										const teamHex = driverDetails.TeamColour ? `#${driverDetails.TeamColour}` : "#3f3f46";
 
 										return (
 											<div
-												className="grid p-2"
-												style={{
-													gridTemplateColumns: "2rem 2rem auto 4rem 4rem",
-												}}
 												key={driver.RacingNumber}
+												style={{
+													position: "relative",
+													display: "grid",
+													gridTemplateColumns: "2rem 2rem auto 4rem 4rem",
+													padding: "8px 8px 8px 20px",
+													alignItems: "center",
+													borderBottom: "1px solid rgba(255,255,255,0.04)",
+												}}
 											>
+												{/* Team colour left accent */}
+												<div style={{
+													position: "absolute", left: 0, top: 0, bottom: 0,
+													width: 3, borderRadius: "12px 0 0 12px",
+													background: teamHex,
+												}} />
 												<NumberDiff old={driver.CurrentPosition} current={driver.PredictedPosition} />
 												<p>{driver.PredictedPosition}</p>
-
-												<p>
+												<p style={{ display: "flex", alignItems: "center", gap: 6 }}>
+													<span style={{
+														display: "inline-block", width: 8, height: 8, borderRadius: "50%",
+														background: teamHex, flexShrink: 0,
+													}} />
 													{driverDetails.FirstName} {driverDetails.LastName}
 												</p>
-
-												<p>{driver.PredictedPoints}</p>
-
+												<p style={{ fontVariantNumeric: "tabular-nums" }}>{driver.PredictedPoints}</p>
 												<NumberDiff old={driver.PredictedPoints} current={driver.CurrentPoints} />
 											</div>
 										);
@@ -102,7 +120,7 @@ export default function Standings() {
 						</div>
 					</div>
 
-					{/* Teams */}
+					{/* ── Constructor Championship ── */}
 					<div className="p-4">
 						<div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
 							<div style={{ width: 3, height: 16, background: "#f5a724", borderRadius: 2, flexShrink: 0 }} />
@@ -117,34 +135,44 @@ export default function Standings() {
 							{teamStandings &&
 								Object.values(teamStandings)
 									.sort((a, b) => a.PredictedPosition - b.PredictedPosition)
-									.map((team) => (
-										<div
-											className="grid p-2"
-											style={{
-												gridTemplateColumns: "2rem 2rem 2rem auto 4rem 4rem",
-											}}
-											key={team.TeamName}
-										>
-											<NumberDiff old={team.CurrentPosition} current={team.PredictedPosition} />
-											<p>{team.PredictedPosition}</p>
-
-											<Image
-												src={`/team-logos/${team.TeamName.replaceAll(" ", "-").toLowerCase()}.${"svg"}`}
-												alt={team.TeamName}
-												width={24}
-												height={24}
-												className="overflow-hidden rounded-lg"
-											/>
-
-											<p>{team.TeamName}</p>
-
-											<p>{team.PredictedPoints}</p>
-
-											<NumberDiff old={team.PredictedPoints} current={team.CurrentPoints} />
-										</div>
-									))}
+									.map((team) => {
+										const teamHex = teamColorMap[team.TeamName] ? `#${teamColorMap[team.TeamName]}` : "#3f3f46";
+										return (
+											<div
+												key={team.TeamName}
+												style={{
+													position: "relative",
+													display: "grid",
+													gridTemplateColumns: "2rem 2rem 2rem auto 4rem 4rem",
+													padding: "8px 8px 8px 20px",
+													alignItems: "center",
+													borderBottom: "1px solid rgba(255,255,255,0.04)",
+												}}
+											>
+												{/* Team colour left accent */}
+												<div style={{
+													position: "absolute", left: 0, top: 0, bottom: 0,
+													width: 3, borderRadius: "12px 0 0 12px",
+													background: teamHex,
+												}} />
+												<NumberDiff old={team.CurrentPosition} current={team.PredictedPosition} />
+												<p>{team.PredictedPosition}</p>
+												<Image
+													src={`/team-logos/${team.TeamName.replaceAll(" ", "-").toLowerCase()}.${"svg"}`}
+													alt={team.TeamName}
+													width={24}
+													height={24}
+													className="overflow-hidden rounded-lg"
+												/>
+												<p>{team.TeamName}</p>
+												<p style={{ fontVariantNumeric: "tabular-nums" }}>{team.PredictedPoints}</p>
+												<NumberDiff old={team.PredictedPoints} current={team.CurrentPoints} />
+											</div>
+										);
+									})}
 						</div>
 					</div>
+
 				</div>
 			)}
 		</div>
@@ -155,9 +183,7 @@ const SkeletonItem = () => {
 	return (
 		<div
 			className="grid gap-2 p-2"
-			style={{
-				gridTemplateColumns: "2rem 2rem auto 4rem 4rem 4rem",
-			}}
+			style={{ gridTemplateColumns: "2rem 2rem auto 4rem 4rem 4rem" }}
 		>
 			<div className="h-4 w-4 animate-pulse rounded-md bg-zinc-800" />
 			<div className="h-4 w-4 animate-pulse rounded-md bg-zinc-800" />

@@ -1,5 +1,6 @@
 import { AnimatePresence, LayoutGroup } from "motion/react";
 import clsx from "clsx";
+import { useMemo } from "react";
 
 import { useSettingsStore } from "@/stores/useSettingsStore";
 import { useDataStore } from "@/stores/useDataStore";
@@ -7,6 +8,56 @@ import { useDataStore } from "@/stores/useDataStore";
 import { sortPos } from "@/lib/sorting";
 
 import Driver from "@/components/driver/Driver";
+
+// ── Task 25: Compound distribution pill colours ───────────────────
+const COMPOUND_STYLE: Record<string, { letter: string; color: string; bg: string }> = {
+	soft:         { letter: "S", color: "#ef4444", bg: "rgba(239,68,68,0.15)"   },
+	medium:       { letter: "M", color: "#f5a724", bg: "rgba(245,167,36,0.15)"  },
+	hard:         { letter: "H", color: "#a1a1aa", bg: "rgba(161,161,170,0.15)" },
+	intermediate: { letter: "I", color: "#22c55e", bg: "rgba(34,197,94,0.15)"   },
+	wet:          { letter: "W", color: "#60a5fa", bg: "rgba(96,165,250,0.15)"  },
+};
+
+function CompoundDistribution() {
+	const appData = useDataStore((state) => state.state?.TimingAppData?.Lines);
+
+	const counts = useMemo(() => {
+		if (!appData) return null;
+		const tally: Record<string, number> = {};
+		Object.values(appData).forEach(d => {
+			const stints = d.Stints ?? [];
+			const current = stints[stints.length - 1];
+			const c = current?.Compound?.toLowerCase() ?? "";
+			if (c && COMPOUND_STYLE[c]) tally[c] = (tally[c] ?? 0) + 1;
+		});
+		return Object.keys(tally).length ? tally : null;
+	}, [appData]);
+
+	if (!counts) return null;
+
+	return (
+		<div style={{ display: "flex", alignItems: "center", gap: 4, marginLeft: "auto" }}>
+			{Object.entries(counts).map(([compound, count]) => {
+				const cfg = COMPOUND_STYLE[compound];
+				return (
+					<span
+						key={compound}
+						title={`${count} on ${compound}`}
+						style={{
+							display: "inline-flex", alignItems: "center", gap: 3,
+							padding: "2px 6px", borderRadius: 4,
+							background: cfg.bg,
+							fontSize: 9, fontWeight: 800,
+							color: cfg.color, letterSpacing: ".04em",
+						}}
+					>
+						{cfg.letter}<span style={{ opacity: 0.75 }}>×{count}</span>
+					</span>
+				);
+			})}
+		</div>
+	);
+}
 
 export default function LeaderBoard() {
 	const drivers = useDataStore(({ state }) => state?.DriverList);
@@ -43,6 +94,8 @@ export default function LeaderBoard() {
 				<span style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "#71717a" }}>
 					Live Positions
 				</span>
+				{/* Task 25: compound distribution */}
+				<CompoundDistribution />
 				<span style={{
 					marginLeft: "auto",
 					fontSize: 9, fontWeight: 600,
