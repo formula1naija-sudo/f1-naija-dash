@@ -128,9 +128,11 @@ export function usePushNotifications() {
     // ── Track status ─────────────────────────────────────────────────────
     const trackStatus = TrackStatus?.Status ?? null;
     if (trackStatus && trackStatus !== p.trackStatus) {
+      // F1 API TrackStatus codes: 1=AllClear, 2=Yellow, 4=SafetyCar, 5=RedFlag, 6=VSC, 7=VSCEnding
       if      (trackStatus === "4") PRIORITY.HIGH("🟡 Safety Car",         "Safety Car has been deployed");
-      else if (trackStatus === "6") PRIORITY.HIGH("🔴 Red Flag",           "Session has been red flagged");
-      else if (trackStatus === "5") PRIORITY.HIGH("🟠 Virtual Safety Car", "VSC is now active");
+      else if (trackStatus === "5") PRIORITY.HIGH("🔴 Red Flag",           "Session has been red flagged");
+      else if (trackStatus === "6") PRIORITY.HIGH("🟡 Virtual Safety Car", "VSC is now active");
+      else if (trackStatus === "7") PRIORITY.NORMAL("🟡 VSC Ending",       "Virtual Safety Car ending — prepare to push");
       else if (trackStatus === "1" && p.trackStatus && p.trackStatus !== "1")
                                     PRIORITY.HIGH("🟢 Track Clear",        "Green flag — racing resumed");
       p.trackStatus = trackStatus;
@@ -146,10 +148,11 @@ export function usePushNotifications() {
       // Reset per-session state so stale data from a previous session
       // (retired cars, pit status, positions) does not bleed into the new one
       p.positions        = {};
-      p.retired          = new Set();
+      p.retired          = new Set(); // also reused for knockedOut in qualifying
       p.inPit            = new Set();
       p.p1Driver         = null;
       p.fastestLapDriver = null;
+      p.segmentIndex     = -1;
     }
     if (!p.sessionActive && sessionActive) {
       PRIORITY.NORMAL("🏁 Session Live", `${sessionName ?? "Session"} is now underway`);
@@ -255,8 +258,8 @@ export function usePushNotifications() {
       }
     }
 
-    // ── Qualifying segments (Q1 / Q2 / Q3) ───────────────────────────────
-    if (SessionInfo?.Type === "Qualifying") {
+    // ── Qualifying segments (Q1 / Q2 / Q3) + knockout alerts ─────────────
+    if (SessionInfo?.Type === "Qualifying" || SessionInfo?.Type?.includes("Qualifying")) {
       const segIdx: number = TimingData?.SessionPart ?? -1;
       if (segIdx > 0 && segIdx !== p.segmentIndex && p.segmentIndex !== -1) {
         const partNames: Record<number, string> = { 1: "Q1", 2: "Q2", 3: "Q3" };
@@ -264,6 +267,24 @@ export function usePushNotifications() {
         PRIORITY.NORMAL("🏎️ Qualifying", `${part} is now underway`);
       }
       p.segmentIndex = segIdx;
+
+      // Knocked-out driver alerts
+      if (TimingData?.Lines && DriverList) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const lines = TimingData.Lines as Record<string, any>;
+        for (const [num, line] of Object.entries(lines)) {
+          if (line.KnockedOut && !p.retired.has(num)) {
+            const name = DriverList[num]?.FullName ?? `Car #${num}`;
+            const isFav = favRef.current.includes(num);
+            if (isFav) {
+              PRIORITY.FAV("💔 Your Driver Eliminated", `${name} is out of qualifying`);
+            } else {
+              PRIORITY.NORMAL("🚫 Knocked Out", `${name} has been eliminated`);
+            }
+            p.retired.add(num); // reuse retired set to prevent re-firing
+          }
+        }
+      }
     }
 
     // ── Race control messages ─────────────────────────────────────────────
