@@ -128,29 +128,66 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* ── WHAT WE DO ── */}
+        {/* ── WHAT MAKES US DIFFERENT ── */}
         <section style={{ marginBottom: "clamp(40px,6vw,64px)" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
             <div style={{ width: 3, height: 16, background: "#00d484", borderRadius: 2 }} />
             <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--f1-muted)" }}>
-              What we do
+              What makes us different
             </span>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))", gap: 12 }}>
+          <p style={{ fontSize: 13, color: "var(--f1-muted)", lineHeight: 1.7, marginBottom: 20, maxWidth: 560 }}>
+            There are plenty of F1 sites. There&apos;s only one built for Nigerians.
+          </p>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))", gap: 12 }}>
             {[
-              { icon: "📡", title: "Live Timing Dashboard", desc: "Real-time telemetry, gaps, sector times, and tyre data — exactly as it happens on track." },
-              { icon: "🏆", title: "Championship Standings", desc: "Driver and constructor standings updated the moment each race ends." },
-              { icon: "📅", title: "Race Calendar", desc: "Every round of the 2026 season with session times in WAT, GMT, EST, and your local timezone." },
-              { icon: "📰", title: "F1 News", desc: "Headlines from BBC Sport, Autosport, The Race, Planet F1, and more — in one feed." },
-              { icon: "🇳🇬", title: "Community", desc: "Fantasy leagues, race-day watch parties, X Spaces live reactions, and WhatsApp communities." },
+              {
+                icon: "⏰",
+                accent: "#f5a724",
+                title: "WAT-first timing",
+                desc: "Every session time — qualifying, sprint, race — shown in West Africa Time. No more converting from CET or EST at 2am.",
+              },
+              {
+                icon: "🇳🇬",
+                accent: "#00d484",
+                title: "Nigerian fan perspective",
+                desc: "We cover the grid the way Naija fans see it — strong opinions, community debates, and context that matters to us.",
+              },
+              {
+                icon: "📡",
+                accent: "#e8001f",
+                title: "Live timing, built in-house",
+                desc: "Our live dashboard pulls real F1 telemetry data directly. Gaps, sectors, tyre compounds — not a rehash of someone else's data.",
+              },
+              {
+                icon: "🎙️",
+                accent: "#9c50f5",
+                title: "Race-day community",
+                desc: "X Spaces live on race weekends. Watch parties in Lagos. Threads running lap by lap. We watch together — always.",
+              },
+              {
+                icon: "🆓",
+                accent: "#00d484",
+                title: "Free, independent, fan-built",
+                desc: "No paywalls, no sponsorship bias. F1 Naija is built and run by Nigerian F1 fans — for Nigerian F1 fans.",
+              },
+              {
+                icon: "💬",
+                accent: "#25D366",
+                title: "Your language, your vibe",
+                desc: "Pidgin welcome. We don&apos;t write like a press release — we write like we&apos;re watching the race with you.",
+              },
             ].map(item => (
               <div key={item.title} style={{
-                background: "var(--f1-card)", border: "1px solid rgba(255,255,255,.07)",
-                borderRadius: 12, padding: "18px 20px",
+                background: "var(--f1-card)", borderRadius: 12, padding: "20px",
+                border: "1px solid rgba(255,255,255,.07)",
+                borderLeft: `3px solid ${item.accent}`,
               }}>
-                <div style={{ fontSize: 24, marginBottom: 10 }}>{item.icon}</div>
+                <div style={{ fontSize: 22, marginBottom: 10 }}>{item.icon}</div>
                 <div style={{ fontSize: 13, fontWeight: 800, color: "var(--f1-text)", marginBottom: 6 }}>{item.title}</div>
-                <p style={{ fontSize: 12, color: "var(--f1-muted)", lineHeight: 1.6, margin: 0 }}>{item.desc}</p>
+                <p style={{ fontSize: 12, color: "var(--f1-muted)", lineHeight: 1.65, margin: 0 }}
+                  dangerouslySetInnerHTML={{ __html: item.desc }}
+                />
               </div>
             ))}
           </div>

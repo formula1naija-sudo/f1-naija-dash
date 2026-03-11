@@ -82,7 +82,7 @@ function NewsCard({ item, featured = false }: { item: NewsItem; featured?: boole
             fontSize: 10, fontWeight: 700, padding: "3px 10px", borderRadius: 20,
             background: src.bg, color: src.text, letterSpacing: ".04em", whiteSpace: "nowrap",
           }}>{item.source}</span>
-          <span style={{ fontSize: 10, color: "#3a4560", whiteSpace: "nowrap" }}>{timeAgo(item.pubDate)}</span>
+          <span style={{ fontSize: 10, color: "#52525b", whiteSpace: "nowrap" }}>{timeAgo(item.pubDate)}</span>
         </div>
         <h3 style={{
           fontSize: featured ? "clamp(15px,2.5vw,18px)" : 13,
@@ -101,7 +101,7 @@ function NewsCard({ item, featured = false }: { item: NewsItem; featured?: boole
             WebkitBoxOrient: "vertical", overflow: "hidden",
           }}>{item.description}</p>
         )}
-        <div style={{ marginTop: 12, fontSize: 11, fontWeight: 700, color: featured ? "#00d484" : "#3a4560" }}>
+        <div style={{ marginTop: 12, fontSize: 11, fontWeight: 700, color: featured ? "#00d484" : "#52525b" }}>
           Read more →
         </div>
       </div>
@@ -109,20 +109,24 @@ function NewsCard({ item, featured = false }: { item: NewsItem; featured?: boole
   );
 }
 
-function SkeletonCard() {
+function SkeletonCard({ featured = false }: { featured?: boolean }) {
   return (
     <div style={{
-      background: "rgba(255,255,255,.02)",
-      border: "1px solid rgba(255,255,255,.05)",
-      borderRadius: 12, padding: 16,
+      background: featured ? "rgba(0,212,132,.02)" : "rgba(255,255,255,.02)",
+      border: "1px solid",
+      borderColor: featured ? "rgba(0,212,132,.1)" : "rgba(255,255,255,.05)",
+      borderRadius: 12,
+      padding: featured ? 20 : 16,
+      animation: "skelPulse 1.6s ease-in-out infinite",
     }}>
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 10, gap: 8 }}>
-        <div style={{ height: 20, width: 80, borderRadius: 20, background: "rgba(255,255,255,.06)" }} />
+        <div style={{ height: 20, width: 80, borderRadius: 20, background: "rgba(255,255,255,.07)" }} />
         <div style={{ height: 12, width: 40, borderRadius: 4, background: "rgba(255,255,255,.04)" }} />
       </div>
-      <div style={{ height: 14, width: "100%", borderRadius: 4, background: "rgba(255,255,255,.06)", marginBottom: 6 }} />
-      <div style={{ height: 14, width: "80%", borderRadius: 4, background: "rgba(255,255,255,.04)", marginBottom: 10 }} />
-      <div style={{ height: 10, width: "60%", borderRadius: 4, background: "rgba(255,255,255,.03)" }} />
+      <div style={{ height: featured ? 18 : 14, width: "100%", borderRadius: 4, background: "rgba(255,255,255,.07)", marginBottom: 6 }} />
+      <div style={{ height: featured ? 18 : 14, width: "85%", borderRadius: 4, background: "rgba(255,255,255,.05)", marginBottom: featured ? 10 : 6 }} />
+      {featured && <div style={{ height: 14, width: "65%", borderRadius: 4, background: "rgba(255,255,255,.04)", marginBottom: 10 }} />}
+      <div style={{ height: 12, width: "50%", borderRadius: 4, background: "rgba(255,255,255,.04)", marginTop: 4 }} />
     </div>
   );
 }
@@ -282,6 +286,10 @@ export default function NewsPage() {
           from { opacity: 0; transform: translateY(16px); }
           to   { opacity: 1; transform: translateY(0); }
         }
+        @keyframes skelPulse {
+          0%, 100% { opacity: 1; }
+          50%       { opacity: .45; }
+        }
         .news-fade-1 { animation: newsFadeUp .5s ease .1s both; }
         .news-fade-2 { animation: newsFadeUp .5s ease .25s both; }
         .news-fade-3 { animation: newsFadeUp .5s ease .4s both; }
@@ -348,7 +356,7 @@ export default function NewsPage() {
                   border: "1px solid",
                   borderColor: notifStatus === "subscribed" ? "rgba(0,212,132,.4)" : "rgba(255,255,255,.1)",
                   background: notifStatus === "subscribed" ? "rgba(0,212,132,.08)" : "rgba(255,255,255,.04)",
-                  color: notifStatus === "subscribed" ? "#00d484" : notifStatus === "denied" ? "#3a4560" : "var(--f1-text)",
+                  color: notifStatus === "subscribed" ? "#00d484" : notifStatus === "denied" ? "#52525b" : "var(--f1-text)",
                   minHeight: 40, WebkitTapHighlightColor: "transparent",
                 }}
               >
@@ -418,9 +426,16 @@ export default function NewsPage() {
 
         {/* News grid */}
         {loading ? (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(280px,1fr))", gap: 12 }}>
-            {Array.from({ length: PAGE_SIZE }).map((_, i) => <SkeletonCard key={i} />)}
-          </div>
+          <>
+            {/* Featured skeleton */}
+            <div style={{ marginBottom: 16 }}>
+              <SkeletonCard featured />
+            </div>
+            {/* Grid skeletons */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(260px,1fr))", gap: 10 }}>
+              {Array.from({ length: PAGE_SIZE - 1 }).map((_, i) => <SkeletonCard key={i} />)}
+            </div>
+          </>
         ) : error ? (
           <div style={{
             display: "flex", flexDirection: "column", alignItems: "center",
@@ -479,7 +494,7 @@ export default function NewsPage() {
                   width: "100%", marginTop: 6,
                   padding: "10px", borderRadius: 10, fontSize: 11,
                   border: "1px solid rgba(255,255,255,.05)",
-                  background: "transparent", color: "#3a4560",
+                  background: "transparent", color: "#52525b",
                   cursor: "pointer",
                   minHeight: 44, WebkitTapHighlightColor: "transparent",
                 }}

@@ -297,7 +297,7 @@ export default function StandingsPage() {
                     background: isTop3 ? "rgba(0,212,132,.04)" : "rgba(255,255,255,.02)",
                   }}>
                     <div style={{ position: "absolute", top: 0, left: 0, height: "100%", width: `${barPct}%`, background: teamColor, opacity: .06, transition: "width .8s ease" }} />
-                    <div style={{ position: "relative", zIndex: 1, fontSize: 13, fontWeight: 800, textAlign: "center", color: pos === 1 ? "#f5a724" : pos === 2 ? "#c0c8d8" : pos === 3 ? "#cd7f32" : "#3a4560" }}>{d.position}</div>
+                    <div style={{ position: "relative", zIndex: 1, fontSize: 13, fontWeight: 800, textAlign: "center", color: pos === 1 ? "#f5a724" : pos === 2 ? "#c0c8d8" : pos === 3 ? "#cd7f32" : "#52525b" }}>{d.position}</div>
                     <div style={{ position: "relative", zIndex: 1, height: 24, width: 4, borderRadius: 2, background: teamColor, flexShrink: 0 }} />
                     <div style={{ position: "relative", zIndex: 1, minWidth: 0 }}>
                       <div style={{ fontSize: 11, color: "var(--f1-muted)", lineHeight: 1 }}>{d.Driver.givenName}</div>
@@ -367,7 +367,7 @@ export default function StandingsPage() {
                     background: isTop3 ? "rgba(0,212,132,.04)" : "rgba(255,255,255,.02)",
                   }}>
                     <div style={{ position: "absolute", top: 0, left: 0, height: "100%", width: `${barPct}%`, background: teamColor, opacity: .06 }} />
-                    <div style={{ position: "relative", zIndex: 1, fontSize: 13, fontWeight: 800, textAlign: "center", color: pos === 1 ? "#f5a724" : pos === 2 ? "#c0c8d8" : pos === 3 ? "#cd7f32" : "#3a4560" }}>{c.position}</div>
+                    <div style={{ position: "relative", zIndex: 1, fontSize: 13, fontWeight: 800, textAlign: "center", color: pos === 1 ? "#f5a724" : pos === 2 ? "#c0c8d8" : pos === 3 ? "#cd7f32" : "#52525b" }}>{c.position}</div>
                     <div style={{ position: "relative", zIndex: 1, height: 24, width: 4, borderRadius: 2, background: teamColor, flexShrink: 0 }} />
                     <div style={{ position: "relative", zIndex: 1, fontSize: 14, fontWeight: 800, letterSpacing: "-.01em", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{c.Constructor.name}</div>
                     <div style={{ position: "relative", zIndex: 1, fontFamily: "monospace", fontSize: 14, fontWeight: 700, textAlign: "right", color: "var(--f1-text)" }}>{c.points}</div>
