@@ -160,19 +160,32 @@ function SectionCard({ children }: { children: React.ReactNode }) {
   );
 }
 
+// Hardcoded fallback counts — shown immediately while API loads (or if it fails).
+// Update these when follower milestones are hit.
+const FALLBACK_STATS: SocialStats = {
+  twitter:     6_600,
+  instagram:   5_300,
+  threads:     3_000,
+  tiktok:      0,
+  facebook:    0,
+  fantasy:     200,
+  impressions: "1M+",
+  twitterLive: false,
+};
+
 /* ════════════════════════════════════════════════════════════ */
 export default function CommunityPage() {
-  const [stats, setStats] = useState<SocialStats | null>(null);
+  const [stats, setStats] = useState<SocialStats>(FALLBACK_STATS);
 
   useEffect(() => {
     fetch("/api/social-stats")
       .then(r => r.json())
-      .then(setStats)
-      .catch(() => {/* silently use fallback UI */});
+      .then((data: SocialStats) => setStats(data))
+      .catch(() => {/* keep fallback */});
   }, []);
 
-  // helper so we can show "loading" dots while fetching
-  const s = (n: number | undefined) => (stats ? fmt(n ?? 0) : "···");
+  // Always show real numbers — fallback ensures no blank state
+  const s = (n: number | undefined) => fmt(n ?? 0);
 
   return (
     <div style={{ background: "var(--f1-bg-page)", color: "var(--f1-text)", minHeight: "100vh" }}>
@@ -398,9 +411,9 @@ export default function CommunityPage() {
           gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))",
           gap: 10,
         }}>
-          <SocialCard icon="𝕏"  platform="X / Twitter"  handle="@f1_naija"  followers={stats ? fmt(stats.twitter)   : undefined}  href="https://x.com/f1_naija" live={stats?.twitterLive} />
-          <SocialCard icon="📸" platform="Instagram"     handle="@f1_naija"  followers={stats ? fmt(stats.instagram) : undefined}  href="https://www.instagram.com/f1_naija/" />
-          <SocialCard icon="🧵" platform="Threads"       handle="@f1_naija"  followers={stats ? fmt(stats.threads)   : undefined}  href="https://www.threads.com/@f1_naija" />
+          <SocialCard icon="𝕏"  platform="X / Twitter"  handle="@f1_naija"  followers={fmt(stats.twitter)}   href="https://x.com/f1_naija" live={stats.twitterLive} />
+          <SocialCard icon="📸" platform="Instagram"     handle="@f1_naija"  followers={fmt(stats.instagram)} href="https://www.instagram.com/f1_naija/" />
+          <SocialCard icon="🧵" platform="Threads"       handle="@f1_naija"  followers={fmt(stats.threads)}   href="https://www.threads.com/@f1_naija" />
           <SocialCard icon="📘" platform="Facebook"      handle="F1 Naija"                                                         href="https://www.facebook.com/f1naija/" />
           <SocialCard icon="🎵" platform="TikTok"        handle="@f1.naija"                                                        href="https://www.tiktok.com/@f1.naija" />
         </div>

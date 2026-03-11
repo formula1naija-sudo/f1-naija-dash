@@ -316,30 +316,27 @@ export default function Home() {
             </Link>
           </div>
 
-          {/* WhatsApp Community */}
+          {/* WhatsApp Community — coming soon */}
           <div style={{
             background: "var(--f1-card)", border: "1px solid rgba(37,211,102,.18)",
             borderRadius: 14, padding: "24px 22px",
             display: "flex", flexDirection: "column", gap: 10,
+            opacity: 0.65,
           }}>
             <div style={{ fontSize: 28 }}>💬</div>
             <div style={{ fontSize: 15, fontWeight: 800, color: "var(--f1-text)" }}>WhatsApp Community</div>
             <p style={{ fontSize: 12, color: "var(--f1-muted)", lineHeight: 1.6, margin: 0, flex: 1 }}>
-              Race alerts, score updates, and pure Naija F1 banter — straight to your phone. Oya join us!
+              Race alerts, score updates, and pure Naija F1 banter — straight to your phone. Coming soon!
             </p>
-            <a
-              href="https://chat.whatsapp.com/F1NaijaGroup"
-              target="_blank" rel="noopener noreferrer"
-              style={{
-                display: "inline-flex", alignItems: "center", gap: 6,
-                padding: "10px 18px", borderRadius: 7, fontSize: 12, fontWeight: 700,
-                background: "rgba(37,211,102,.12)", border: "1px solid rgba(37,211,102,.25)",
-                color: "#25D366", textDecoration: "none", letterSpacing: ".03em",
-                alignSelf: "flex-start",
-              }}
-            >
-              Join on WhatsApp →
-            </a>
+            <span style={{
+              display: "inline-flex", alignItems: "center", gap: 6,
+              padding: "10px 18px", borderRadius: 7, fontSize: 12, fontWeight: 700,
+              background: "rgba(255,255,255,.05)", border: "1px solid rgba(255,255,255,.1)",
+              color: "var(--f1-muted)", letterSpacing: ".03em",
+              alignSelf: "flex-start", cursor: "not-allowed",
+            }}>
+              Coming Soon
+            </span>
           </div>
         </div>
       </section>

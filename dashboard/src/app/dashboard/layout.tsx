@@ -123,12 +123,19 @@ export default function DashboardLayout({ children }: Props) {
   );
 }
 
+const HOW_TO_WATCH = [
+  { provider: 'DStv',    channel: 'SuperSport F1 · Ch. 208' },
+  { provider: 'Canal+',  channel: 'Canal+ Sport' },
+  { provider: 'F1 TV',   channel: 'f1.com/subscribe' },
+  { provider: 'ShowMax', channel: 'showmax.com' },
+];
+
 function NoSessionState() {
   const nextRace = useNextRace();
   const countdown = useCountdown(nextRace?.start ?? null);
 
   return (
-    <div style={{ textAlign: 'center', padding: '40px 24px', maxWidth: 440 }}>
+    <div style={{ textAlign: 'center', padding: '40px 24px', maxWidth: 480, width: '100%' }}>
       {/* Icon */}
       <div style={{ fontSize: 48, marginBottom: 20 }}>🏎️</div>
 
@@ -172,17 +179,49 @@ function NoSessionState() {
         </div>
       )}
 
-      <Link
-        href="/schedule"
-        style={{
-          display: 'inline-flex', alignItems: 'center', gap: 6,
-          padding: '11px 24px', borderRadius: 8, fontSize: 13, fontWeight: 700,
-          background: 'rgba(255,255,255,.05)', border: '1px solid rgba(255,255,255,.1)',
-          color: 'var(--f1-text)', textDecoration: 'none', letterSpacing: '.02em',
-        }}
-      >
-        View Full Schedule →
-      </Link>
+      {/* How to watch in Nigeria */}
+      <div style={{
+        background: 'rgba(255,255,255,.03)', border: '1px solid rgba(255,255,255,.07)',
+        borderRadius: 12, padding: '16px 20px', marginBottom: 20, textAlign: 'left',
+      }}>
+        <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase', color: 'var(--f1-muted)', marginBottom: 12 }}>
+          📺 How to watch in Nigeria
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {HOW_TO_WATCH.map(item => (
+            <div key={item.provider} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--f1-text)' }}>{item.provider}</span>
+              <span style={{ fontSize: 11, color: 'var(--f1-muted)' }}>{item.channel}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Actions */}
+      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center' }}>
+        <Link
+          href="/schedule"
+          style={{
+            display: 'inline-flex', alignItems: 'center', gap: 6,
+            padding: '11px 20px', borderRadius: 8, fontSize: 13, fontWeight: 700,
+            background: 'rgba(255,255,255,.05)', border: '1px solid rgba(255,255,255,.1)',
+            color: 'var(--f1-text)', textDecoration: 'none', letterSpacing: '.02em',
+          }}
+        >
+          📅 View Full Schedule
+        </Link>
+        <Link
+          href="/community"
+          style={{
+            display: 'inline-flex', alignItems: 'center', gap: 6,
+            padding: '11px 20px', borderRadius: 8, fontSize: 13, fontWeight: 700,
+            background: 'rgba(0,212,132,.1)', border: '1px solid rgba(0,212,132,.25)',
+            color: '#00d484', textDecoration: 'none', letterSpacing: '.02em',
+          }}
+        >
+          🇳🇬 Join the Community
+        </Link>
+      </div>
     </div>
   );
 }

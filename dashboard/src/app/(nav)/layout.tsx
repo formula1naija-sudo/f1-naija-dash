@@ -1,6 +1,6 @@
 "use client";
 
-import { type ReactNode, useState, useEffect } from "react";
+import { type ReactNode, useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Footer from "@/components/Footer";
@@ -8,17 +8,40 @@ import AdBanner from "@/components/AdBanner";
 
 type Props = { children: ReactNode };
 
-// ── Desktop nav + More-menu links ─────────────────────────────
+/** Returns true when the current time falls inside any scheduled session. */
+function useIsLiveSession(): boolean {
+  const [isLive, setIsLive] = useState(false);
+
+  const check = useCallback(() => {
+    const now = Date.now();
+    fetch("/api/schedule")
+      .then(r => r.ok ? r.json() : null)
+      .then((rounds: Array<{ sessions: Array<{ start: string; end: string }> }> | null) => {
+        if (!rounds) return;
+        const live = rounds.some(r =>
+          r.sessions.some(s => now >= new Date(s.start).getTime() && now <= new Date(s.end).getTime())
+        );
+        setIsLive(live);
+      })
+      .catch(() => null);
+  }, []);
+
+  useEffect(() => {
+    check();
+    const id = setInterval(check, 120_000);
+    return () => clearInterval(id);
+  }, [check]);
+
+  return isLive;
+}
+
+// ── Desktop nav (primary links only — keep short to avoid overflow) ───────────
 const NAV_LINKS = [
-  { href: "/",           label: "Home" },
-  { href: "/dashboard",  label: "Dashboard" },
-  { href: "/schedule",   label: "Schedule" },
-  { href: "/news",       label: "News" },
-  { href: "/standings",  label: "Standings" },
-  { href: "/community",  label: "Community" },
-  { href: "/fantasy",    label: "Fantasy" },
-  { href: "/about",      label: "About" },
-  { href: "/help",       label: "Help" },
+  { href: "/",           label: "Home"       },
+  { href: "/dashboard",  label: "Dashboard"  },
+  { href: "/schedule",   label: "Schedule"   },
+  { href: "/standings",  label: "Standings"  },
+  { href: "/community",  label: "Community"  },
 ];
 
 // ── Mobile bottom tabs (most-used 4 + More) ───────────────────
@@ -109,6 +132,7 @@ function IconGrid({ active }: { active: boolean }) {
 export default function Layout({ children }: Props) {
   const pathname = usePathname();
   const [moreOpen, setMoreOpen] = useState(false);
+  const isLiveSession = useIsLiveSession();
 
   // Lock body scroll when overlay is open
   useEffect(() => {
@@ -283,21 +307,27 @@ export default function Layout({ children }: Props) {
           ))}
         </div>
 
-        {/* Mobile: right-side live indicator (optional) */}
+        {/* Mobile: right-side live indicator */}
         <div className="sm:hidden flex" style={{ alignItems: "center", gap: 8 }}>
           <Link
             href="/dashboard"
             style={{
               display: "flex", alignItems: "center", gap: 5,
               padding: "6px 12px", borderRadius: 6, minHeight: 36,
-              background: "rgba(0,212,132,.12)", border: "1px solid rgba(0,212,132,.25)",
-              color: "#00d484", textDecoration: "none",
+              background: isLiveSession ? "rgba(232,0,31,.15)" : "rgba(0,212,132,.12)",
+              border: `1px solid ${isLiveSession ? "rgba(232,0,31,.35)" : "rgba(0,212,132,.25)"}`,
+              color: isLiveSession ? "#e8001f" : "#00d484", textDecoration: "none",
               fontSize: 11, fontWeight: 700, letterSpacing: ".04em",
               WebkitTapHighlightColor: "transparent", touchAction: "manipulation",
             }}
           >
-            <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#00d484", display: "inline-block", animation: "pulse 2s infinite" }} />
-            LIVE
+            <span style={{
+              width: 6, height: 6, borderRadius: "50%",
+              background: isLiveSession ? "#e8001f" : "#00d484",
+              display: "inline-block",
+              animation: isLiveSession ? "pulse 1.4s infinite" : "none",
+            }} />
+            {isLiveSession ? "LIVE" : "DASHBOARD"}
           </Link>
         </div>
       </nav>

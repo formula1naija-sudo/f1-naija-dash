@@ -292,8 +292,33 @@ export default function HomeHero() {
                     )}
                   </div>
                   <div style={{ textAlign: "right" }}>
-                    <div style={{ fontSize: 9, color: "var(--f1-muted)", textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 2 }}>Lagos · WAT</div>
-                    <div style={{ fontSize: 13, fontWeight: 700 }}>{mounted ? localTime : "—"}</div>
+                    {nextRound ? (
+                      <>
+                        <div style={{ fontSize: 9, color: "var(--f1-muted)", textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 2 }}>Race Start · WAT</div>
+                        <div style={{ fontSize: 13, fontWeight: 700 }}>
+                          {(() => {
+                            const raceSess = nextRound.sessions?.find((s: { kind: string }) => s.kind === "Race");
+                            const target = raceSess?.start ?? nextRound.start;
+                            try {
+                              return new Date(target).toLocaleString("en-US", {
+                                timeZone: "Africa/Lagos",
+                                weekday: "short",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                hour12: true,
+                              });
+                            } catch {
+                              return mounted ? localTime : "—";
+                            }
+                          })()}
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div style={{ fontSize: 9, color: "var(--f1-muted)", textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 2 }}>Lagos · WAT</div>
+                        <div style={{ fontSize: 13, fontWeight: 700 }}>{mounted ? localTime : "—"}</div>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
