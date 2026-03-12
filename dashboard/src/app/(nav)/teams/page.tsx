@@ -131,7 +131,7 @@ export default function TeamsPage() {
           Constructor<br />Standings
         </h1>
         <p style={{ fontSize: 13, color: "var(--f1-muted)", marginTop: 12, lineHeight: 1.6 }}>
-          All 10 teams, ranked by championship points.
+          All 11 teams, ranked by championship points.
         </p>
       </section>
 

@@ -41,6 +41,123 @@ type RaceRound = {
   }[];
 };
 
+/* ── Team profile data ───────────────────────────────────────── */
+type TeamProfile = {
+  base: string;
+  founded: string;
+  championships: string;
+  tagline: string;
+  flag: string;
+};
+
+const TEAM_PROFILES: Record<string, TeamProfile> = {
+  mclaren: {
+    flag: "🇬🇧",
+    base: "Woking, Surrey, UK",
+    founded: "1963",
+    championships: "8 Constructors · 12 Drivers",
+    tagline: "One of F1's most iconic teams. Home to Senna, Prost, and Hamilton. The papaya orange is back and faster than ever.",
+  },
+  ferrari: {
+    flag: "🇮🇹",
+    base: "Maranello, Italy",
+    founded: "1950",
+    championships: "16 Constructors · 15 Drivers",
+    tagline: "The most successful constructor in F1 history. The Scuderia is the soul of the sport — no team carries more history or passion.",
+  },
+  red_bull: {
+    flag: "🇦🇹",
+    base: "Milton Keynes, UK",
+    founded: "2005",
+    championships: "6 Constructors · 5 Drivers",
+    tagline: "The team that redefined F1 dominance. Four straight titles with Vettel, then Verstappen's back-to-back era that swept all before it.",
+  },
+  mercedes: {
+    flag: "🇩🇪",
+    base: "Brackley, UK",
+    founded: "2010",
+    championships: "8 Constructors · 9 Drivers",
+    tagline: "Eight consecutive constructors' titles from 2014–2021. The Silver Arrows built the most dominant dynasty in the sport's modern era.",
+  },
+  williams: {
+    flag: "🇬🇧",
+    base: "Grove, Oxfordshire, UK",
+    founded: "1977",
+    championships: "9 Constructors · 7 Drivers",
+    tagline: "A proud independent with a glorious past — Mansell, Prost, Hill, and Villeneuve all won the drivers' title here. Now rebuilding.",
+  },
+  aston_martin: {
+    flag: "🇬🇧",
+    base: "Silverstone, UK",
+    founded: "2021",
+    championships: "0",
+    tagline: "Racing royalty reborn. The Silverstone-based squad — formerly Force India and Racing Point — relaunched under the iconic Aston Martin name with Fernando Alonso leading the charge.",
+  },
+  alpine: {
+    flag: "🇫🇷",
+    base: "Enstone, UK · Viry-Châtillon, France",
+    founded: "2021",
+    championships: "2 Constructors (as Renault) · 2 Drivers (as Renault)",
+    tagline: "The French works team. The Enstone factory has built race-winning cars since the Benetton era. Now chasing a return to glory under the Alpine banner.",
+  },
+  haas: {
+    flag: "🇺🇸",
+    base: "Kannapolis, North Carolina, USA",
+    founded: "2016",
+    championships: "0",
+    tagline: "America's home in F1. Gene Haas built the grid's only US-based team from scratch — a true independent operating from the heart of NASCAR country.",
+  },
+  audi: {
+    flag: "🇨🇭",
+    base: "Hinwil, Switzerland",
+    founded: "1993 (as Sauber)",
+    championships: "0",
+    tagline: "Sauber's legendary Swiss operation now rebranded under Audi. One of F1's most respected technical academies — the factory that launched Räikkönen, Massa, and Hamilton's junior career.",
+  },
+  sauber: {
+    flag: "🇨🇭",
+    base: "Hinwil, Switzerland",
+    founded: "1993",
+    championships: "0",
+    tagline: "The storied Swiss team transitioning to full Audi works status. A technical powerhouse that has launched some of F1's greatest careers.",
+  },
+  kick_sauber: {
+    flag: "🇨🇭",
+    base: "Hinwil, Switzerland",
+    founded: "1993 (as Sauber)",
+    championships: "0",
+    tagline: "The storied Swiss team in transition to full Audi works status. A technical powerhouse that has launched some of F1's greatest careers.",
+  },
+  racing_bulls: {
+    flag: "🇮🇹",
+    base: "Faenza, Italy",
+    founded: "2006 (as Toro Rosso)",
+    championships: "0",
+    tagline: "Red Bull's Italian sister team — the proving ground for future champions. Vettel, Verstappen, and Ricciardo all came through the Faenza factory.",
+  },
+  rb: {
+    flag: "🇮🇹",
+    base: "Faenza, Italy",
+    founded: "2006 (as Toro Rosso)",
+    championships: "0",
+    tagline: "Red Bull's Italian sister team — the proving ground for future champions. Vettel, Verstappen, and Ricciardo all came through the Faenza factory.",
+  },
+  alphatauri: {
+    flag: "🇮🇹",
+    base: "Faenza, Italy",
+    founded: "2006 (as Toro Rosso)",
+    championships: "0",
+    tagline: "Red Bull's Italian sister team — the proving ground for future champions. Vettel, Verstappen, and Ricciardo all came through the Faenza factory.",
+  },
+  cadillac: {
+    flag: "🇺🇸",
+    base: "Indianapolis, Indiana, USA",
+    founded: "2026",
+    championships: "0",
+    tagline: "The newest team in the paddock. General Motors and Cadillac bring American muscle back to F1 for the first time since 2004 — built on the foundation of Andretti Global.",
+  },
+};
+
 /* ── Helpers ─────────────────────────────────────────────────── */
 const TEAM_COLORS: Record<string, string> = {
   mclaren: "#FF8000", ferrari: "#EF1A2D", red_bull: "#3671C6",
@@ -196,6 +313,35 @@ export default function TeamProfilePage() {
       </header>
 
       <div style={{ padding: "28px 0 80px" }}>
+
+        {/* ── PROFILE ── */}
+        {TEAM_PROFILES[constructorId ?? ""] && (() => {
+          const p = TEAM_PROFILES[constructorId!];
+          return (
+            <div className="p-fade" style={{
+              background: `linear-gradient(135deg,${color}08,transparent)`,
+              border: `1px solid ${color}22`,
+              borderRadius: 14, padding: "20px 22px", marginBottom: 16,
+              animationDelay: ".18s",
+            }}>
+              <p style={{ fontSize: 13, color: "var(--f1-text)", lineHeight: 1.7, marginBottom: 16, fontStyle: "italic" }}>
+                &ldquo;{p.tagline}&rdquo;
+              </p>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "8px 24px" }}>
+                {[
+                  { label: "Base",          value: `${p.flag} ${p.base}` },
+                  { label: "Est.",          value: p.founded },
+                  { label: "Titles",        value: p.championships },
+                ].map(({ label, value }) => (
+                  <div key={label}>
+                    <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--f1-muted)", marginBottom: 2 }}>{label}</div>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: "var(--f1-text)" }}>{value}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })()}
 
         {/* ── STATS ── */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(90px,1fr))", gap: 8, marginBottom: 28 }}>
