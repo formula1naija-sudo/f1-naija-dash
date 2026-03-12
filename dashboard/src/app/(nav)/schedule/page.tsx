@@ -78,10 +78,12 @@ export default async function SchedulePage() {
 
         {/* Up Next */}
         <div style={{ marginBottom: 32 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
-            <div style={{ width: 4, height: 18, borderRadius: 2, background: "#00d484" }} />
-            <h2 style={{ fontSize: 18, fontWeight: 800, letterSpacing: "-.02em", margin: 0 }}>Up Next</h2>
-            <span style={{ fontSize: 11, color: "var(--f1-muted)", marginLeft: 4 }}>· All times are local</span>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12, marginBottom: 20 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <div style={{ width: 4, height: 18, borderRadius: 2, background: "#00d484" }} />
+              <h2 style={{ fontSize: 18, fontWeight: 800, letterSpacing: "-.02em", margin: 0 }}>Up Next</h2>
+            </div>
+            <ScheduleTZPicker />
           </div>
           <Suspense fallback={<NextRoundLoading />}>
             <NextRound />
@@ -90,12 +92,9 @@ export default async function SchedulePage() {
 
         {/* Full Schedule */}
         <div>
-          <div style={{ marginBottom: 20, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <div style={{ width: 4, height: 18, borderRadius: 2, background: "#f5a724" }} />
-              <h2 style={{ fontSize: 18, fontWeight: 800, letterSpacing: "-.02em", margin: 0 }}>Full Schedule</h2>
-            </div>
-            <ScheduleTZPicker />
+          <div style={{ marginBottom: 20, display: "flex", alignItems: "center", gap: 8 }}>
+            <div style={{ width: 4, height: 18, borderRadius: 2, background: "#f5a724" }} />
+            <h2 style={{ fontSize: 18, fontWeight: 800, letterSpacing: "-.02em", margin: 0 }}>Full Schedule</h2>
           </div>
           <Suspense fallback={<FullScheduleLoading />}>
             <Schedule />
