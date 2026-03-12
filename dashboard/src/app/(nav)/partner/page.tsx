@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 
 const STATS = [
@@ -11,51 +12,6 @@ const STATS = [
   { value: "130+",  label: "Countries reached" },
 ];
 
-const PACKAGES = [
-  {
-    tier: "Bronze",
-    color: "#cd7f32",
-    border: "rgba(205,127,50,.25)",
-    bg: "rgba(205,127,50,.06)",
-    price: "On request",
-    features: [
-      "Logo in website footer",
-      "1× social media mention per month",
-      "Logo on race-day posts",
-    ],
-  },
-  {
-    tier: "Silver",
-    color: "#9ca3af",
-    border: "rgba(156,163,175,.25)",
-    bg: "rgba(156,163,175,.06)",
-    price: "On request",
-    features: [
-      "Everything in Bronze",
-      "Dedicated sponsor card on homepage",
-      "4× social media posts per month",
-      "Logo on live dashboard header",
-      "Inclusion in weekly race previews",
-    ],
-  },
-  {
-    tier: "Gold",
-    color: "#f5a724",
-    border: "rgba(245,167,36,.3)",
-    bg: "rgba(245,167,36,.06)",
-    price: "On request",
-    features: [
-      "Everything in Silver",
-      "Title sponsor of X Spaces race reactions",
-      "Co-branded race content",
-      "Inclusion in race-day WhatsApp blasts",
-      "Live dashboard banner placement",
-      "Custom campaign strategy",
-    ],
-    featured: true,
-  },
-];
-
 const AUDIENCE = [
   { icon: "🇳🇬", label: "Primary audience",  value: "Nigerian F1 fans (Lagos, Abuja, PH)" },
   { icon: "🌍", label: "Diaspora reach",     value: "London, Houston, Dubai, Toronto" },
@@ -63,7 +19,43 @@ const AUDIENCE = [
   { icon: "📅", label: "Peak engagement",    value: "Race weekends (Fri–Sun)" },
 ];
 
+const PAST_BRANDS = [
+  { name: "DStv",        color: "#00AEEF", bg: "rgba(0,174,239,.08)",   border: "rgba(0,174,239,.2)",   desc: "Africa's leading pay-TV provider" },
+  { name: "Heineken",    color: "#009E47", bg: "rgba(0,158,71,.08)",    border: "rgba(0,158,71,.2)",    desc: "Official F1 beer partner" },
+  { name: "Partyvest",   color: "#7C3AED", bg: "rgba(124,58,237,.08)",  border: "rgba(124,58,237,.2)",  desc: "Nigerian fintech & lifestyle brand" },
+  { name: "Glenfiddich", color: "#C8941A", bg: "rgba(200,148,26,.08)",  border: "rgba(200,148,26,.2)",  desc: "World's most awarded single malt" },
+];
+
+interface FormState {
+  name: string;
+  brand: string;
+  email: string;
+  message: string;
+}
+
 export default function PartnerPage() {
+  const [form, setForm] = useState<FormState>({ name: "", brand: "", email: "", message: "" });
+  const [submitted, setSubmitted] = useState(false);
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const subject = encodeURIComponent(`Partnership Enquiry — ${form.brand || form.name}`);
+    const body = encodeURIComponent(
+      `Hi F1 Naija team,\n\nName: ${form.name}\nBrand: ${form.brand}\nEmail: ${form.email}\n\n${form.message}\n\nSent via f1-naija.vercel.app/partner`
+    );
+    window.open(`mailto:ads@f1naija.com?subject=${subject}&body=${body}`, "_blank");
+    setSubmitted(true);
+  }
+
+  const inputStyle: React.CSSProperties = {
+    width: "100%", boxSizing: "border-box",
+    background: "rgba(255,255,255,.04)",
+    border: "1px solid rgba(255,255,255,.1)",
+    borderRadius: 8, padding: "12px 14px",
+    fontSize: 13, color: "var(--f1-text)",
+    outline: "none", fontFamily: "inherit",
+  };
+
   return (
     <div style={{ background: "var(--f1-bg-page)", color: "var(--f1-text)", minHeight: "100vh" }}>
       <style>{`
@@ -74,6 +66,8 @@ export default function PartnerPage() {
         .pfy-1 { animation: partnerFadeUp .5s ease .05s both; }
         .pfy-2 { animation: partnerFadeUp .5s ease .15s both; }
         .pfy-3 { animation: partnerFadeUp .5s ease .25s both; }
+        .partner-input:focus { border-color: rgba(0,212,132,.4) !important; }
+        .partner-input::placeholder { color: #52525b; }
       `}</style>
 
       {/* ── PAGE HERO ── */}
@@ -189,64 +183,195 @@ export default function PartnerPage() {
           </div>
         </section>
 
-        {/* ── PACKAGES ── */}
-        <section aria-label="Partnership packages" style={{ marginBottom: "clamp(40px,6vw,64px)" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
+        {/* ── BRANDS WE'VE WORKED WITH ── */}
+        <section aria-label="Brands we've worked with" style={{ marginBottom: "clamp(40px,6vw,64px)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
             <div style={{ width: 3, height: 16, background: "#00d484", borderRadius: 2 }} />
             <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--f1-muted)" }}>
-              Partnership packages
+              Brands we&apos;ve worked with
             </span>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))", gap: 14 }}>
-            {PACKAGES.map(pkg => (
-              <div key={pkg.tier} style={{
-                background: pkg.featured ? pkg.bg : "var(--f1-card)",
-                border: `1px solid ${pkg.border}`,
-                borderRadius: 14, padding: "24px 22px",
-                display: "flex", flexDirection: "column", gap: 16,
-                position: "relative",
+          <p style={{ fontSize: 13, color: "var(--f1-muted)", marginBottom: 20, lineHeight: 1.6 }}>
+            Trusted by leading brands reaching Nigeria&apos;s F1 fanbase.
+          </p>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: 12, marginBottom: 12 }}>
+            {PAST_BRANDS.map(b => (
+              <div key={b.name} style={{
+                background: b.bg,
+                border: `1px solid ${b.border}`,
+                borderRadius: 12, padding: "22px 20px",
+                display: "flex", flexDirection: "column", gap: 8,
               }}>
-                {pkg.featured && (
-                  <div style={{
-                    position: "absolute", top: 12, right: 12,
-                    fontSize: 9, fontWeight: 800, letterSpacing: ".1em", textTransform: "uppercase",
-                    background: pkg.color, color: "#04060e",
-                    padding: "3px 8px", borderRadius: 4,
-                  }}>
-                    Most Popular
-                  </div>
-                )}
-                <div>
-                  <div style={{ fontSize: 18, fontWeight: 900, color: pkg.color, marginBottom: 4 }}>{pkg.tier}</div>
-                  <div style={{ fontSize: 13, color: "var(--f1-muted)" }}>{pkg.price}</div>
+                <div style={{ fontSize: 20, fontWeight: 900, color: b.color, letterSpacing: "-.01em" }}>
+                  {b.name}
                 </div>
-                <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: 8 }}>
-                  {pkg.features.map(f => (
-                    <li key={f} style={{ display: "flex", alignItems: "flex-start", gap: 8, fontSize: 12, color: "var(--f1-muted)" }}>
-                      <span style={{ color: pkg.color, flexShrink: 0, marginTop: 1 }}>✓</span>
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-                <a
-                  href="mailto:ads@f1naija.com"
-                  style={{
-                    display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 6,
-                    padding: "10px 16px", borderRadius: 7, fontSize: 12, fontWeight: 700,
-                    background: `rgba(${pkg.color === "#f5a724" ? "245,167,36" : pkg.color === "#9ca3af" ? "156,163,175" : "205,127,50"},.15)`,
-                    border: `1px solid ${pkg.border}`,
-                    color: pkg.color, textDecoration: "none",
-                    marginTop: "auto",
-                  }}
-                >
-                  Get in Touch →
-                </a>
+                <div style={{ fontSize: 12, color: "var(--f1-muted)", lineHeight: 1.5 }}>
+                  {b.desc}
+                </div>
               </div>
             ))}
+            {/* "and others" placeholder */}
+            <div style={{
+              background: "rgba(255,255,255,.03)",
+              border: "1px dashed rgba(255,255,255,.1)",
+              borderRadius: 12, padding: "22px 20px",
+              display: "flex", flexDirection: "column", gap: 8,
+              alignItems: "flex-start", justifyContent: "center",
+            }}>
+              <div style={{ fontSize: 20, fontWeight: 900, color: "var(--f1-muted)", letterSpacing: "-.01em" }}>
+                + others
+              </div>
+              <div style={{ fontSize: 12, color: "var(--f1-muted)", lineHeight: 1.5 }}>
+                More brands across FMCG, fintech, lifestyle & media
+              </div>
+            </div>
           </div>
-          <p style={{ fontSize: 11, color: "#52525b", marginTop: 12, lineHeight: 1.6 }}>
-            All packages are negotiable. We also offer custom campaigns, race-weekend activations, and one-off sponsored posts. Email us to discuss.
+
+          {/* Rate card CTA */}
+          <div style={{
+            background: "rgba(245,167,36,.05)", border: "1px solid rgba(245,167,36,.18)",
+            borderRadius: 12, padding: "18px 20px",
+            display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 14,
+          }}>
+            <div>
+              <div style={{ fontSize: 14, fontWeight: 800, color: "var(--f1-text)", marginBottom: 4 }}>
+                Want our rate card?
+              </div>
+              <p style={{ fontSize: 12, color: "var(--f1-muted)", margin: 0, lineHeight: 1.5 }}>
+                We&apos;ll send our full sponsorship rate card within 24 hours.
+              </p>
+            </div>
+            <a
+              href="mailto:ads@f1naija.com?subject=Rate%20Card%20Request&body=Hi%2C%20please%20send%20me%20the%20F1%20Naija%20rate%20card.%0A%0AName%3A%20%0ABrand%3A%20"
+              style={{
+                display: "inline-flex", alignItems: "center", gap: 7,
+                padding: "11px 22px", minHeight: 44, borderRadius: 7, fontSize: 13, fontWeight: 700,
+                background: "rgba(245,167,36,.15)", border: "1px solid rgba(245,167,36,.3)",
+                color: "#f5a724", textDecoration: "none", whiteSpace: "nowrap",
+              }}
+            >
+              Request Rate Card →
+            </a>
+          </div>
+        </section>
+
+        {/* ── CONTACT FORM ── */}
+        <section aria-label="Contact us" style={{ marginBottom: "clamp(40px,6vw,64px)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+            <div style={{ width: 3, height: 16, background: "#00d484", borderRadius: 2 }} />
+            <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--f1-muted)" }}>
+              Get in touch
+            </span>
+          </div>
+          <p style={{ fontSize: 13, color: "var(--f1-muted)", marginBottom: 24, lineHeight: 1.6 }}>
+            Tell us about your brand and we&apos;ll get back to you within 48 hours.
           </p>
+
+          <div style={{
+            background: "var(--f1-card)", border: "1px solid rgba(255,255,255,.07)",
+            borderRadius: 14, padding: "clamp(24px,4vw,36px)",
+          }}>
+            {submitted ? (
+              <div style={{ textAlign: "center", padding: "24px 0" }}>
+                <div style={{ fontSize: 36, marginBottom: 16 }}>✅</div>
+                <div style={{ fontSize: 18, fontWeight: 800, color: "var(--f1-text)", marginBottom: 8 }}>
+                  Email client opened!
+                </div>
+                <p style={{ fontSize: 13, color: "var(--f1-muted)", lineHeight: 1.6, marginBottom: 20 }}>
+                  Your message has been pre-filled in your email client. Hit send and we&apos;ll get back to you within 48 hours.
+                </p>
+                <button
+                  onClick={() => setSubmitted(false)}
+                  style={{
+                    background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.12)",
+                    borderRadius: 7, padding: "10px 18px", fontSize: 12, fontWeight: 600,
+                    color: "var(--f1-muted)", cursor: "pointer", fontFamily: "inherit",
+                  }}
+                >
+                  Send another message
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                    <label style={{ fontSize: 11, fontWeight: 700, color: "var(--f1-muted)", textTransform: "uppercase", letterSpacing: ".1em" }}>
+                      Your name *
+                    </label>
+                    <input
+                      className="partner-input"
+                      required
+                      type="text"
+                      placeholder="Chidi Okeke"
+                      value={form.name}
+                      onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
+                      style={inputStyle}
+                    />
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                    <label style={{ fontSize: 11, fontWeight: 700, color: "var(--f1-muted)", textTransform: "uppercase", letterSpacing: ".1em" }}>
+                      Brand / company *
+                    </label>
+                    <input
+                      className="partner-input"
+                      required
+                      type="text"
+                      placeholder="Brand name"
+                      value={form.brand}
+                      onChange={e => setForm(f => ({ ...f, brand: e.target.value }))}
+                      style={inputStyle}
+                    />
+                  </div>
+                </div>
+
+                <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                  <label style={{ fontSize: 11, fontWeight: 700, color: "var(--f1-muted)", textTransform: "uppercase", letterSpacing: ".1em" }}>
+                    Email address *
+                  </label>
+                  <input
+                    className="partner-input"
+                    required
+                    type="email"
+                    placeholder="you@brand.com"
+                    value={form.email}
+                    onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
+                    style={inputStyle}
+                  />
+                </div>
+
+                <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                  <label style={{ fontSize: 11, fontWeight: 700, color: "var(--f1-muted)", textTransform: "uppercase", letterSpacing: ".1em" }}>
+                    Tell us about your campaign
+                  </label>
+                  <textarea
+                    className="partner-input"
+                    rows={4}
+                    placeholder="What are your goals? Which audiences do you want to reach? Any specific race weekends or activations in mind?"
+                    value={form.message}
+                    onChange={e => setForm(f => ({ ...f, message: e.target.value }))}
+                    style={{ ...inputStyle, resize: "vertical" }}
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  style={{
+                    display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8,
+                    padding: "14px 28px", minHeight: 48, borderRadius: 8, fontSize: 14, fontWeight: 800,
+                    background: "#00d484", color: "#04060e", border: "none",
+                    cursor: "pointer", fontFamily: "inherit", alignSelf: "flex-start",
+                  }}
+                >
+                  📩 Send Message
+                </button>
+
+                <p style={{ fontSize: 11, color: "#52525b", margin: 0, lineHeight: 1.6 }}>
+                  This will open your email client with your message pre-filled. We respond within 48 hours.
+                </p>
+              </form>
+            )}
+          </div>
         </section>
 
         {/* ── CTA ── */}
