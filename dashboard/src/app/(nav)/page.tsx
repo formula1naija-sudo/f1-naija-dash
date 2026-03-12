@@ -67,7 +67,7 @@ export default function Home() {
         driverName: `${r.Driver.givenName} ${r.Driver.familyName}`,
         constructorName: r.Constructor.name,
         constructorId: (r.Constructor.constructorId as string).toLowerCase(),
-        time: r.position === "1" ? (r.Time?.time ?? "") : (r.Time?.time ? `+${r.Time.time}` : ""),
+        time: r.position === "1" ? (r.Time?.time ?? "") : (r.Time?.time ? (String(r.Time.time).startsWith("+") ? String(r.Time.time) : `+${r.Time.time}`) : ""),
       }));
       setLastRace({
         raceName: race.raceName,
