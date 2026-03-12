@@ -56,25 +56,38 @@ export default function Home() {
       .then(d => { if (d.items) setNews(d.items); })
       .catch(() => {});
 
+    // Try current season first; if no races yet (pre-season) fall back to last season
+    const parseRace = (d: unknown): boolean => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const race = (d as any)?.MRData?.RaceTable?.Races?.[0];
+      if (!race) return false;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const podium: PodiumEntry[] = race.Results.slice(0, 3).map((r: any) => ({
+        position: r.position,
+        driverName: `${r.Driver.givenName} ${r.Driver.familyName}`,
+        constructorName: r.Constructor.name,
+        constructorId: (r.Constructor.constructorId as string).toLowerCase(),
+        time: r.position === "1" ? (r.Time?.time ?? "") : (r.Time?.time ? `+${r.Time.time}` : ""),
+      }));
+      setLastRace({
+        raceName: race.raceName,
+        circuit: `${race.Circuit.Location.locality}, ${race.Circuit.Location.country}`,
+        date: race.date as string,
+        podium,
+      });
+      return true;
+    };
     fetch("https://api.jolpi.ca/ergast/f1/current/last/results.json")
       .then(r => r.json())
       .then(d => {
-        const race = d?.MRData?.RaceTable?.Races?.[0];
-        if (!race) return;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const podium: PodiumEntry[] = race.Results.slice(0, 3).map((r: any) => ({
-          position: r.position,
-          driverName: `${r.Driver.givenName} ${r.Driver.familyName}`,
-          constructorName: r.Constructor.name,
-          constructorId: (r.Constructor.constructorId as string).toLowerCase(),
-          time: r.position === "1" ? (r.Time?.time ?? "") : (r.Time?.time ? `+${r.Time.time}` : ""),
-        }));
-        setLastRace({
-          raceName: race.raceName,
-          circuit: `${race.Circuit.Location.locality}, ${race.Circuit.Location.country}`,
-          date: race.date as string,
-          podium,
-        });
+        if (!parseRace(d)) {
+          // No races in current season yet — show last race of previous season
+          const prevYear = new Date().getFullYear() - 1;
+          fetch(`https://api.jolpi.ca/ergast/f1/${prevYear}/last/results.json`)
+            .then(r2 => r2.json())
+            .then(d2 => parseRace(d2))
+            .catch(() => {});
+        }
       })
       .catch(() => {});
   }, []);
