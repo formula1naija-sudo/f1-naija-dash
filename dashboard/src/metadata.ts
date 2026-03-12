@@ -4,7 +4,7 @@ const title = "F1 Naija | Live F1 Dashboard";
 const description =
 	"Real-time Formula 1 timing and telemetry. Live leaderboards, tire choices, gaps, lap times, sector times and more. Powered by F1 Naija.";
 
-const url = "https://f1-naija-dash.vercel.app";
+const url = "https://f1-naija.vercel.app";
 
 export const metadata: Metadata = {
 	generator: "Next.js",
@@ -33,10 +33,10 @@ export const metadata: Metadata = {
 	},
 
 	twitter: {
-		site: "@f1naija",
+		site: "@f1_naija",
 		title,
 		description,
-		creator: "@f1naija",
+		creator: "@f1_naija",
 		card: "summary_large_image",
 		images: [
 			{
@@ -56,7 +56,7 @@ export const metadata: Metadata = {
 
 	creator: "F1 Naija",
 	publisher: "F1 Naija",
-	authors: [{ name: "F1 Naija", url: "https://x.com/f1naija" }],
+	authors: [{ name: "F1 Naija", url: "https://x.com/f1_naija" }],
 
 	appleWebApp: {
 		capable: true,

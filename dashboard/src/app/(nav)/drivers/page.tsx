@@ -35,6 +35,7 @@ const teamColors: Record<string, string> = {
   kick_sauber:  "#C0002A",
   racing_bulls: "#6692FF",
   rb:           "#6692FF",
+  cadillac:     "#C8AA32",
 };
 
 function tColor(id: string) {
