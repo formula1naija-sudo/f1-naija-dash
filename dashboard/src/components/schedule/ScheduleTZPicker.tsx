@@ -1,76 +1,61 @@
 "use client";
 import { useState } from "react";
 
-const TIMEZONES = [
-  { zone: "Africa/Lagos",        flag: "🇳🇬", abbr: "WAT",  label: "Nigeria"      },
-  { zone: "Africa/Accra",        flag: "🇬🇭", abbr: "GMT",  label: "Ghana"        },
-  { zone: "Africa/Johannesburg", flag: "🇿🇦", abbr: "SAST", label: "South Africa" },
-  { zone: "America/New_York",    flag: "🇺🇸", abbr: "ET",   label: "USA (East)"   },
-];
+export type TZMode = "my-time" | "track-time";
 
-const TZ_STORAGE_KEY = "f1_schedule_tz";
-const TZ_EVENT       = "f1-tz-change";
+export const TZ_STORAGE_KEY = "f1_schedule_tz_mode";
+export const TZ_EVENT       = "f1-tz-change";
 
 export default function ScheduleTZPicker() {
-  const [activeTZ, setActiveTZ] = useState<number>(() => {
-    if (typeof window === "undefined") return 0;
+  const [mode, setMode] = useState<TZMode>(() => {
+    if (typeof window === "undefined") return "my-time";
     const saved = localStorage.getItem(TZ_STORAGE_KEY);
-    if (saved !== null) {
-      const idx = parseInt(saved);
-      if (!isNaN(idx) && idx >= 0 && idx < TIMEZONES.length) return idx;
-    }
-    return 0;
+    return saved === "track-time" ? "track-time" : "my-time";
   });
 
-  const selectTZ = (i: number) => {
-    setActiveTZ(i);
-    localStorage.setItem(TZ_STORAGE_KEY, String(i));
-    window.dispatchEvent(new CustomEvent(TZ_EVENT, { detail: i }));
+  const select = (m: TZMode) => {
+    setMode(m);
+    localStorage.setItem(TZ_STORAGE_KEY, m);
+    window.dispatchEvent(new CustomEvent(TZ_EVENT, { detail: m }));
   };
+
+  const OPTIONS: { value: TZMode; icon: string; label: string; sub: string }[] = [
+    { value: "my-time",    icon: "📱", label: "My Time",    sub: "Your device" },
+    { value: "track-time", icon: "🏟️", label: "Track Time", sub: "At the circuit" },
+  ];
 
   return (
     <div style={{
-      display: "flex", alignItems: "center", gap: 6,
+      display: "flex", alignItems: "center", gap: 4,
       background: "var(--f1-card)",
       border: "1px solid rgba(255,255,255,.06)",
       borderRadius: 10,
-      padding: "5px 8px",
+      padding: "4px",
     }}>
-      <span style={{
-        fontSize: 10, fontWeight: 600,
-        color: "#52525b",
-        textTransform: "uppercase", letterSpacing: ".06em",
-        paddingRight: 8,
-        borderRight: "1px solid rgba(255,255,255,.07)",
-        marginRight: 2,
-        whiteSpace: "nowrap",
-      }}>
-        Times in
-      </span>
-      <div style={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
-        {TIMEZONES.map((tz, i) => (
-          <button
-            key={tz.zone}
-            onClick={() => selectTZ(i)}
-            title={tz.label}
-            style={{
-              background: activeTZ === i ? "rgba(0,212,132,.12)" : "transparent",
-              border: activeTZ === i ? "1px solid rgba(0,212,132,.28)" : "1px solid transparent",
-              borderRadius: 6,
-              padding: "4px 8px",
-              minHeight: 36,
-              fontSize: 11, fontWeight: 600,
-              color: activeTZ === i ? "#00d484" : "#71717a",
-              cursor: "pointer",
-              transition: "all .15s",
-              whiteSpace: "nowrap",
-              touchAction: "manipulation",
-            }}
-          >
-            {tz.flag} {tz.abbr}
-          </button>
-        ))}
-      </div>
+      {OPTIONS.map(opt => (
+        <button
+          key={opt.value}
+          onClick={() => select(opt.value)}
+          title={opt.sub}
+          style={{
+            display: "flex", alignItems: "center", gap: 6,
+            background: mode === opt.value ? "rgba(0,212,132,.12)" : "transparent",
+            border: mode === opt.value ? "1px solid rgba(0,212,132,.28)" : "1px solid transparent",
+            borderRadius: 7,
+            padding: "6px 12px",
+            minHeight: 36,
+            fontSize: 11, fontWeight: 700,
+            color: mode === opt.value ? "#00d484" : "#71717a",
+            cursor: "pointer",
+            transition: "all .15s",
+            whiteSpace: "nowrap",
+            touchAction: "manipulation",
+          }}
+        >
+          <span style={{ fontSize: 13 }}>{opt.icon}</span>
+          {opt.label}
+        </button>
+      ))}
     </div>
   );
 }

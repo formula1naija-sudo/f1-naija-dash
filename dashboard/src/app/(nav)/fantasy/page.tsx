@@ -6,9 +6,9 @@ const LEAGUE_CODE = "C1JYXEPWR10";
 const LEAGUE_URL  = `https://fantasy.formula1.com/en/leagues/join/${LEAGUE_CODE}`;
 
 const PRIZES = [
-  { pos: "🥇", label: "1st Place", prize: "F1 Naija merchandise pack + shoutout across all socials" },
-  { pos: "🥈", label: "2nd Place", prize: "F1 Naija digital bundle + social shoutout" },
-  { pos: "🥉", label: "3rd Place", prize: "Exclusive F1 Naija badge + social shoutout" },
+  { pos: "🥇", label: "1st Place — 2026 Season", prize: "F1 Naija merchandise pack + shoutout across all socials" },
+  { pos: "🥈", label: "2nd Place — 2026 Season", prize: "F1 Naija digital bundle + social shoutout" },
+  { pos: "🥉", label: "3rd Place — 2026 Season", prize: "Exclusive F1 Naija badge + social shoutout" },
 ];
 
 const HOW_TO_PLAY = [
@@ -79,7 +79,7 @@ export default function FantasyPage() {
           <div className="ffy-1" style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
             <div style={{ width: 16, height: 1, background: "#f5a724" }} />
             <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: "#f5a724" }}>
-              200+ players and counting
+              2026 Season · 200+ players and counting
             </span>
           </div>
           <div className="ffy-2" style={{ lineHeight: .92, marginBottom: 18 }}>
@@ -165,7 +165,7 @@ export default function FantasyPage() {
             ))}
           </div>
           <p style={{ fontSize: 11, color: "#52525b", marginTop: 10, lineHeight: 1.6 }}>
-            * Prizes subject to change. Winners announced after the Abu Dhabi Grand Prix (final round).
+            * 2026 season prizes subject to change. Winners announced after the Abu Dhabi Grand Prix (final round).
           </p>
         </section>
 

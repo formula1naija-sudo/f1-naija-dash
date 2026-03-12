@@ -526,28 +526,22 @@ export default function CommunityPage() {
           gap: 14,
         }}>
 
-          {/* WhatsApp — coming soon */}
+          {/* WhatsApp */}
           <div style={{
             padding: "22px 20px", borderRadius: 12,
             background: "var(--f1-card)",
             border: "1px solid rgba(255,255,255,.07)",
-            opacity: 0.55,
-          }}>
+            transition: "border-color .18s",
+          }}
+            onMouseEnter={e => { if (!window.matchMedia("(hover:hover)").matches) return; e.currentTarget.style.borderColor = "rgba(37,211,102,.3)"; }}
+            onMouseLeave={e => { if (!window.matchMedia("(hover:hover)").matches) return; e.currentTarget.style.borderColor = "rgba(255,255,255,.07)"; }}
+          >
             <div style={{ fontSize: 28, marginBottom: 10 }}>💬</div>
             <div style={{ fontSize: 14, fontWeight: 800, marginBottom: 6 }}>WhatsApp Community</div>
             <p style={{ fontSize: 12, color: "var(--f1-muted)", lineHeight: 1.6, margin: "0 0 16px" }}>
               A dedicated space for race-day chaos, transfers, hot takes, and everything in between.
             </p>
-            <span style={{
-              display: "inline-flex", alignItems: "center",
-              padding: "8px 16px", borderRadius: 7,
-              background: "rgba(255,255,255,.06)",
-              border: "1px solid rgba(255,255,255,.1)",
-              fontSize: 12, fontWeight: 700, color: "var(--f1-muted)",
-              cursor: "not-allowed",
-            }}>
-              Coming Soon
-            </span>
+            <CTAButton href="https://chat.whatsapp.com/F1Naija" label="💬 Join on WhatsApp" variant="ghost" />
           </div>
 
           {/* X Spaces */}

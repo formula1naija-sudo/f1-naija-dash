@@ -198,7 +198,7 @@ export default function AboutPage() {
                   minHeight: 44,
                 }}
               >
-                View Partnership Packages →
+                Partner with Us →
               </Link>
             </div>
           </div>

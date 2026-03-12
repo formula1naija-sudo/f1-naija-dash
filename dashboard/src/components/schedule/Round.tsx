@@ -5,23 +5,79 @@ import type { Round as RoundType } from "@/types/schedule.type";
 import { groupSessionByDay } from "@/lib/groupSessionByDay";
 import { formatDayRange, formatMonth } from "@/lib/dateFormatter";
 import Flag from "@/components/Flag";
+import { TZ_STORAGE_KEY, TZ_EVENT } from "@/components/schedule/ScheduleTZPicker";
+import type { TZMode } from "@/components/schedule/ScheduleTZPicker";
 
 type Props = {
   round: RoundType;
   nextName?: string;
 };
 
-const TIMEZONES = [
-  { zone: "Africa/Lagos",        flag: "🇳🇬", abbr: "WAT"  },
-  { zone: "Africa/Accra",        flag: "🇬🇭", abbr: "GMT"  },
-  { zone: "Africa/Johannesburg", flag: "🇿🇦", abbr: "SAST" },
-  { zone: "Africa/Nairobi",      flag: "🇰🇪", abbr: "EAT"  },
-  { zone: "Europe/London",       flag: "🇬🇧", abbr: "BST"  },
-  { zone: "America/New_York",    flag: "🇺🇸", abbr: "ET"   },
+// IANA timezone for each F1 circuit country
+// US races use round.name for disambiguation
+const TRACK_TIMEZONES: Record<string, string> = {
+  Australia:             "Australia/Melbourne",
+  Austria:               "Europe/Vienna",
+  Azerbaijan:            "Asia/Baku",
+  Bahrain:               "Asia/Bahrain",
+  Belgium:               "Europe/Brussels",
+  Brazil:                "America/Sao_Paulo",
+  Canada:                "America/Toronto",
+  China:                 "Asia/Shanghai",
+  Spain:                 "Europe/Madrid",
+  France:                "Europe/Paris",
+  "Great Britain":       "Europe/London",
+  "United Kingdom":      "Europe/London",
+  Germany:               "Europe/Berlin",
+  Hungary:               "Europe/Budapest",
+  Italy:                 "Europe/Rome",
+  Japan:                 "Asia/Tokyo",
+  "Saudi Arabia":        "Asia/Riyadh",
+  Mexico:                "America/Mexico_City",
+  Monaco:                "Europe/Monaco",
+  Netherlands:           "Europe/Amsterdam",
+  Portugal:              "Europe/Lisbon",
+  Qatar:                 "Asia/Qatar",
+  Singapore:             "Asia/Singapore",
+  "United Arab Emirates":"Asia/Dubai",
+};
+
+// US venues — keyed by round.name (partial match)
+const US_TRACK_TZ: { match: string; zone: string }[] = [
+  { match: "Miami",     zone: "America/New_York"    },
+  { match: "United States", zone: "America/Chicago" }, // COTA, Austin
+  { match: "Las Vegas", zone: "America/Los_Angeles" },
 ];
 
-const TZ_STORAGE_KEY = "f1_schedule_tz";
-const TZ_EVENT       = "f1-tz-change";
+function getTrackTimezone(countryName: string, roundName: string): string {
+  if (countryName === "United States") {
+    for (const entry of US_TRACK_TZ) {
+      if (roundName.includes(entry.match)) return entry.zone;
+    }
+    return "America/New_York";
+  }
+  return TRACK_TIMEZONES[countryName] ?? "UTC";
+}
+
+function getDeviceTimezone(): string {
+  try {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone;
+  } catch {
+    return "UTC";
+  }
+}
+
+function getTZAbbr(timezone: string): string {
+  try {
+    const parts = Intl.DateTimeFormat("en-US", {
+      timeZone: timezone,
+      timeZoneName: "short",
+    }).formatToParts(new Date());
+    return parts.find(p => p.type === "timeZoneName")?.value ?? timezone;
+  } catch {
+    return timezone;
+  }
+}
 
 function formatTime(dateStr: string, timezone: string): string {
   try {
@@ -60,26 +116,30 @@ export default function Round({ round, nextName }: Props) {
   const isNext = round.name === nextName;
   const isLive = isNext && utc().isBetween(utc(round.start), utc(round.end));
 
-  const [activeTZ, setActiveTZ] = useState<number>(() => {
-    if (typeof window === "undefined") return 0;
+  const [mode, setMode] = useState<TZMode>(() => {
+    if (typeof window === "undefined") return "my-time";
     const saved = localStorage.getItem(TZ_STORAGE_KEY);
-    if (saved !== null) {
-      const idx = parseInt(saved);
-      if (!isNaN(idx) && idx >= 0 && idx < TIMEZONES.length) return idx;
-    }
-    return 0;
+    return saved === "track-time" ? "track-time" : "my-time";
   });
 
   useEffect(() => {
     const handler = (e: Event) => {
-      const detail = (e as CustomEvent<number>).detail;
-      if (typeof detail === "number") setActiveTZ(detail);
+      const detail = (e as CustomEvent<TZMode>).detail;
+      if (detail === "my-time" || detail === "track-time") setMode(detail);
     };
     window.addEventListener(TZ_EVENT, handler);
     return () => window.removeEventListener(TZ_EVENT, handler);
   }, []);
 
-  const tz = TIMEZONES[activeTZ];
+  const timezone = mode === "track-time"
+    ? getTrackTimezone(round.countryName, round.name)
+    : getDeviceTimezone();
+
+  const tzAbbr = getTZAbbr(timezone);
+
+  const tzLabel = mode === "track-time"
+    ? `🏟️ Track time · ${tzAbbr}`
+    : `📱 My time · ${tzAbbr}`;
 
   const statusBadge = isLive
     ? { label: "Live",    bg: "rgba(245,167,36,.12)",  color: "#f5a724", border: "rgba(245,167,36,.30)" }
@@ -165,7 +225,7 @@ export default function Round({ round, nextName }: Props) {
       </div>
 
       {/* ── SESSIONS ───────────────────────────────────── */}
-      <div style={{ padding: "10px 16px 14px" }}>
+      <div style={{ padding: "10px 16px 4px" }}>
         {groupSessionByDay(round.sessions).map((day, i) => (
           <div key={`day.${i}`}>
             {/* Day label */}
@@ -207,14 +267,23 @@ export default function Round({ round, nextName }: Props) {
                     textDecoration: isDone ? "line-through" : "none",
                     whiteSpace: "nowrap",
                   }}>
-                    {formatTime(session.start, tz.zone)}{" "}
-                    <span style={{ color: "#52525b" }}>{tz.abbr}</span>
+                    {formatTime(session.start, timezone)}{" "}
+                    <span style={{ color: "#52525b" }}>{tzAbbr}</span>
                   </span>
                 </div>
               );
             })}
           </div>
         ))}
+      </div>
+
+      {/* ── TZ LABEL ───────────────────────────────────── */}
+      <div style={{
+        padding: "6px 16px 10px",
+        fontSize: 9, fontWeight: 600,
+        color: "#52525b", letterSpacing: ".04em",
+      }}>
+        {tzLabel}
       </div>
 
       {/* ── ACTIONS: Add to Calendar + WhatsApp ─────────── */}
