@@ -4,6 +4,7 @@ import { type ReactNode, useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { AnimatePresence, motion } from 'motion/react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useDataEngine } from '@/hooks/useDataEngine';
 import { useWakeLock } from '@/hooks/useWakeLock';
 import { useStores } from '@/hooks/useStores';
@@ -70,7 +71,11 @@ type Props = {
   children: ReactNode;
 };
 
+// Routes that should always render their content regardless of live session status
+const ALWAYS_SHOW_ROUTES = ['/dashboard/settings', '/dashboard/standings'];
+
 export default function DashboardLayout({ children }: Props) {
+  const pathname = usePathname();
   const stores = useStores();
   const { handleInitial, handleUpdate, maxDelay } = useDataEngine(stores);
   const { connected } = useSocket({ handleInitial, handleUpdate });
@@ -85,7 +90,8 @@ export default function DashboardLayout({ children }: Props) {
   const sessionStatus   = useDataStore(({ state }) => state?.SessionStatus?.Status);
   const dataLoaded      = useDataStore(({ state }) => state !== undefined);
   const noActiveSession = connected && dataLoaded && sessionStatus !== 'Started';
-  const showNoSession   = noActiveSession || (syncing && !ended);
+  const alwaysShow      = ALWAYS_SHOW_ROUTES.some(r => pathname.startsWith(r));
+  const showNoSession   = !alwaysShow && (noActiveSession || (syncing && !ended));
 
   return (
     <>
