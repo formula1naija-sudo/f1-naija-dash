@@ -162,70 +162,6 @@ function SectionCard({ children }: { children: React.ReactNode }) {
   );
 }
 
-// ── Naija Driver Index data ────────────────────────────────────────
-type Driver = {
-  name: string; team: string; teamColor: string;
-  nationality: string; flag: string; number: number;
-  naijaRating: number;
-  categories: { pace: number; racecraft: number; consistency: number; hype: number; potential: number };
-  verdict: string;
-  status: "🔥 Hot" | "📈 Rising" | "😐 Mid" | "📉 Struggling" | "👀 Watch" | "🆕 Rookie";
-};
-
-const DRIVERS_2026: Driver[] = [
-  { name: "Lando Norris",      team: "McLaren",         teamColor: "#FF8000", nationality: "British",       flag: "🇬🇧", number: 1,  naijaRating: 9, categories: { pace:9,  racecraft:9,  consistency:9,  hype:10, potential:10 }, verdict: "2025 World Champion! Naija fans don adopt am as our guy. Him carry the #1 with swag — make e defend am well.", status: "🔥 Hot"      },
-  { name: "Oscar Piastri",     team: "McLaren",         teamColor: "#FF8000", nationality: "Australian",    flag: "🇦🇺", number: 81, naijaRating: 8, categories: { pace:9,  racecraft:8,  consistency:9,  hype:7,  potential:10 }, verdict: "Quietly menacing. This boy dey score points like breathing — the next superstar dey rise.", status: "📈 Rising"   },
-  { name: "George Russell",    team: "Mercedes",        teamColor: "#27F4D2", nationality: "British",       flag: "🇬🇧", number: 63, naijaRating: 7, categories: { pace:8,  racecraft:8,  consistency:9,  hype:6,  potential:8  }, verdict: "Underrated and understated. If that silver car give am tools, e go surprise everybody.", status: "👀 Watch"     },
-  { name: "Kimi Antonelli",    team: "Mercedes",        teamColor: "#27F4D2", nationality: "Italian",       flag: "🇮🇹", number: 12, naijaRating: 7, categories: { pace:8,  racecraft:7,  consistency:7,  hype:8,  potential:10 }, verdict: "The chosen one wey Mercedes hand-picked. Baby driver but potential dey off the charts — watch closely.", status: "🆕 Rookie"   },
-  { name: "Charles Leclerc",   team: "Ferrari",         teamColor: "#EF1A2D", nationality: "Monégasque",    flag: "🇲🇨", number: 16, naijaRating: 8, categories: { pace:9,  racecraft:8,  consistency:7,  hype:8,  potential:9  }, verdict: "Fast like electricity but occasional blunder dey pain Naija fans. Biko sort your qualifying head.", status: "📈 Rising"   },
-  { name: "Lewis Hamilton",    team: "Ferrari",         teamColor: "#EF1A2D", nationality: "British",       flag: "🇬🇧", number: 44, naijaRating: 9, categories: { pace:9,  racecraft:10, consistency:8,  hype:10, potential:8  }, verdict: "The GOAT debate don reach Maranello. Ferrari red on Lewis Hamilton is cinema — make we see the magic.", status: "🔥 Hot"      },
-  { name: "Max Verstappen",    team: "Red Bull Racing", teamColor: "#3671C6", nationality: "Dutch",         flag: "🇳🇱", number: 3,  naijaRating: 9, categories: { pace:10, racecraft:10, consistency:9,  hype:8,  potential:9  }, verdict: "Four-time champion wey dey operate on a different level. E lost the title but underestimate am at your own risk.", status: "🔥 Hot"      },
-  { name: "Isack Hadjar",      team: "Red Bull Racing", teamColor: "#3671C6", nationality: "French",        flag: "🇫🇷", number: 6,  naijaRating: 6, categories: { pace:8,  racecraft:7,  consistency:7,  hype:6,  potential:9  }, verdict: "Big shoes to fill at Red Bull. French-Algerian rookie with fire in his belly — the pressure go test am.", status: "🆕 Rookie"   },
-  { name: "Carlos Sainz",      team: "Williams",        teamColor: "#00A0DD", nationality: "Spanish",       flag: "🇪🇸", number: 55, naijaRating: 7, categories: { pace:8,  racecraft:8,  consistency:8,  hype:6,  potential:7  }, verdict: "E go squeeze every drop from the Williams. This man never give up in his life — respect must be given.", status: "👀 Watch"     },
-  { name: "Alexander Albon",   team: "Williams",        teamColor: "#00A0DD", nationality: "Thai",          flag: "🇹🇭", number: 23, naijaRating: 6, categories: { pace:7,  racecraft:8,  consistency:8,  hype:6,  potential:7  }, verdict: "Mr. Points from nowhere. Him dey extract magic from midfield machinery — quiet but dependable.", status: "😐 Mid"       },
-  { name: "Fernando Alonso",   team: "Aston Martin",    teamColor: "#00594F", nationality: "Spanish",       flag: "🇪🇸", number: 14, naijaRating: 8, categories: { pace:8,  racecraft:10, consistency:7,  hype:9,  potential:7  }, verdict: "Uncle Fernando still dey for 2026! 44 years old and racing sharp. Naija fans love veteran energy — we salute you.", status: "🔥 Hot"      },
-  { name: "Lance Stroll",      team: "Aston Martin",    teamColor: "#00594F", nationality: "Canadian",      flag: "🇨🇦", number: 18, naijaRating: 5, categories: { pace:7,  racecraft:6,  consistency:6,  hype:5,  potential:6  }, verdict: "Daddy money move, but the boy get talent sha. Give am a good car and watch him surprise you on certain Saturdays.", status: "😐 Mid"       },
-  { name: "Pierre Gasly",      team: "Alpine",          teamColor: "#2173B8", nationality: "French",        flag: "🇫🇷", number: 10, naijaRating: 6, categories: { pace:7,  racecraft:8,  consistency:7,  hype:6,  potential:7  }, verdict: "Gasly don prove e belongs at this level. Solid midfield warrior — Alpine dey lucky to have am.", status: "😐 Mid"       },
-  { name: "Franco Colapinto",  team: "Alpine",          teamColor: "#2173B8", nationality: "Argentine",     flag: "🇦🇷", number: 43, naijaRating: 6, categories: { pace:7,  racecraft:7,  consistency:6,  hype:8,  potential:8  }, verdict: "South American passion wey dey show for every lap. Naija fans vibe with his hunger — the boy no fear nothing.", status: "📈 Rising"   },
-  { name: "Esteban Ocon",      team: "Haas",            teamColor: "#B6BABD", nationality: "French",        flag: "🇫🇷", number: 31, naijaRating: 6, categories: { pace:7,  racecraft:7,  consistency:7,  hype:5,  potential:6  }, verdict: "Fresh start at Haas after Alpine drama. E need this reset — watch if the new environment wake am up.", status: "👀 Watch"     },
-  { name: "Oliver Bearman",    team: "Haas",            teamColor: "#B6BABD", nationality: "British",       flag: "🇬🇧", number: 87, naijaRating: 6, categories: { pace:7,  racecraft:7,  consistency:6,  hype:7,  potential:9  }, verdict: "The boy wey took Ferrari spot at short notice and delivered. Haas is his proving ground — make e shine.", status: "📈 Rising"   },
-  { name: "Nico Hülkenberg",   team: "Audi",            teamColor: "#C0002A", nationality: "German",        flag: "🇩🇪", number: 27, naijaRating: 6, categories: { pace:7,  racecraft:8,  consistency:8,  hype:6,  potential:6  }, verdict: "No podium in 200+ races but him no give up. The Hulk dey help build Audi from the ground up — respect.", status: "👀 Watch"     },
-  { name: "Gabriel Bortoleto", team: "Audi",            teamColor: "#C0002A", nationality: "Brazilian",     flag: "🇧🇷", number: 5,  naijaRating: 6, categories: { pace:8,  racecraft:7,  consistency:6,  hype:7,  potential:9  }, verdict: "Brazilian flair wey F2 championship don back up. Naija fans like his spirit — make e carry the Senna legacy well.", status: "🆕 Rookie"   },
-  { name: "Liam Lawson",       team: "Racing Bulls",    teamColor: "#6692FF", nationality: "New Zealander", flag: "🇳🇿", number: 30, naijaRating: 6, categories: { pace:8,  racecraft:8,  consistency:6,  hype:6,  potential:8  }, verdict: "Aggressive on track, no take nonsense. Red Bull system chewed and spat others but Lawson dey stand firm.", status: "👀 Watch"     },
-  { name: "Arvid Lindblad",    team: "Racing Bulls",    teamColor: "#6692FF", nationality: "British",       flag: "🇬🇧", number: 41, naijaRating: 5, categories: { pace:7,  racecraft:6,  consistency:5,  hype:5,  potential:9  }, verdict: "17 years old and already in F1! Kid still dey learn but the talent dey raw. E go be special in few years.", status: "🆕 Rookie"   },
-  { name: "Sergio Pérez",      team: "Cadillac",        teamColor: "#C8AA32", nationality: "Mexican",       flag: "🇲🇽", number: 11, naijaRating: 6, categories: { pace:7,  racecraft:8,  consistency:6,  hype:7,  potential:6  }, verdict: "Checo back for Cadillac comeback story. The man wey Naija fans love to root for — make am prove he still get it.", status: "📈 Rising"   },
-  { name: "Valtteri Bottas",   team: "Cadillac",        teamColor: "#C8AA32", nationality: "Finnish",       flag: "🇫🇮", number: 77, naijaRating: 5, categories: { pace:7,  racecraft:7,  consistency:7,  hype:6,  potential:5  }, verdict: "Finland quiet man dey still dey for 2026. Valtteri dey score points when nobody dey watch — underestimate at your peril.", status: "😐 Mid"       },
-];
-
-const SORT_OPTIONS = [
-  { key: "naijaRating", label: "🇳🇬 Naija Rating" },
-  { key: "pace",        label: "⚡ Pace"           },
-  { key: "racecraft",   label: "🏎️ Racecraft"      },
-  { key: "consistency", label: "📊 Consistency"    },
-  { key: "hype",        label: "🔥 Hype"           },
-  { key: "potential",   label: "🚀 Potential"      },
-] as const;
-type SortKey = typeof SORT_OPTIONS[number]["key"];
-
-function RatingBar({ value, color = "#00d484" }: { value: number; color?: string }) {
-  return (
-    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-      <div style={{ flex: 1, height: 5, borderRadius: 3, background: "rgba(255,255,255,.08)", overflow: "hidden" }}>
-        <div style={{ width: `${value * 10}%`, height: "100%", background: `linear-gradient(90deg,${color}99,${color})`, borderRadius: 3, transition: "width .5s ease" }} />
-      </div>
-      <span style={{ fontSize: 11, fontWeight: 700, color, minWidth: 18, textAlign: "right" }}>{value}</span>
-    </div>
-  );
-}
-
-const TEAM_GROUPS = [
-  { team: "McLaren",          color: "#FF8000" }, { team: "Ferrari",         color: "#EF1A2D" },
-  { team: "Red Bull Racing",  color: "#3671C6" }, { team: "Mercedes",        color: "#27F4D2" },
-  { team: "Williams",         color: "#00A0DD" }, { team: "Aston Martin",    color: "#00594F" },
-  { team: "Alpine",           color: "#2173B8" }, { team: "Haas",            color: "#B6BABD" },
-  { team: "Audi",             color: "#C0002A" }, { team: "Racing Bulls",    color: "#6692FF" },
-  { team: "Cadillac",         color: "#C8AA32" },
-];
 
 // ══════════════════════════════════════════════════════════════════
 // Hardcoded fallback counts — shown immediately while API loads (or if it fails).
@@ -333,18 +269,6 @@ function PushNotificationBanner() {
 /* ════════════════════════════════════════════════════════════ */
 export default function CommunityPage() {
   const [stats, setStats] = useState<SocialStats>(FALLBACK_STATS);
-  const [sortKey,    setSortKey]    = useState<SortKey>("naijaRating");
-  const [filterTeam, setFilterTeam] = useState<string>("All");
-
-  const sorted = useMemo(() => {
-    const base = filterTeam === "All"
-      ? [...DRIVERS_2026]
-      : DRIVERS_2026.filter(d => d.team === filterTeam);
-    return base.sort((a, b) => {
-      if (sortKey === "naijaRating") return b.naijaRating - a.naijaRating;
-      return b.categories[sortKey as keyof typeof a.categories] - a.categories[sortKey as keyof typeof a.categories];
-    });
-  }, [sortKey, filterTeam]);
 
   useEffect(() => {
     fetch("/api/social-stats")
@@ -512,7 +436,14 @@ export default function CommunityPage() {
             <p style={{ fontSize: 12, color: "var(--f1-muted)", lineHeight: 1.6, margin: "0 0 16px" }}>
               A dedicated space for race-day chaos, transfers, hot takes, and everything in between.
             </p>
-            <CTAButton href="https://chat.whatsapp.com/F1Naija" label="💬 Join on WhatsApp" variant="ghost" />
+            <span style={{
+              display: "inline-flex", alignItems: "center",
+              padding: "8px 16px", borderRadius: 8, fontSize: 12, fontWeight: 700,
+              background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.1)",
+              color: "var(--f1-muted)", letterSpacing: ".04em",
+            }}>
+              Coming Soon
+            </span>
           </div>
 
           {/* X Spaces */}
@@ -550,10 +481,7 @@ export default function CommunityPage() {
               Every race weekend, we run live-reaction threads on X and Threads. Follow the
               action lap by lap, share your take, and join thousands of Nigerian F1 fans in real time.
             </p>
-            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-              <CTAButton href="https://x.com/f1_naija" label="𝕏 Follow on X" variant="ghost" />
-              <CTAButton href="https://www.threads.com/@f1_naija" label="Threads" variant="ghost" />
-            </div>
+            <CTAButton href="https://x.com/f1_naija" label="𝕏 Follow on X" variant="ghost" />
           </div>
         </div>
       </section>
@@ -593,117 +521,6 @@ export default function CommunityPage() {
 
       <SectionDivider />
 
-      {/* ── NAIJA DRIVER INDEX ─────────────────────────────────── */}
-      <section aria-label="Naija Driver Index 2026" style={{ padding: "56px 0" }}>
-        <style>{`
-          .ni-card { transition: border-color .18s, transform .18s, box-shadow .18s; }
-          .ni-card:hover { border-color: rgba(255,255,255,.14) !important; transform: translateY(-1px); box-shadow: 0 8px 32px rgba(0,0,0,.24); }
-          .ni-sort-btn:hover, .ni-filter-btn:hover { opacity: .85; }
-          @media (prefers-reduced-motion: reduce) { .ni-card { transition: none; } }
-        `}</style>
-
-        <div style={{ marginBottom: 28 }}>
-          <EyebrowLabel text="Rated by Naija Fans · 2026 Season" />
-          <h2 style={{ fontSize: "clamp(26px,4vw,44px)", fontWeight: 900, letterSpacing: "-.025em", lineHeight: .95, margin: "0 0 10px" }}>
-            Naija Driver<br />
-            <span style={{ background: "linear-gradient(120deg,#9c50f5 0%,#c084fc 45%,#00d484 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>Index 2026</span>
-          </h2>
-          <p style={{ fontSize: 13, color: "var(--f1-muted)", lineHeight: 1.65, margin: 0, maxWidth: 520 }}>
-            All 22 F1 drivers rated by pace, racecraft, consistency, hype, and potential.{" "}
-            <span lang="pcm">Community verdicts. Pidgin energy.</span>
-          </p>
-        </div>
-
-        {/* Team filter */}
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 12, alignItems: "center" }}>
-          <span style={{ fontSize: 10, fontWeight: 800, color: "var(--f1-muted)", textTransform: "uppercase", letterSpacing: ".12em", marginRight: 4 }}>Team:</span>
-          {["All", ...TEAM_GROUPS.map(t => t.team)].map(team => {
-            const tc = TEAM_GROUPS.find(t => t.team === team)?.color ?? "#00d484";
-            const active = filterTeam === team;
-            return (
-              <button key={team} className="ni-filter-btn" onClick={() => setFilterTeam(team)} aria-pressed={active} style={{
-                padding: "5px 12px", minHeight: 44, borderRadius: 6, fontSize: 10, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap",
-                background: active ? `${tc}22` : "var(--f1-card)",
-                border: `1px solid ${active ? tc + "66" : "rgba(255,255,255,.07)"}`,
-                color: active ? tc : "var(--f1-muted)", transition: "all .15s",
-              }}>{team === "All" ? "All Teams" : team}</button>
-            );
-          })}
-        </div>
-
-        {/* Sort */}
-        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 6, marginBottom: 24 }}>
-          <span style={{ fontSize: 10, fontWeight: 800, color: "var(--f1-muted)", textTransform: "uppercase", letterSpacing: ".12em", marginRight: 4 }}>Sort:</span>
-          {SORT_OPTIONS.map(opt => (
-            <button key={opt.key} className="ni-sort-btn" onClick={() => setSortKey(opt.key)} aria-pressed={sortKey === opt.key} style={{
-              padding: "5px 12px", minHeight: 44, borderRadius: 7, fontSize: 11, fontWeight: 700, cursor: "pointer",
-              background: sortKey === opt.key ? "rgba(156,80,245,.2)" : "var(--f1-card)",
-              border: `1px solid ${sortKey === opt.key ? "rgba(156,80,245,.45)" : "rgba(255,255,255,.08)"}`,
-              color: sortKey === opt.key ? "#c084fc" : "var(--f1-muted)", transition: "all .15s",
-            }}>{opt.label}</button>
-          ))}
-        </div>
-
-        <p style={{ fontSize: 11, color: "var(--f1-muted)", marginBottom: 14 }}>
-          {sorted.length} driver{sorted.length !== 1 ? "s" : ""}{filterTeam !== "All" ? ` · ${filterTeam}` : " · All Teams"}{" · sorted by "}{SORT_OPTIONS.find(o => o.key === sortKey)?.label.replace(/^[^\s]+\s/, "") ?? sortKey}
-        </p>
-
-        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-          {sorted.map((driver, idx) => (
-            <div key={driver.name} className="ni-card" style={{
-              background: "var(--f1-card)", border: "1px solid rgba(255,255,255,.07)",
-              borderLeft: `3px solid ${driver.teamColor}`, borderRadius: 14, overflow: "hidden",
-            }}>
-              {/* Card header */}
-              <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 10, padding: "12px 16px", borderBottom: "1px solid rgba(255,255,255,.05)" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                  <div style={{ width: 32, height: 32, borderRadius: "50%", flexShrink: 0, background: driver.teamColor + "18", border: `2px solid ${driver.teamColor}40`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 900, color: driver.teamColor }}>{idx + 1}</div>
-                  <div>
-                    <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
-                      <span style={{ fontSize: 15, fontWeight: 900, color: "var(--f1-text)" }}>{driver.name}</span>
-                      <span style={{ fontSize: 15 }} aria-label={driver.nationality}>{driver.flag}</span>
-                      {driver.status === "🆕 Rookie" && (
-                        <span style={{ fontSize: 9, fontWeight: 800, padding: "2px 6px", borderRadius: 4, background: "rgba(0,212,132,.12)", color: "#00d484", border: "1px solid rgba(0,212,132,.22)", textTransform: "uppercase", letterSpacing: ".08em" }}>Rookie</span>
-                      )}
-                    </div>
-                    <div style={{ fontSize: 11, color: "var(--f1-muted)", marginTop: 2 }}>
-                      <span style={{ color: driver.teamColor, fontWeight: 700 }}>#{driver.number}</span>{" · "}<span>{driver.team}</span>
-                    </div>
-                  </div>
-                </div>
-                <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
-                  <span style={{ fontSize: 11, fontWeight: 700, padding: "4px 9px", borderRadius: 5, background: "rgba(255,255,255,.06)", color: "var(--f1-muted)", whiteSpace: "nowrap" }}>{driver.status}</span>
-                  <div style={{ textAlign: "center" }}>
-                    <div style={{ fontSize: 26, fontWeight: 900, lineHeight: 1, background: "linear-gradient(135deg,#9c50f5,#c084fc)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>{driver.naijaRating}</div>
-                    <div style={{ fontSize: 9, color: "#52525b", textTransform: "uppercase", letterSpacing: ".1em" }}>/10</div>
-                  </div>
-                </div>
-              </div>
-              {/* Ratings + verdict */}
-              <div style={{ padding: "12px 16px", display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))", gap: 14 }}>
-                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                  {(["pace","racecraft","consistency","hype","potential"] as const).map(cat => (
-                    <div key={cat}>
-                      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
-                        <span style={{ fontSize: 10, fontWeight: 700, textTransform: "capitalize", letterSpacing: ".06em", color: sortKey === cat ? driver.teamColor : "var(--f1-muted)" }}>{sortKey === cat ? "→ " : ""}{cat}</span>
-                      </div>
-                      <RatingBar value={driver.categories[cat]} color={driver.teamColor} />
-                    </div>
-                  ))}
-                </div>
-                <div style={{ background: "rgba(255,255,255,.025)", border: "1px solid rgba(255,255,255,.05)", borderRadius: 10, padding: "12px 14px", display: "flex", alignItems: "center" }}>
-                  <p style={{ fontSize: 12, color: "var(--f1-text)", fontStyle: "italic", lineHeight: 1.65, margin: 0 }}>&ldquo;<span lang="pcm">{driver.verdict}</span>&rdquo;</p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-        <p style={{ fontSize: 11, color: "#52525b", marginTop: 20, lineHeight: 1.7, textAlign: "center" }}>
-          Ratings represent F1 Naija community opinions — not official statistics. Updated throughout the 2026 season.
-        </p>
-      </section>
-
-      <SectionDivider />
 
 
       {/* ── RACE ALERTS ───────────────────────────────────────── */}

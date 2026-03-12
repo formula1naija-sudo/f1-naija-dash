@@ -58,7 +58,6 @@ const NAV_GROUPS = [
     title: "Info",
     links: [
       { href: "/about",      label: "About F1 Naija",  icon: "ℹ️"  },
-      { href: "/partner",    label: "Partner With Us", icon: "🤝" },
       { href: "/help",       label: "Help",            icon: "❓" },
     ],
   },

@@ -398,29 +398,37 @@ export default function Home() {
           </Link>
         </div>
 
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
-          {SOCIAL_LINKS.map((s) => (
-            <a
-              key={s.href}
-              href={s.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={s.label}
-              style={{
-                display: "inline-flex", alignItems: "center", gap: 8,
-                padding: "10px 16px", minHeight: 44,
-                background: "var(--f1-card)",
-                border: "1px solid rgba(255,255,255,.07)",
-                borderRadius: 10, textDecoration: "none",
-                transition: "border-color .2s",
-              }}
-              onMouseEnter={e => { if (window.matchMedia("(hover:hover)").matches) e.currentTarget.style.borderColor = "rgba(0,212,132,.3)"; }}
-              onMouseLeave={e => { if (window.matchMedia("(hover:hover)").matches) e.currentTarget.style.borderColor = "var(--f1-border)"; }}
-            >
-              <span style={{ fontSize: 18 }}>{s.icon}</span>
-              <span style={{ fontSize: 12, fontWeight: 600, color: "var(--f1-muted)" }}>{s.handle}</span>
-            </a>
-          ))}
+        <div style={{ display: "flex", flexDirection: "column", gap: 12, alignItems: "flex-start" }}>
+          <div style={{ display: "flex", gap: 10 }}>
+            {SOCIAL_LINKS.map((s) => (
+              <a
+                key={s.href}
+                href={s.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={s.label}
+                style={{
+                  display: "inline-flex", alignItems: "center", justifyContent: "center",
+                  width: 44, height: 44,
+                  background: "var(--f1-card)",
+                  border: "1px solid rgba(255,255,255,.07)",
+                  borderRadius: 10, textDecoration: "none",
+                  fontSize: 20,
+                  transition: "border-color .2s",
+                }}
+                onMouseEnter={e => { if (window.matchMedia("(hover:hover)").matches) e.currentTarget.style.borderColor = "rgba(0,212,132,.3)"; }}
+                onMouseLeave={e => { if (window.matchMedia("(hover:hover)").matches) e.currentTarget.style.borderColor = "rgba(255,255,255,.07)"; }}
+              >
+                {s.icon}
+              </a>
+            ))}
+          </div>
+          <Link href="/community" style={{
+            fontSize: 12, fontWeight: 700, color: "#00d484", textDecoration: "none",
+            display: "inline-flex", alignItems: "center", gap: 4,
+          }}>
+            Join the community →
+          </Link>
         </div>
       </section>
     </div>

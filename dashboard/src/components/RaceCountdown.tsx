@@ -17,12 +17,9 @@ type Round = {
   over: boolean;
 };
 
-type TZConfig = {
-  zone: string;
-  label: string;
-  flag: string;
-  abbr: string;
-};
+type TZMode = "my-time" | "track-time";
+const TZ_STORAGE_KEY = "f1_schedule_tz_mode";
+const TZ_EVENT = "f1-tz-change";
 
 const COUNTRY_CODE_MAP: Record<string, string> = {
   Australia: "aus",
@@ -52,14 +49,38 @@ const COUNTRY_CODE_MAP: Record<string, string> = {
   "United States": "usa",
 };
 
-const TIMEZONES: TZConfig[] = [
-  { zone: "Africa/Lagos",        label: "Nigeria",      flag: "🇳🇬", abbr: "WAT"  },
-  { zone: "Africa/Accra",        label: "Ghana",        flag: "🇬🇭", abbr: "GMT"  },
-  { zone: "Africa/Johannesburg", label: "South Africa", flag: "🇿🇦", abbr: "SAST" },
-  { zone: "Africa/Nairobi",      label: "Kenya",        flag: "🇰🇪", abbr: "EAT"  },
-  { zone: "Europe/London",       label: "UK",           flag: "🇬🇧", abbr: "BST"  },
-  { zone: "America/New_York",    label: "USA (East)",   flag: "🇺🇸", abbr: "ET"   },
-];
+// ── Track timezone lookup (mirrors Round.tsx) ─────────────────────
+const TRACK_TZ: Record<string, string> = {
+  Australia: "Australia/Melbourne", Austria: "Europe/Vienna",
+  Azerbaijan: "Asia/Baku", Bahrain: "Asia/Bahrain",
+  Belgium: "Europe/Brussels", Brazil: "America/Sao_Paulo",
+  Canada: "America/Toronto", China: "Asia/Shanghai",
+  Spain: "Europe/Madrid", France: "Europe/Paris",
+  "Great Britain": "Europe/London", "United Kingdom": "Europe/London",
+  Hungary: "Europe/Budapest", Italy: "Europe/Rome",
+  Japan: "Asia/Tokyo", "Saudi Arabia": "Asia/Riyadh",
+  Mexico: "America/Mexico_City", Monaco: "Europe/Monaco",
+  Netherlands: "Europe/Amsterdam", Portugal: "Europe/Lisbon",
+  Qatar: "Asia/Qatar", Singapore: "Asia/Singapore",
+  "United Arab Emirates": "Asia/Dubai",
+  "United States": "America/New_York", // default; Miami/Las Vegas differ but this covers most
+};
+
+function getTrackTZ(countryName: string): string {
+  return TRACK_TZ[countryName] ?? "UTC";
+}
+
+function getDeviceTZ(): string {
+  try { return Intl.DateTimeFormat().resolvedOptions().timeZone; } catch { return "UTC"; }
+}
+
+function getTZAbbr(timezone: string): string {
+  try {
+    const parts = new Intl.DateTimeFormat("en-US", { timeZone: timezone, timeZoneName: "short" })
+      .formatToParts(new Date());
+    return parts.find(p => p.type === "timeZoneName")?.value ?? timezone;
+  } catch { return timezone; }
+}
 
 function formatTZ(dateStr: string, timeZone: string): string {
   try {
@@ -114,7 +135,26 @@ export default function RaceCountdown() {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, mins: 0, secs: 0 });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [activeTZ, setActiveTZ] = useState(0);
+  const [tzMode, setTZMode] = useState<TZMode>(() => {
+    if (typeof window === "undefined") return "my-time";
+    return (localStorage.getItem(TZ_STORAGE_KEY) as TZMode) ?? "my-time";
+  });
+
+  // Sync with Schedule page TZ toggle
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const mode = (e as CustomEvent<TZMode>).detail;
+      if (mode === "my-time" || mode === "track-time") setTZMode(mode);
+    };
+    window.addEventListener(TZ_EVENT, handler);
+    return () => window.removeEventListener(TZ_EVENT, handler);
+  }, []);
+
+  function switchMode(mode: TZMode) {
+    setTZMode(mode);
+    localStorage.setItem(TZ_STORAGE_KEY, mode);
+    window.dispatchEvent(new CustomEvent(TZ_EVENT, { detail: mode }));
+  }
 
   useEffect(() => {
     const fetchSchedule = async () => {
@@ -221,64 +261,65 @@ export default function RaceCountdown() {
         <CountdownUnit value={timeLeft.secs} label="Secs" />
       </div>
 
-      <div>
-        <div className="mb-3 flex gap-1 overflow-x-auto pb-1" role="group" aria-label="Select timezone">
-          {TIMEZONES.map((tz, i) => (
-            <button
-              key={tz.zone}
-              onClick={() => setActiveTZ(i)}
-              aria-pressed={activeTZ === i}
-              aria-label={`Show times in ${tz.label} (${tz.abbr})`}
-              className={
-                "flex-shrink-0 rounded-lg px-3 text-[11px] font-semibold uppercase tracking-wide transition-colors " +
-                (activeTZ === i
-                  ? "bg-emerald-700/30 text-emerald-400"
-                  : "text-zinc-500 hover:text-zinc-300")
-              }
-              style={{ minHeight: 44, minWidth: 44 }}
-            >
-              {tz.flag} {tz.abbr}
-            </button>
-          ))}
-        </div>
+      {(() => {
+        const timezone = tzMode === "track-time"
+          ? getTrackTZ(nextRace.countryName)
+          : getDeviceTZ();
+        const tzAbbr = getTZAbbr(timezone);
+        const tzLabel = tzMode === "track-time"
+          ? `🏟️ Track time · ${tzAbbr}`
+          : `📱 My time · ${tzAbbr}`;
+        return (
+          <div>
+            {/* My Time / Track Time toggle */}
+            <div className="mb-3 flex gap-1.5" role="group" aria-label="Select timezone mode">
+              {(["my-time", "track-time"] as TZMode[]).map(mode => (
+                <button
+                  key={mode}
+                  onClick={() => switchMode(mode)}
+                  aria-pressed={tzMode === mode}
+                  className={
+                    "flex-1 rounded-lg px-3 py-2 text-[11px] font-bold uppercase tracking-wide transition-colors " +
+                    (tzMode === mode
+                      ? "bg-emerald-700/30 text-emerald-400"
+                      : "text-zinc-500 hover:text-zinc-300 bg-white/[0.03]")
+                  }
+                  style={{ minHeight: 36 }}
+                >
+                  {mode === "my-time" ? "📱 My Time" : "🏟️ Track Time"}
+                </button>
+              ))}
+            </div>
 
-        <p className="mb-2.5 text-[11px] font-semibold uppercase tracking-widest text-zinc-500">
-          Session times · {TIMEZONES[activeTZ].label}
-        </p>
-        <div className="flex flex-col gap-1.5">
-          {nextRace.sessions.map((session, i) => {
-            const isRace = session.kind === "Race" || session.kind === "Sprint";
-            return (
-              <div
-                key={i}
-                className={
-                  "flex items-center justify-between rounded-lg px-3.5 py-2 text-sm " +
-                  (isRace
-                    ? "border border-emerald-700/30 bg-emerald-900/15"
-                    : "border border-white/5 bg-white/[0.03]")
-                }
-              >
-                <span
-                  className={
-                    "min-w-[52px] text-xs font-bold " +
-                    (isRace ? "text-emerald-400" : "text-zinc-200")
-                  }
-                >
-                  {getSessionLabel(session.kind)}
-                </span>
-                <span
-                  className={
-                    "font-mono text-xs " +
-                    (isRace ? "text-emerald-400" : "text-zinc-400")
-                  }
-                >
-                  {formatTZ(session.start, TIMEZONES[activeTZ].zone)}
-                </span>
-              </div>
-            );
-          })}
-        </div>
-      </div>
+            <p className="mb-2.5 text-[11px] font-semibold uppercase tracking-widest text-zinc-500">
+              Session times · {tzLabel}
+            </p>
+            <div className="flex flex-col gap-1.5">
+              {nextRace.sessions.map((session, i) => {
+                const isRace = session.kind === "Race" || session.kind === "Sprint";
+                return (
+                  <div
+                    key={i}
+                    className={
+                      "flex items-center justify-between rounded-lg px-3.5 py-2 text-sm " +
+                      (isRace
+                        ? "border border-emerald-700/30 bg-emerald-900/15"
+                        : "border border-white/5 bg-white/[0.03]")
+                    }
+                  >
+                    <span className={"min-w-[52px] text-xs font-bold " + (isRace ? "text-emerald-400" : "text-zinc-200")}>
+                      {getSessionLabel(session.kind)}
+                    </span>
+                    <span className={"font-mono text-xs " + (isRace ? "text-emerald-400" : "text-zinc-400")}>
+                      {formatTZ(session.start, timezone)}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })()}
 
       {/* ── HOW TO WATCH IN NIGERIA ─────────────────────── */}
       <div style={{
