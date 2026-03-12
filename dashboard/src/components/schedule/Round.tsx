@@ -299,12 +299,7 @@ export default function Round({ round, nextName }: Props) {
         const title = `${round.countryName} Grand Prix — F1 Naija`;
         const details = `Follow live on F1 Naija 🇳🇬\nf1-naija.vercel.app/dashboard\n\nNigeria: DStv SuperSport F1 (Ch. 215)`;
 
-        // Google Calendar URL
-        const gcTitle = encodeURIComponent(title);
-        const gcDates = `${fmt(new Date(raceSession.start))}/${fmt(new Date(raceSession.end))}`;
-        const gcUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${gcTitle}&dates=${gcDates}&details=${encodeURIComponent(details)}`;
-
-        // ICS (Apple Calendar / Outlook / Other) — data URI download
+        // ICS — universal calendar download (Android/Google, iOS/Apple, Outlook, Nokia, etc.)
         const icsContent = [
           "BEGIN:VCALENDAR",
           "VERSION:2.0",
@@ -339,35 +334,20 @@ export default function Round({ round, nextName }: Props) {
             padding: "10px 16px 14px",
             borderTop: "1px solid rgba(255,255,255,.05)",
           }}>
-            {/* Calendar row: Google + Apple/Other */}
-            <div style={{ display: "flex", gap: 6 }}>
-              <a
-                href={gcUrl}
-                target="_blank" rel="noopener noreferrer"
-                aria-label={`Add ${round.countryName} Grand Prix to Google Calendar`}
-                style={{
-                  flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 5,
-                  padding: "9px 8px", minHeight: 40, borderRadius: 7, fontSize: 10, fontWeight: 700,
-                  background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.09)",
-                  color: "var(--f1-muted)", textDecoration: "none", whiteSpace: "nowrap",
-                }}
-              >
-                📅 Google
-              </a>
-              <a
-                href={icsHref}
-                download={icsFilename}
-                aria-label={`Add ${round.countryName} Grand Prix to Apple Calendar or Outlook`}
-                style={{
-                  flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 5,
-                  padding: "9px 8px", minHeight: 40, borderRadius: 7, fontSize: 10, fontWeight: 700,
-                  background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.09)",
-                  color: "var(--f1-muted)", textDecoration: "none", whiteSpace: "nowrap",
-                }}
-              >
-                🍎 Apple / Other
-              </a>
-            </div>
+            {/* Single universal calendar button */}
+            <a
+              href={icsHref}
+              download={icsFilename}
+              aria-label={`Add ${round.countryName} Grand Prix to your calendar`}
+              style={{
+                display: "flex", alignItems: "center", justifyContent: "center", gap: 5,
+                padding: "9px 10px", minHeight: 40, borderRadius: 7, fontSize: 11, fontWeight: 700,
+                background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.09)",
+                color: "var(--f1-muted)", textDecoration: "none", whiteSpace: "nowrap",
+              }}
+            >
+              📅 Add to Calendar
+            </a>
             {/* WhatsApp */}
             <a
               href={waUrl}
