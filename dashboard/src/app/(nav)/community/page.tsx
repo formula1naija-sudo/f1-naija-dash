@@ -162,35 +162,6 @@ function SectionCard({ children }: { children: React.ReactNode }) {
   );
 }
 
-// ══════════════════════════════════════════════════════════════════
-// ── New to F1 data ────────────────────────────────────────────────
-const F1_BASICS = [
-  { icon: "🏎️", title: "What is Formula 1?", desc: "Formula 1 is the highest class of international single-seater auto racing. 10 teams (constructors) each field 2 drivers across a ~24-race season. The driver and team with the most points at the end wins the World Championship." },
-  { icon: "📅", title: "The Race Weekend",    desc: "Each Grand Prix runs over a weekend: Practice sessions (FP1, FP2, FP3) on Friday and Saturday, Qualifying on Saturday to set the grid order, and the Race on Sunday. Some weekends have a Sprint race format — with less practice and an extra mini-race on Saturday." },
-  { icon: "🏆", title: "Points System",       desc: "The top 10 finishers score points: 25–18–15–12–10–8–6–4–2–1. The driver with the most points at season end is World Drivers' Champion. Constructor points are the total of both drivers combined." },
-  { icon: "🔴🟡🟢", title: "Tyre Strategy",  desc: "F1 uses three tyre compounds: Soft (red, fastest but wears quickly), Medium (yellow, balanced), and Hard (white, durable). Teams must use at least 2 compounds in a dry race. Pit stop strategy — when to change tyres — is often what decides the winner." },
-  { icon: "🚩", title: "Flags & Safety Car",  desc: "Yellow flag = caution/slow down. Red flag = stop the race. Safety Car = all cars must follow slowly behind it, no overtaking. Virtual Safety Car (VSC) = same concept, but electronically enforced. Blue flag = you're about to be lapped, let faster car pass." },
-  { icon: "⚡", title: "DRS",                 desc: "An overtaking aid: a flap on the rear wing opens to reduce drag when a car is within 1 second of the car ahead in designated 'DRS zones'. This gives the following car a speed boost to attempt a pass. DRS is disabled in wet conditions." },
-];
-
-const NAIJA_GUIDE = [
-  { title: "When to watch (WAT)", desc: "Most European races start at 14:00–15:00 WAT. Asian/Australian races can be brutal — 06:00–07:00 WAT. American races (Miami, Austin, Las Vegas) are usually 22:00–23:00 WAT. Check the Schedule page for exact times.", link: { label: "View Race Schedule", href: "/schedule" } },
-  { title: "How to watch in Nigeria", desc: "DStv subscribers can watch on SuperSport F1 (Channel 215). Internationally, F1 TV streams every session live — onboard cameras, driver radio, and data overlays included.", link: { label: "Get F1 TV", href: "https://f1tv.formula1.com" } },
-  { title: "Join the community", desc: "Don't watch alone! Join the F1 Naija community on X (Twitter), Instagram, and WhatsApp for live reactions, race day threads, and post-race debates.", link: null },
-  { title: "Fantasy League", desc: "Play the official F1 Fantasy game and join our private F1 Naija league to compete with 200+ other Naija fans. It's free and very addictive.", link: { label: "Join Fantasy League", href: "https://fantasy.formula1.com/en/leagues/join/C1JYXEPWR10" } },
-];
-
-const GLOSSARY = [
-  { term: "Apex",        def: "The inside point of a corner — the ideal racing line clips through here." },
-  { term: "Undercut",    def: "Pitting early to get fresh tyres and come out ahead of a slower rival." },
-  { term: "Overcut",     def: "Staying out longer to let the rival pit, then using faster pace to emerge ahead." },
-  { term: "Quali",       def: "Qualifying — the Saturday session that determines the starting grid." },
-  { term: "Parc Fermé",  def: "Once qualifying begins, teams can't make significant car changes before the race." },
-  { term: "Bottoming",   def: "When the floor of the car scrapes the ground — causes sparks and can damage the car." },
-  { term: "Marbles",     def: "Rubber debris that builds up off the racing line, making it slippery." },
-  { term: "GOAT debate", def: "Hamilton vs Schumacher — 7 World Championships each. Naija fans have strong opinions." },
-];
-
 // ── Naija Driver Index data ────────────────────────────────────────
 type Driver = {
   name: string; team: string; teamColor: string;
@@ -466,7 +437,7 @@ export default function CommunityPage() {
           gap: 16,
         }}>
 
-          {/* Fantasy League */}
+          {/* Fantasy League → link to dedicated page */}
           <SectionCard>
             <EyebrowLabel text="Fantasy League" />
             <h2 style={{ fontSize: "clamp(22px,3vw,30px)", fontWeight: 900, letterSpacing: "-.02em", lineHeight: 1, margin: "0 0 12px" }}>
@@ -474,11 +445,11 @@ export default function CommunityPage() {
               <span style={{ color: "#f5a724" }}>Fantasy League.</span>
             </h2>
             <p style={{ fontSize: 13, color: "var(--f1-muted)", lineHeight: 1.7, margin: "0 0 24px" }}>
-              Compete against the sharpest F1 minds in the Naija community. Pick your drivers,
-              manage your strategy, and climb the standings every race weekend.
+              200+ players and counting. Pick your drivers, manage your strategy, and climb the
+              standings every race weekend — free to play.
             </p>
             <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-              <CTAButton href="https://fantasy.formula1.com/en/leagues/join/C1JYXEPWR10" label="Join the League" variant="primary" />
+              <CTAButton href="/fantasy" label="View Fantasy Page →" variant="primary" />
             </div>
           </SectionCard>
 
@@ -589,72 +560,35 @@ export default function CommunityPage() {
 
       <SectionDivider />
 
-      {/* ── NEW TO F1 ──────────────────────────────────────────── */}
-      <section aria-label="New to F1 starter guide" style={{ padding: "56px 0" }}>
-        <div style={{ marginBottom: 32 }}>
-          <EyebrowLabel text="New to F1? Start Here" />
-          <h2 style={{ fontSize: "clamp(26px,4vw,44px)", fontWeight: 900, letterSpacing: "-.025em", lineHeight: .95, margin: "0 0 10px" }}>
-            Your F1 starter<br />
-            <span style={{ color: "#00d484" }}>pack 🇳🇬</span>
-          </h2>
-          <p style={{ fontSize: 13, color: "var(--f1-muted)", lineHeight: 1.65, margin: 0, maxWidth: 520 }}>
-            Just getting into F1? Written by Naija fans, for Naija fans — everything you need to follow the sport.
-          </p>
-        </div>
-
-        {/* F1 Basics */}
-        <div style={{ marginBottom: 32 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
-            <div style={{ width: 3, height: 14, background: "#00d484", borderRadius: 2 }} />
-            <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--f1-muted)" }}>F1 Basics</span>
-          </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: 10 }}>
-            {F1_BASICS.map(item => (
-              <div key={item.title} style={{ background: "var(--f1-card)", border: "1px solid rgba(255,255,255,.07)", borderRadius: 12, padding: "18px 20px" }}>
-                <div style={{ fontSize: 26, marginBottom: 8 }}>{item.icon}</div>
-                <div style={{ fontSize: 13, fontWeight: 800, color: "var(--f1-text)", marginBottom: 7 }}>{item.title}</div>
-                <p style={{ fontSize: 12, color: "var(--f1-muted)", lineHeight: 1.7, margin: 0 }}>{item.desc}</p>
+      {/* ── NEW TO F1 — link card to /start-here ───────────────── */}
+      <section aria-label="New to F1 starter guide" style={{ padding: "40px 0" }}>
+        <Link href="/start-here" style={{ textDecoration: "none", display: "block" }}>
+          <div style={{
+            display: "flex", alignItems: "center", justifyContent: "space-between", gap: 20,
+            flexWrap: "wrap",
+            background: "var(--f1-card)",
+            border: "1px solid rgba(0,212,132,.2)",
+            borderLeft: "3px solid #00d484",
+            borderRadius: 14, padding: "24px 26px",
+            transition: "border-color .18s",
+          }}
+            onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.borderColor = "rgba(0,212,132,.4)"; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.borderColor = "rgba(0,212,132,.2)"; }}
+          >
+            <div>
+              <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: ".12em", textTransform: "uppercase", color: "#00d484", marginBottom: 8 }}>New to F1?</div>
+              <div style={{ fontSize: "clamp(18px,2.5vw,24px)", fontWeight: 900, color: "var(--f1-text)", lineHeight: 1.15, marginBottom: 8 }}>
+                Your F1 Starter Pack 🇳🇬
               </div>
-            ))}
+              <p style={{ fontSize: 12, color: "var(--f1-muted)", lineHeight: 1.65, margin: 0, maxWidth: 480 }}>
+                F1 basics, the Naija fan guide, watch times, and a full F1 jargon decoder — written by Naija fans, for Naija fans.
+              </p>
+            </div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: "#00d484", whiteSpace: "nowrap", flexShrink: 0 }}>
+              Start Here →
+            </div>
           </div>
-        </div>
-
-        {/* Naija Fan Guide */}
-        <div style={{ marginBottom: 32 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
-            <div style={{ width: 3, height: 14, background: "#f5a724", borderRadius: 2 }} />
-            <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--f1-muted)" }}>The Naija Fan Guide</span>
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-            {NAIJA_GUIDE.map(item => (
-              <div key={item.title} style={{ background: "var(--f1-card)", border: "1px solid rgba(255,255,255,.07)", borderRadius: 12, padding: "18px 20px" }}>
-                <div style={{ fontSize: 13, fontWeight: 800, color: "var(--f1-text)", marginBottom: 6 }}>{item.title}</div>
-                <p style={{ fontSize: 12, color: "var(--f1-muted)", lineHeight: 1.7, margin: "0 0 10px" }}>{item.desc}</p>
-                {item.link && (
-                  <Link href={item.link.href} style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 12, fontWeight: 700, color: "#00d484", textDecoration: "none" }}>
-                    {item.link.label} →
-                  </Link>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Glossary */}
-        <div>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
-            <div style={{ width: 3, height: 14, background: "#00d484", borderRadius: 2 }} />
-            <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--f1-muted)" }}>F1 Jargon Decoder</span>
-          </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))", gap: 8 }}>
-            {GLOSSARY.map(g => (
-              <div key={g.term} style={{ background: "var(--f1-card)", border: "1px solid rgba(255,255,255,.07)", borderRadius: 10, padding: "12px 14px" }}>
-                <div style={{ fontSize: 12, fontWeight: 800, color: "#00d484", marginBottom: 4 }}>{g.term}</div>
-                <p style={{ fontSize: 11, color: "var(--f1-muted)", lineHeight: 1.6, margin: 0 }}>{g.def}</p>
-              </div>
-            ))}
-          </div>
-        </div>
+        </Link>
       </section>
 
       <SectionDivider />
@@ -771,48 +705,6 @@ export default function CommunityPage() {
 
       <SectionDivider />
 
-      {/* ── ABOUT F1 NAIJA ─────────────────────────────────────── */}
-      <section aria-label="About F1 Naija" style={{ padding: "56px 0" }}>
-        <div style={{ marginBottom: 32 }}>
-          <EyebrowLabel text="Built for the culture" />
-          <h2 style={{ fontSize: "clamp(26px,4vw,44px)", fontWeight: 900, letterSpacing: "-.025em", lineHeight: .95, margin: "0 0 14px" }}>
-            About F1 Naija.
-          </h2>
-          <p style={{ fontSize: 14, color: "var(--f1-muted)", lineHeight: 1.75, maxWidth: 560, margin: 0 }}>
-            F1 Naija is Nigeria&apos;s leading Formula 1 media platform — combining a real-time live timing
-            dashboard, race news, WAT-first scheduling, and the largest online community of Nigerian F1 fans.
-            We reach over one million monthly impressions across a highly engaged audience of 16,000+
-            followers spanning Nigeria, the UK, the US, and the wider diaspora.
-          </p>
-        </div>
-
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: 14, marginBottom: 28 }}>
-          {[
-            { accent: "#f5a724", title: "Live timing & data",         desc: "A real-time F1 dashboard with lap times, gaps, tyre strategy, sector data, and DRS — powered by official F1 telemetry." },
-            { accent: "#00d484", title: "WAT-first calendar & news",  desc: "Every session time in West Africa Time by default. Race news curated from top global F1 sources for a Nigerian audience." },
-            { accent: "#9c50f5", title: "Community & social media",   desc: "Live X Spaces on race weekends, Lagos watch parties, fantasy league with 200+ players, and race-day threads across all platforms." },
-          ].map(item => (
-            <div key={item.title} style={{ background: "var(--f1-card)", border: "1px solid rgba(255,255,255,.07)", borderRadius: 12, padding: "20px 22px", display: "flex", gap: 14 }}>
-              <div style={{ width: 3, minHeight: 44, borderRadius: 2, background: item.accent, flexShrink: 0, marginTop: 4 }} />
-              <div>
-                <div style={{ fontSize: 13, fontWeight: 800, color: "var(--f1-text)", marginBottom: 5 }}>{item.title}</div>
-                <p style={{ fontSize: 12, color: "var(--f1-muted)", lineHeight: 1.7, margin: 0 }}>{item.desc}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
-          <a href="mailto:ads@f1naija.com" style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "10px 20px", borderRadius: 8, fontSize: 13, fontWeight: 700, background: "rgba(245,167,36,.15)", border: "1px solid rgba(245,167,36,.35)", color: "#f5a724", textDecoration: "none", minHeight: 44 }}>
-            📩 ads@f1naija.com
-          </a>
-          <Link href="/partner" style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "10px 20px", borderRadius: 8, fontSize: 13, fontWeight: 700, background: "transparent", border: "1px solid rgba(255,255,255,.14)", color: "var(--f1-text)", textDecoration: "none", minHeight: 44 }}>
-            🤝 Partner With Us →
-          </Link>
-        </div>
-      </section>
-
-      <SectionDivider />
 
       {/* ── RACE ALERTS ───────────────────────────────────────── */}
       <PushNotificationBanner />

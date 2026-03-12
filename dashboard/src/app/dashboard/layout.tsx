@@ -329,6 +329,23 @@ function DesktopStaticBar({ show }: { show: boolean }) {
           </svg>
           F1 Naija
         </Link>
+        {/* Help link */}
+        <Link
+          href="/help"
+          style={{
+            display: "flex", alignItems: "center", gap: 4,
+            padding: "4px 10px", borderRadius: 6, height: 30,
+            background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.09)",
+            fontSize: 11, fontWeight: 700, color: "var(--f1-muted)",
+            textDecoration: "none", letterSpacing: ".02em", flexShrink: 0,
+            transition: "border-color .15s, color .15s",
+          }}
+          aria-label="Dashboard help"
+          onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,.2)"; e.currentTarget.style.color = "var(--f1-text)"; }}
+          onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,.09)"; e.currentTarget.style.color = "var(--f1-muted)"; }}
+        >
+          ❓ Help
+        </Link>
       </div>
       <div className="hidden md:items-center lg:flex">{show && <WeatherInfo />}</div>
       <div className="flex justify-end">{show && <TrackInfo />}</div>
