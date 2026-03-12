@@ -131,10 +131,8 @@ export default function DashboardLayout({ children }: Props) {
 }
 
 const HOW_TO_WATCH = [
-  { provider: 'DStv',    channel: 'SuperSport F1 · Ch. 208' },
-  { provider: 'Canal+',  channel: 'Canal+ Sport' },
-  { provider: 'F1 TV',   channel: 'f1.com/subscribe' },
-  { provider: 'ShowMax', channel: 'showmax.com' },
+  { provider: 'DStv',  channel: 'SuperSport F1 · Ch. 215', href: null },
+  { provider: 'F1 TV', channel: 'f1tv.formula1.com',       href: 'https://f1tv.formula1.com' },
 ];
 
 function NoSessionState() {
@@ -198,7 +196,11 @@ function NoSessionState() {
           {HOW_TO_WATCH.map(item => (
             <div key={item.provider} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--f1-text)' }}>{item.provider}</span>
-              <span style={{ fontSize: 11, color: 'var(--f1-muted)' }}>{item.channel}</span>
+              {item.href ? (
+                <a href={item.href} target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: '#00d484', textDecoration: 'none' }}>{item.channel}</a>
+              ) : (
+                <span style={{ fontSize: 11, color: 'var(--f1-muted)' }}>{item.channel}</span>
+              )}
             </div>
           ))}
         </div>
@@ -272,16 +274,19 @@ function MobileStaticBar({ show, connected }: { show: boolean; connected: boolea
         <Link
           href="/"
           style={{
-            display: "flex", alignItems: "center", gap: 4,
+            display: "flex", alignItems: "center", gap: 5,
             padding: "4px 10px", borderRadius: 6, height: 32,
-            background: "rgba(255,255,255,.05)", border: "1px solid rgba(255,255,255,.1)",
-            fontSize: 11, fontWeight: 700, color: "var(--f1-muted)",
+            background: "rgba(0,212,132,.08)", border: "1px solid rgba(0,212,132,.2)",
+            fontSize: 11, fontWeight: 700, color: "#00d484",
             textDecoration: "none", letterSpacing: ".02em", flexShrink: 0,
             WebkitTapHighlightColor: "transparent",
           }}
           aria-label="Back to F1 Naija"
         >
-          ‹ F1 Naija
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+            <path d="M7.5 2L3.5 6L7.5 10" stroke="#00d484" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          F1 Naija
         </Link>
         <DelayInput saveDelay={500} />
         <DelayTimer />
@@ -308,18 +313,21 @@ function DesktopStaticBar({ show }: { show: boolean }) {
         <Link
           href="/"
           style={{
-            display: "flex", alignItems: "center", gap: 4,
+            display: "flex", alignItems: "center", gap: 5,
             padding: "4px 10px", borderRadius: 6, height: 30,
-            background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.09)",
-            fontSize: 11, fontWeight: 700, color: "var(--f1-muted)",
+            background: "rgba(0,212,132,.06)", border: "1px solid rgba(0,212,132,.18)",
+            fontSize: 11, fontWeight: 700, color: "#00d484",
             textDecoration: "none", letterSpacing: ".02em", flexShrink: 0,
-            transition: "border-color .15s",
+            transition: "border-color .15s, background .15s",
           }}
           aria-label="Back to F1 Naija"
-          onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(0,212,132,.3)"; e.currentTarget.style.color = "#00d484"; }}
-          onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,.09)"; e.currentTarget.style.color = "var(--f1-muted)"; }}
+          onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(0,212,132,.4)"; e.currentTarget.style.background = "rgba(0,212,132,.12)"; }}
+          onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(0,212,132,.18)"; e.currentTarget.style.background = "rgba(0,212,132,.06)"; }}
         >
-          ‹ F1 Naija
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+            <path d="M7.5 2L3.5 6L7.5 10" stroke="#00d484" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          F1 Naija
         </Link>
       </div>
       <div className="hidden md:items-center lg:flex">{show && <WeatherInfo />}</div>

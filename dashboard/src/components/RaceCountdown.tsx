@@ -90,10 +90,8 @@ function getSessionLabel(kind: string): string {
 }
 
 const HOW_TO_WATCH = [
-  { provider: "DStv",    channel: "SuperSport F1 · Channel 208" },
-  { provider: "Canal+",  channel: "Canal+ Sport" },
-  { provider: "F1 TV",   channel: "f1.com/subscribe" },
-  { provider: "ShowMax", channel: "showmax.com (streaming)" },
+  { provider: "DStv",  channel: "SuperSport F1 · Channel 215", href: null },
+  { provider: "F1 TV", channel: "f1tv.formula1.com",           href: "https://f1tv.formula1.com" },
 ];
 
 function CountdownUnit({ value, label }: { value: number; label: string }) {
@@ -294,7 +292,11 @@ export default function RaceCountdown() {
           {HOW_TO_WATCH.map(item => (
             <div key={item.provider} className="flex items-center justify-between rounded-lg border border-white/5 bg-white/[0.02] px-3 py-2">
               <span className="text-xs font-semibold text-zinc-200">{item.provider}</span>
-              <span className="text-xs text-zinc-500">{item.channel}</span>
+              {item.href ? (
+                <a href={item.href} target="_blank" rel="noopener noreferrer" className="text-xs text-emerald-500 hover:underline">{item.channel}</a>
+              ) : (
+                <span className="text-xs text-zinc-500">{item.channel}</span>
+              )}
             </div>
           ))}
         </div>

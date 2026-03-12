@@ -175,7 +175,7 @@ const F1_BASICS = [
 
 const NAIJA_GUIDE = [
   { title: "When to watch (WAT)", desc: "Most European races start at 14:00–15:00 WAT. Asian/Australian races can be brutal — 06:00–07:00 WAT. American races (Miami, Austin, Las Vegas) are usually 22:00–23:00 WAT. Check the Schedule page for exact times.", link: { label: "View Race Schedule", href: "/schedule" } },
-  { title: "How to watch in Nigeria", desc: "DStv subscribers can watch on SuperSport F1 (Channel 208). Internationally, F1 TV streams every session live — onboard cameras, driver radio, and data overlays included.", link: { label: "Get F1 TV", href: "https://f1tv.formula1.com" } },
+  { title: "How to watch in Nigeria", desc: "DStv subscribers can watch on SuperSport F1 (Channel 215). Internationally, F1 TV streams every session live — onboard cameras, driver radio, and data overlays included.", link: { label: "Get F1 TV", href: "https://f1tv.formula1.com" } },
   { title: "Join the community", desc: "Don't watch alone! Join the F1 Naija community on X (Twitter), Instagram, and WhatsApp for live reactions, race day threads, and post-race debates.", link: null },
   { title: "Fantasy League", desc: "Play the official F1 Fantasy game and join our private F1 Naija league to compete with 200+ other Naija fans. It's free and very addictive.", link: { label: "Join Fantasy League", href: "https://fantasy.formula1.com/en/leagues/join/C1JYXEPWR10" } },
 ];

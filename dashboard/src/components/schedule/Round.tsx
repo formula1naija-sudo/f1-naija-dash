@@ -294,12 +294,32 @@ export default function Round({ round, nextName }: Props) {
           round.sessions.find(s => s.kind === "Sprint Race" || s.kind === "Sprint");
         if (!raceSession) return null;
 
-        // Google Calendar URL
+        // Shared helpers
         const fmt = (d: Date) => d.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
-        const gcTitle = encodeURIComponent(`${round.countryName} Grand Prix — F1 Naija`);
+        const title = `${round.countryName} Grand Prix — F1 Naija`;
+        const details = `Follow live on F1 Naija 🇳🇬\nf1-naija.vercel.app/dashboard\n\nNigeria: DStv SuperSport F1 (Ch. 215)`;
+
+        // Google Calendar URL
+        const gcTitle = encodeURIComponent(title);
         const gcDates = `${fmt(new Date(raceSession.start))}/${fmt(new Date(raceSession.end))}`;
-        const gcDetails = encodeURIComponent(`Watch live on F1 Naija 🇳🇬\nf1-naija.vercel.app/dashboard\n\nNigeria: DStv SuperSport F1 (Ch. 208)`);
-        const gcUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${gcTitle}&dates=${gcDates}&details=${gcDetails}`;
+        const gcUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${gcTitle}&dates=${gcDates}&details=${encodeURIComponent(details)}`;
+
+        // ICS (Apple Calendar / Outlook / Other) — data URI download
+        const icsContent = [
+          "BEGIN:VCALENDAR",
+          "VERSION:2.0",
+          "PRODID:-//F1 Naija//Schedule//EN",
+          "BEGIN:VEVENT",
+          `DTSTART:${fmt(new Date(raceSession.start))}`,
+          `DTEND:${fmt(new Date(raceSession.end))}`,
+          `SUMMARY:${title}`,
+          `DESCRIPTION:${details.replace(/\n/g, "\\n")}`,
+          `URL:https://f1-naija.vercel.app/dashboard`,
+          "END:VEVENT",
+          "END:VCALENDAR",
+        ].join("\r\n");
+        const icsHref = `data:text/calendar;charset=utf-8,${encodeURIComponent(icsContent)}`;
+        const icsFilename = `${round.countryName.replace(/\s+/g, "-")}-GP.ics`;
 
         // WhatsApp share
         const watTime = new Date(raceSession.start).toLocaleString("en-US", {
@@ -309,36 +329,53 @@ export default function Round({ round, nextName }: Props) {
         });
         const waText = encodeURIComponent(
           `🏎️ ${round.countryName} Grand Prix\n📅 ${watTime} WAT\n\n` +
-          `Watch live on F1 Naija 🇳🇬\nf1-naija.vercel.app/dashboard`
+          `Follow live on F1 Naija 🇳🇬\nf1-naija.vercel.app/dashboard`
         );
         const waUrl = `https://wa.me/?text=${waText}`;
 
         return (
           <div style={{
-            display: "flex", gap: 8,
+            display: "flex", flexDirection: "column", gap: 6,
             padding: "10px 16px 14px",
             borderTop: "1px solid rgba(255,255,255,.05)",
           }}>
-            <a
-              href={gcUrl}
-              target="_blank" rel="noopener noreferrer"
-              aria-label={`Add ${round.countryName} Grand Prix to Google Calendar`}
-              style={{
-                flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 5,
-                padding: "10px 10px", minHeight: 44, borderRadius: 7, fontSize: 11, fontWeight: 700,
-                background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.09)",
-                color: "var(--f1-muted)", textDecoration: "none", whiteSpace: "nowrap",
-              }}
-            >
-              📅 Add to Calendar
-            </a>
+            {/* Calendar row: Google + Apple/Other */}
+            <div style={{ display: "flex", gap: 6 }}>
+              <a
+                href={gcUrl}
+                target="_blank" rel="noopener noreferrer"
+                aria-label={`Add ${round.countryName} Grand Prix to Google Calendar`}
+                style={{
+                  flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 5,
+                  padding: "9px 8px", minHeight: 40, borderRadius: 7, fontSize: 10, fontWeight: 700,
+                  background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.09)",
+                  color: "var(--f1-muted)", textDecoration: "none", whiteSpace: "nowrap",
+                }}
+              >
+                📅 Google
+              </a>
+              <a
+                href={icsHref}
+                download={icsFilename}
+                aria-label={`Add ${round.countryName} Grand Prix to Apple Calendar or Outlook`}
+                style={{
+                  flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 5,
+                  padding: "9px 8px", minHeight: 40, borderRadius: 7, fontSize: 10, fontWeight: 700,
+                  background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.09)",
+                  color: "var(--f1-muted)", textDecoration: "none", whiteSpace: "nowrap",
+                }}
+              >
+                🍎 Apple / Other
+              </a>
+            </div>
+            {/* WhatsApp */}
             <a
               href={waUrl}
               target="_blank" rel="noopener noreferrer"
               aria-label={`Share ${round.countryName} Grand Prix on WhatsApp`}
               style={{
-                flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 5,
-                padding: "10px 10px", minHeight: 44, borderRadius: 7, fontSize: 11, fontWeight: 700,
+                display: "flex", alignItems: "center", justifyContent: "center", gap: 5,
+                padding: "9px 10px", minHeight: 40, borderRadius: 7, fontSize: 11, fontWeight: 700,
                 background: "rgba(37,211,102,.08)", border: "1px solid rgba(37,211,102,.2)",
                 color: "#25d366", textDecoration: "none", whiteSpace: "nowrap",
               }}

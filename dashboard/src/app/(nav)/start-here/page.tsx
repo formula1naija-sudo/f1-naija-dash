@@ -43,7 +43,7 @@ const NAIJA_GUIDE = [
   },
   {
     title: "How to watch in Nigeria",
-    desc: "DStv subscribers can watch on SuperSport F1 (Channel 208). Internationally, F1 TV streams every session live — onboard cameras, driver radio, and data overlays included.",
+    desc: "DStv subscribers can watch on SuperSport F1 (Channel 215). Internationally, F1 TV streams every session live — onboard cameras, driver radio, and data overlays included.",
     link: { label: "Get F1 TV", href: "https://f1tv.formula1.com" },
   },
   {

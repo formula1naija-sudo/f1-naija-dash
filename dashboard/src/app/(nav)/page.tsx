@@ -103,6 +103,124 @@ export default function Home() {
         <RaceCountdown />
       </div>
 
+      {/* ── LATEST NEWS ──────────────────────────────────── */}
+      {news.length > 0 && (
+        <section aria-label="Latest F1 news" style={{
+          padding: "clamp(32px,5vw,52px) 0",
+          borderTop: "1px solid rgba(255,255,255,.06)",
+        }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 24, flexWrap: "wrap", gap: 12 }}>
+            <div>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+                <div style={{ width: 20, height: 1, background: "#f5a724" }} />
+                <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: "#f5a724" }}>
+                  Latest news
+                </span>
+              </div>
+              <h2 style={{ fontSize: "clamp(22px,3.5vw,34px)", fontWeight: 900, letterSpacing: "-.025em", margin: 0 }}>
+                F1 Headlines.
+              </h2>
+            </div>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {news.map((item, i) => (
+              <a
+                key={i}
+                href={item.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: "flex", alignItems: "center", gap: 16,
+                  background: "var(--f1-card)", border: "1px solid rgba(255,255,255,.07)",
+                  borderRadius: 12, padding: "16px 18px", textDecoration: "none",
+                  transition: "border-color .2s",
+                }}
+                onMouseEnter={e => { if (window.matchMedia("(hover:hover)").matches) e.currentTarget.style.borderColor = "rgba(245,167,36,.3)"; }}
+                onMouseLeave={e => { if (window.matchMedia("(hover:hover)").matches) e.currentTarget.style.borderColor = "rgba(255,255,255,.07)"; }}
+              >
+                <div style={{ flexShrink: 0 }}>
+                  <div style={{
+                    fontSize: 9, fontWeight: 800, letterSpacing: ".1em", textTransform: "uppercase",
+                    color: categoryColor[item.category] ?? "#00d484",
+                    padding: "3px 8px", borderRadius: 4,
+                    background: `${categoryColor[item.category] ?? "#00d484"}1a`,
+                    border: `1px solid ${categoryColor[item.category] ?? "#00d484"}33`,
+                    whiteSpace: "nowrap",
+                  }}>
+                    {item.category}
+                  </div>
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: "var(--f1-text)", lineHeight: 1.4, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    {item.title}
+                  </div>
+                  <div style={{ fontSize: 11, color: "var(--f1-muted)", marginTop: 3 }}>
+                    {item.source}
+                  </div>
+                </div>
+                <div style={{ fontSize: 14, color: "var(--f1-muted)", flexShrink: 0 }}>↗</div>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* ── LAST RACE PODIUM ─────────────────────────────── */}
+      {lastRace && (
+        <section aria-label="Last race result" style={{
+          padding: "clamp(32px,5vw,52px) 0",
+          borderTop: "1px solid rgba(255,255,255,.06)",
+        }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 24, flexWrap: "wrap", gap: 12 }}>
+            <div>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+                <div style={{ width: 20, height: 1, background: "#e10600" }} />
+                <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: "#e10600" }}>
+                  Last race
+                </span>
+              </div>
+              <h2 style={{ fontSize: "clamp(22px,3.5vw,34px)", fontWeight: 900, letterSpacing: "-.025em", margin: 0, lineHeight: 1.1 }}>
+                {lastRace.raceName}
+              </h2>
+              <p style={{ fontSize: 12, color: "var(--f1-muted)", margin: "6px 0 0" }}>
+                {lastRace.circuit} · {new Date(lastRace.date + "T12:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
+              </p>
+            </div>
+            <Link href="/results" style={{
+              fontSize: 12, fontWeight: 700, color: "#00d484", textDecoration: "none",
+              display: "inline-flex", alignItems: "center", gap: 4,
+            }}>
+              Full results →
+            </Link>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: 12 }}>
+            {lastRace.podium.map((p) => {
+              const teamColor = teamColors[p.constructorId] ?? "#9ca3af";
+              return (
+                <div key={p.position} style={{
+                  background: "var(--f1-card)",
+                  border: `1px solid ${teamColor}33`,
+                  borderTop: `3px solid ${teamColor}`,
+                  borderRadius: 12, padding: "20px 18px",
+                  display: "flex", flexDirection: "column", gap: 6,
+                }}>
+                  <div style={{ fontSize: 22 }}>{positionMedals[p.position]}</div>
+                  <div style={{ fontSize: 15, fontWeight: 800, color: "var(--f1-text)", lineHeight: 1.2 }}>{p.driverName}</div>
+                  <div style={{ fontSize: 11, color: teamColor, fontWeight: 700, textTransform: "uppercase", letterSpacing: ".08em" }}>
+                    {p.constructorName}
+                  </div>
+                  {p.time && (
+                    <div style={{ fontSize: 12, color: "var(--f1-muted)", marginTop: 4, fontVariantNumeric: "tabular-nums" }}>
+                      {p.time}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
       {/* ── COMMUNITY ────────────────────────────────────── */}
       <section aria-label="Join the community" style={{
         padding: "clamp(40px,7vw,72px) 0",
@@ -257,126 +375,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* ── LAST RACE PODIUM ─────────────────────────────── */}
-      {lastRace && (
-        <section aria-label="Last race result" style={{
-          padding: "clamp(32px,5vw,52px) 0",
-          borderTop: "1px solid rgba(255,255,255,.06)",
-        }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 24, flexWrap: "wrap", gap: 12 }}>
-            <div>
-              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
-                <div style={{ width: 20, height: 1, background: "#e10600" }} />
-                <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: "#e10600" }}>
-                  Last race
-                </span>
-              </div>
-              <h2 style={{ fontSize: "clamp(22px,3.5vw,34px)", fontWeight: 900, letterSpacing: "-.025em", margin: 0, lineHeight: 1.1 }}>
-                {lastRace.raceName}
-              </h2>
-              <p style={{ fontSize: 12, color: "var(--f1-muted)", margin: "6px 0 0" }}>
-                {lastRace.circuit} · {new Date(lastRace.date + "T12:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
-              </p>
-            </div>
-            <Link href="/results" style={{
-              fontSize: 12, fontWeight: 700, color: "#00d484", textDecoration: "none",
-              display: "inline-flex", alignItems: "center", gap: 4,
-            }}>
-              Full results →
-            </Link>
-          </div>
-
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: 12 }}>
-            {lastRace.podium.map((p) => {
-              const teamColor = teamColors[p.constructorId] ?? "#9ca3af";
-              return (
-                <div key={p.position} style={{
-                  background: "var(--f1-card)",
-                  border: `1px solid ${teamColor}33`,
-                  borderTop: `3px solid ${teamColor}`,
-                  borderRadius: 12, padding: "20px 18px",
-                  display: "flex", flexDirection: "column", gap: 6,
-                }}>
-                  <div style={{ fontSize: 22 }}>{positionMedals[p.position]}</div>
-                  <div style={{ fontSize: 15, fontWeight: 800, color: "var(--f1-text)", lineHeight: 1.2 }}>{p.driverName}</div>
-                  <div style={{ fontSize: 11, color: teamColor, fontWeight: 700, textTransform: "uppercase", letterSpacing: ".08em" }}>
-                    {p.constructorName}
-                  </div>
-                  {p.time && (
-                    <div style={{ fontSize: 12, color: "var(--f1-muted)", marginTop: 4, fontVariantNumeric: "tabular-nums" }}>
-                      {p.time}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </section>
-      )}
-
-      {/* ── LATEST NEWS ──────────────────────────────────── */}
-      {news.length > 0 && (
-        <section aria-label="Latest F1 news" style={{
-          padding: "clamp(32px,5vw,52px) 0",
-          borderTop: "1px solid rgba(255,255,255,.06)",
-        }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 24, flexWrap: "wrap", gap: 12 }}>
-            <div>
-              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
-                <div style={{ width: 20, height: 1, background: "#f5a724" }} />
-                <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: "#f5a724" }}>
-                  Latest news
-                </span>
-              </div>
-              <h2 style={{ fontSize: "clamp(22px,3.5vw,34px)", fontWeight: 900, letterSpacing: "-.025em", margin: 0 }}>
-                F1 Headlines.
-              </h2>
-            </div>
-          </div>
-
-          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-            {news.map((item, i) => (
-              <a
-                key={i}
-                href={item.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  display: "flex", alignItems: "center", gap: 16,
-                  background: "var(--f1-card)", border: "1px solid rgba(255,255,255,.07)",
-                  borderRadius: 12, padding: "16px 18px", textDecoration: "none",
-                  transition: "border-color .2s",
-                }}
-                onMouseEnter={e => { if (window.matchMedia("(hover:hover)").matches) e.currentTarget.style.borderColor = "rgba(245,167,36,.3)"; }}
-                onMouseLeave={e => { if (window.matchMedia("(hover:hover)").matches) e.currentTarget.style.borderColor = "rgba(255,255,255,.07)"; }}
-              >
-                <div style={{ flexShrink: 0 }}>
-                  <div style={{
-                    fontSize: 9, fontWeight: 800, letterSpacing: ".1em", textTransform: "uppercase",
-                    color: categoryColor[item.category] ?? "#00d484",
-                    padding: "3px 8px", borderRadius: 4,
-                    background: `${categoryColor[item.category] ?? "#00d484"}1a`,
-                    border: `1px solid ${categoryColor[item.category] ?? "#00d484"}33`,
-                    whiteSpace: "nowrap",
-                  }}>
-                    {item.category}
-                  </div>
-                </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: "var(--f1-text)", lineHeight: 1.4, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                    {item.title}
-                  </div>
-                  <div style={{ fontSize: 11, color: "var(--f1-muted)", marginTop: 3 }}>
-                    {item.source}
-                  </div>
-                </div>
-                <div style={{ fontSize: 14, color: "var(--f1-muted)", flexShrink: 0 }}>↗</div>
-              </a>
-            ))}
-          </div>
-        </section>
-      )}
 
       {/* ── FOOTER CTA ───────────────────────────────────── */}
       <section aria-label="Get started with F1 Naija" style={{

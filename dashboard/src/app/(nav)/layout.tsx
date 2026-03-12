@@ -41,10 +41,8 @@ const NAV_GROUPS = [
     links: [
       { href: "/",           label: "Home",       icon: "🏠" },
       { href: "/schedule",   label: "Schedule",   icon: "📅" },
-      { href: "/results",    label: "Results",    icon: "🏁" },
-      { href: "/news",       label: "News",       icon: "📰" },
+{ href: "/news",       label: "News",       icon: "📰" },
       { href: "/standings",  label: "Standings",  icon: "🏆" },
-      { href: "/drivers",    label: "Drivers",    icon: "🚗" },
       { href: "/teams",      label: "Teams",      icon: "🏎️" },
     ],
   },
