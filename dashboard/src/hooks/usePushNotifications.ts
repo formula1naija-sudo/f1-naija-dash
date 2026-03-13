@@ -77,6 +77,16 @@ export function usePushNotifications() {
 
   // Keep favourite list accessible inside the effect without triggering re-runs
   const favRef = useRef<string[]>(favoriteDrivers);
+  // Clear stale/old notifications from OS notification center on mount
+  useEffect(() => {
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.ready
+        .then(reg => reg.getNotifications())
+        .then(notifications => notifications.forEach(n => n.close()))
+        .catch(() => {});
+    }
+  }, []);
+
   useEffect(() => { favRef.current = favoriteDrivers; }, [favoriteDrivers]);
 
   useEffect(() => {
