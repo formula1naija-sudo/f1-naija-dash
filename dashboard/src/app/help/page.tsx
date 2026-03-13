@@ -81,7 +81,7 @@ export default function HelpPage() {
           border-radius: 10px;
           padding: 12px 16px;
           font-size: 12px;
-          color: #b38a40;
+          color: var(--f1-muted);
           line-height: 1.6;
         }
         .help-note::before {
@@ -110,7 +110,7 @@ export default function HelpPage() {
           gap: 8px;
           font-size: 12px;
           font-weight: 600;
-          color: #52525b;
+          color: var(--f1-muted);
           text-decoration: none;
           padding: 8px 12px;
           border-radius: 8px;
@@ -184,7 +184,7 @@ export default function HelpPage() {
           background: "rgba(255,255,255,.02)",
           border: "1px solid rgba(255,255,255,.06)",
         }}>
-          <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "#52525b", alignSelf: "center", paddingRight: 8 }}>Jump to</span>
+          <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--f1-muted)", alignSelf: "center", paddingRight: 8 }}>Jump to</span>
           {SECTIONS.map(s => (
             <a key={s.id} href={`#${s.id}`} className="toc-link">{s.label}</a>
           ))}
@@ -419,7 +419,7 @@ export default function HelpPage() {
           display: "flex", alignItems: "center", gap: 12,
         }}>
           <div style={{ width: 16, height: 1, background: "#f5a724", flexShrink: 0 }} />
-          <p style={{ fontSize: 11, color: "#52525b" }}>
+          <p style={{ fontSize: 11, color: "var(--f1-muted)" }}>
             Still confused? Reach out to us at{" "}
             <a href="mailto:hello@f1naija.com" style={{ color: "#f5a724", textDecoration: "none" }}>hello@f1naija.com</a>
             {" "}or DM{" "}

@@ -101,7 +101,7 @@ function NewsCard({ item, featured = false }: { item: NewsItem; featured?: boole
             WebkitBoxOrient: "vertical", overflow: "hidden",
           }}>{item.description}</p>
         )}
-        <div style={{ marginTop: 12, fontSize: 11, fontWeight: 700, color: featured ? "#00d484" : "#52525b" }}>
+        <div style={{ marginTop: 12, fontSize: 11, fontWeight: 700, color: featured ? "#00d484" : "var(--f1-muted)" }}>
           Read more →
         </div>
       </div>
@@ -363,7 +363,7 @@ export default function NewsPage() {
                   border: "1px solid",
                   borderColor: notifStatus === "subscribed" ? "rgba(0,212,132,.4)" : "rgba(255,255,255,.1)",
                   background: notifStatus === "subscribed" ? "rgba(0,212,132,.08)" : "rgba(255,255,255,.04)",
-                  color: notifStatus === "subscribed" ? "#00d484" : notifStatus === "denied" ? "#52525b" : "var(--f1-text)",
+                  color: notifStatus === "subscribed" ? "#00d484" : notifStatus === "denied" ? "var(--f1-muted)" : "var(--f1-text)",
                   minHeight: 44, WebkitTapHighlightColor: "transparent",
                 }}
               >
