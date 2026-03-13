@@ -372,6 +372,26 @@ app.get('/tweets', async (req, res) => {
   }
 });
 
+// ── Test endpoint (dev only) ────────────────────────────────────────────────────
+// GET /test-push?secret=YOUR_SECRET sends a real push to all subscribers.
+// Use to verify the full VAPID pipeline without waiting for a race event.
+app.get('/test-push', async (req, res) => {
+  const TEST_SECRET = process.env.TEST_PUSH_SECRET || 'f1naija-test';
+  if (req.query.secret !== TEST_SECRET) {
+    return res.status(401).json({ error: 'Invalid secret. Add ?secret=YOUR_TEST_PUSH_SECRET' });
+  }
+  if (subscriptions.size === 0) {
+    return res.status(200).json({ sent: 0, message: 'No subscribers registered yet. Open the PWA first.' });
+  }
+  const testNotification = [{
+    title: '🏎️ F1 Naija Test',
+    body: 'Push notifications are working! Background delivery confirmed.',
+    url: '/dashboard',
+  }];
+  await sendNotifications(testNotification);
+  res.json({ sent: subscriptions.size, message: 'Test push sent to ' + subscriptions.size + ' subscriber(s)' });
+});
+
 // ── Start ─────────────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
   console.log('Push service running on port ' + PORT);
