@@ -102,8 +102,8 @@ const SOCIAL_LINKS = [
     href: "https://x.com/f1_naija",
     label: "X (Twitter)",
     color: "#fff",
-    bg: "rgba(255,255,255,.08)",
-    border: "rgba(255,255,255,.14)",
+    bg: "#000",
+    border: "rgba(255,255,255,.2)",
     icon: (
       <svg width="36" height="36" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
         <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.258 5.63 5.906-5.63Zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
@@ -126,8 +126,8 @@ const SOCIAL_LINKS = [
     href: "https://www.tiktok.com/@f1.naija",
     label: "TikTok",
     color: "#fff",
-    bg: "rgba(255,255,255,.08)",
-    border: "rgba(255,255,255,.14)",
+    bg: "#000",
+    border: "rgba(255,255,255,.2)",
     icon: (
       <svg width="36" height="36" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
         <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.32 6.32 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.75a4.85 4.85 0 0 1-1.01-.06Z"/>
@@ -212,7 +212,7 @@ export default function Layout({ children }: Props) {
           -webkit-tap-highlight-color: transparent; touch-action: manipulation;
           flex-shrink: 0;
         }
-        .hbtn:hover  { background: rgba(255,255,255,.06); }
+        .hbtn:hover  { background: var(--f1-panel); }
         .hbtn:active { background: var(--f1-border); }
 
         /* ── Backdrop ── */
@@ -252,7 +252,7 @@ export default function Layout({ children }: Props) {
           -webkit-tap-highlight-color: transparent; touch-action: manipulation;
           white-space: nowrap; flex-shrink: 0;
         }
-        .dlink:hover  { background: rgba(255,255,255,.04); }
+        .dlink:hover  { background: var(--f1-panel); }
         .dlink:active { background: var(--f1-border-soft); }
         .dlink.active { color: #00d484; background: rgba(0,212,132,.07); }
 
