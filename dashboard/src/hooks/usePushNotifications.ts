@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+
 import { useDataStore } from "@/stores/useDataStore";
 import { useSettingsStore } from "@/stores/useSettingsStore";
 
@@ -78,6 +79,30 @@ export function usePushNotifications() {
   // Keep favourite list accessible inside the effect without triggering re-runs
   const favRef = useRef<string[]>(favoriteDrivers);
   const mountedAt = useRef(Date.now());
+  // Restore baseline state from localStorage — prevents notification flood on PWA reopen
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem('f1n-prev');
+      if (raw) {
+        const d = JSON.parse(raw);
+        prev.current = {
+          initialized: true,
+          trackStatus:       d.trackStatus ?? null,
+          sessionName:       d.sessionName ?? null,
+          sessionActive:     d.sessionActive ?? false,
+          fastestLapDriver:  d.fastestLapDriver ?? null,
+          positions:         d.positions ?? {},
+          retired:           new Set<string>(d.retired ?? []),
+          inPit:             new Set<string>(d.inPit ?? []),
+          p1Driver:          d.p1Driver ?? null,
+          segmentIndex:      d.segmentIndex ?? -1,
+          rainfall:          d.rainfall,
+          lastRCM:           d.lastRCM,
+        };
+      }
+    } catch {}
+  }, []);
+
   // Clear stale/old notifications from OS notification center on mount
   useEffect(() => {
     if ("serviceWorker" in navigator) {
@@ -87,6 +112,30 @@ export function usePushNotifications() {
         .catch(() => {});
     }
   }, []);
+  // Restore baseline state from localStorage — prevents notification flood on PWA reopen
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem('f1n-prev');
+      if (raw) {
+        const d = JSON.parse(raw);
+        prev.current = {
+          initialized: true,
+          trackStatus:       d.trackStatus ?? null,
+          sessionName:       d.sessionName ?? null,
+          sessionActive:     d.sessionActive ?? false,
+          fastestLapDriver:  d.fastestLapDriver ?? null,
+          positions:         d.positions ?? {},
+          retired:           new Set(d.retired ?? []),
+          inPit:             new Set(d.inPit ?? []),
+          p1Driver:          d.p1Driver ?? null,
+          segmentIndex:      d.segmentIndex ?? -1,
+          rainfall:          d.rainfall,
+          lastRCM:           d.lastRCM,
+        };
+      }
+    } catch {}
+  }, []);
+
 
   useEffect(() => { favRef.current = favoriteDrivers; }, [favoriteDrivers]);
 
@@ -135,6 +184,14 @@ export function usePushNotifications() {
 
       p.segmentIndex = TimingData?.SessionPart ?? -1;
       p.initialized = true;
+      // Persist baseline so next app open starts from here (prevents flood)
+      try {
+        localStorage.setItem('f1n-prev', JSON.stringify({
+          ...p,
+          retired: [...p.retired],
+          inPit:   [...p.inPit],
+        }));
+      } catch {}
       return;
     }
 
