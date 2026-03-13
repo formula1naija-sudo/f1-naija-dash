@@ -54,7 +54,7 @@ function useIsLiveSession(): boolean {
       .then((rounds: Array<{ sessions: Array<{ start: string; end: string }> }> | null) => {
         if (!rounds) return;
         const live = rounds.some(r =>
-          r.sessions.some(s => now >= new Date(s.start).getTime() && now <= new Date(s.end).getTime())
+          r.sessions?.some(s => now >= new Date(s.start).getTime() && now <= new Date(s.end).getTime())
         );
         setIsLive(live);
       })
