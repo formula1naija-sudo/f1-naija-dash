@@ -145,6 +145,13 @@ html {
 	}
 }
 
+/* ─── Logo visibility in light mode ────────────────────────── */
+/* tag-logo.png is white/light-green on transparent — invisible on light bg.
+   Add a strong dark drop-shadow in light mode to outline the logo. */
+[data-theme="light"] .f1-logo-img {
+	filter: drop-shadow(0 0 3px rgba(0,0,0,.75)) drop-shadow(0 1px 8px rgba(0,0,0,.45)) !important;
+}
+
 /* ─── Accessibility: keyboard focus ring ────────────────────── */
 :focus-visible {
 	outline: 2px solid #00d484;

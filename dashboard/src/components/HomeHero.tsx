@@ -179,6 +179,7 @@ export default function HomeHero() {
               alt="F1 Naija"
               width={420}
               height={420}
+              className="f1-logo-img"
               style={{
                 objectFit: "contain",
                 width: "100%",

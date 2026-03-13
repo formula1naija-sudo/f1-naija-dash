@@ -298,6 +298,7 @@ export default function Layout({ children }: Props) {
           aria-label="F1 Naija home"
         >
           <Image src="/tag-logo.png" alt="F1 Naija" width={36} height={36}
+            className="f1-logo-img"
             style={{ objectFit: "contain", filter: "drop-shadow(0 0 6px rgba(0,212,132,0.3))" }}
           />
         </Link>
@@ -377,6 +378,7 @@ export default function Layout({ children }: Props) {
             flexShrink: 0,
           }}>
             <Image src="/tag-logo.png" alt="F1 Naija" width={44} height={44}
+              className="f1-logo-img"
               style={{ objectFit: "contain", filter: "drop-shadow(0 0 8px rgba(0,212,132,0.3))" }}
             />
             <button
