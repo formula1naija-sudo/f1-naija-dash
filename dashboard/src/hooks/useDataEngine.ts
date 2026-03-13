@@ -47,11 +47,14 @@ export const useDataEngine = ({ updateState, updatePosition, updateCarData }: Pr
 
 	const delayRef = useRef<number>(0);
 
-	useSettingsStore.subscribe(
-		(state) => state.delay,
-		(delay) => (delayRef.current = delay),
-		{ fireImmediately: true },
-	);
+	useEffect(() => {
+		const unsub = useSettingsStore.subscribe(
+			(state) => state.delay,
+			(delay) => (delayRef.current = delay),
+			{ fireImmediately: true },
+		);
+		return unsub;
+	}, []);
 
 	const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -65,20 +68,28 @@ export const useDataEngine = ({ updateState, updatePosition, updateCarData }: Pr
 		});
 
 		if (carZ) {
-			const carData = inflate<CarData>(carZ);
-			updateCarData(carData.Entries[0].Cars);
+			try {
+				const carData = inflate<CarData>(carZ);
+				updateCarData(carData.Entries[0].Cars);
 
-			for (const entry of carData.Entries) {
-				carBuffer.pushTimed(entry.Cars, utcToLocalMs(entry.Utc));
+				for (const entry of carData.Entries) {
+					carBuffer.pushTimed(entry.Cars, utcToLocalMs(entry.Utc));
+				}
+			} catch (e) {
+				console.error("[useDataEngine] Failed to decompress carZ (initial):", e);
 			}
 		}
 
 		if (posZ) {
-			const position = inflate<Position>(posZ);
-			updatePosition(position.Position[0].Entries);
+			try {
+				const position = inflate<Position>(posZ);
+				updatePosition(position.Position[0].Entries);
 
-			for (const entry of position.Position) {
-				posBuffer.pushTimed(entry.Entries, utcToLocalMs(entry.Timestamp));
+				for (const entry of position.Position) {
+					posBuffer.pushTimed(entry.Entries, utcToLocalMs(entry.Timestamp));
+				}
+			} catch (e) {
+				console.error("[useDataEngine] Failed to decompress posZ (initial):", e);
 			}
 		}
 	};
@@ -91,16 +102,24 @@ export const useDataEngine = ({ updateState, updatePosition, updateCarData }: Pr
 		});
 
 		if (carZ) {
-			const carData = inflate<CarData>(carZ);
-			for (const entry of carData.Entries) {
-				carBuffer.pushTimed(entry.Cars, utcToLocalMs(entry.Utc));
+			try {
+				const carData = inflate<CarData>(carZ);
+				for (const entry of carData.Entries) {
+					carBuffer.pushTimed(entry.Cars, utcToLocalMs(entry.Utc));
+				}
+			} catch (e) {
+				console.error("[useDataEngine] Failed to decompress carZ (update):", e);
 			}
 		}
 
 		if (posZ) {
-			const position = inflate<Position>(posZ);
-			for (const entry of position.Position) {
-				posBuffer.pushTimed(entry.Entries, utcToLocalMs(entry.Timestamp));
+			try {
+				const position = inflate<Position>(posZ);
+				for (const entry of position.Position) {
+					posBuffer.pushTimed(entry.Entries, utcToLocalMs(entry.Timestamp));
+				}
+			} catch (e) {
+				console.error("[useDataEngine] Failed to decompress posZ (update):", e);
 			}
 		}
 	};
