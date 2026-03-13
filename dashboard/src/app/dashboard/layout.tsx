@@ -1,6 +1,6 @@
 'use client';
 
-import { type ReactNode, useEffect, useState } from 'react';
+import { type ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { AnimatePresence, motion } from 'motion/react';
 import Link from 'next/link';
@@ -93,7 +93,7 @@ export default function DashboardLayout({ children }: Props) {
   const pathname = usePathname();
   const stores = useStores();
   const { handleInitial, handleUpdate, maxDelay } = useDataEngine(stores);
-  const { connected } = useSocket({ handleInitial, handleUpdate });
+  const { connected, reconnect } = useSocket({ handleInitial, handleUpdate });
   const delay = useSettingsStore((state) => state.delay);
   const syncing = delay > maxDelay;
   useWakeLock();
@@ -138,7 +138,7 @@ export default function DashboardLayout({ children }: Props) {
             }
           >
             <MobileDynamicBar />
-            {!connected ? <ConnectingSkeleton /> : children}
+            {!connected ? <ConnectingState onRetry={reconnect} /> : children}
           </div>
           <div
             className={
@@ -260,18 +260,91 @@ function NoSessionState({ nextRace }: { nextRace: NextRace | null }) {
   );
 }
 
-function ConnectingSkeleton() {
-  return (
-    <div className="flex flex-col gap-3 p-3 animate-pulse">
-      <div className="h-10 w-1/3 rounded-lg bg-zinc-800" />
-      {Array.from({ length: 10 }).map((_, i) => (
-        <div key={i} className="flex items-center gap-3">
-          <div className="h-8 w-8 rounded-full bg-zinc-800" />
-          <div className="h-8 flex-1 rounded-lg bg-zinc-800" />
-          <div className="h-8 w-16 rounded-lg bg-zinc-800" />
-          <div className="h-8 w-20 rounded-lg bg-zinc-800" />
+// ── ConnectingState ───────────────────────────────────────────────────────────
+// Replaces the old static skeleton with a timed, escalating UX:
+//   0 – 8 s   → animated skeleton (fast connection expected)
+//   8 – 20 s  → skeleton + "Connecting…" banner (Railway may be waking up)
+//   > 20 s    → friendly error panel + manual retry button
+function ConnectingState({ onRetry }: { onRetry: () => void }) {
+  const [elapsed, setElapsed] = useState(0);
+  const startRef = useRef(Date.now());
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setElapsed(Math.floor((Date.now() - startRef.current) / 1000));
+    }, 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  const handleRetry = useCallback(() => {
+    startRef.current = Date.now();
+    setElapsed(0);
+    onRetry();
+  }, [onRetry]);
+
+  // > 20s — show full error panel
+  if (elapsed >= 20) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-5 p-8" style={{ minHeight: '60vh', textAlign: 'center' }}>
+        <div style={{ fontSize: 40 }}>📡</div>
+        <div>
+          <p style={{ fontSize: 16, fontWeight: 800, color: 'var(--f1-text)', marginBottom: 6 }}>
+            Taking longer than expected
+          </p>
+          <p style={{ fontSize: 13, color: 'var(--f1-muted)', maxWidth: 340, lineHeight: 1.6 }}>
+            The live timing service may be starting up — this can take up to 30 seconds on a cold start.
+          </p>
         </div>
-      ))}
+        <button
+          onClick={handleRetry}
+          style={{
+            display: 'inline-flex', alignItems: 'center', gap: 7,
+            padding: '10px 22px', borderRadius: 8, border: 'none', cursor: 'pointer',
+            background: '#00d484', color: '#04060e',
+            fontSize: 13, fontWeight: 800, letterSpacing: '.03em',
+            fontFamily: 'inherit',
+          }}
+        >
+          ↻ Retry connection
+        </button>
+        <p style={{ fontSize: 11, color: '#52525b' }}>
+          If it keeps failing, check back in a few minutes.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-3 p-3">
+      {/* 8–20s: show a subtle "connecting" banner above the skeleton */}
+      {elapsed >= 8 && (
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: 10,
+          padding: '10px 14px', borderRadius: 8,
+          background: 'rgba(245,167,36,.08)', border: '1px solid rgba(245,167,36,.2)',
+          marginBottom: 4,
+        }}>
+          <div style={{
+            width: 8, height: 8, borderRadius: '50%', background: '#f5a724', flexShrink: 0,
+            animation: 'pulse 1.4s infinite',
+          }} />
+          <p style={{ fontSize: 12, color: '#f5a724', fontWeight: 600, margin: 0 }}>
+            Connecting to live service… ({elapsed}s) — service may be starting up
+          </p>
+        </div>
+      )}
+      {/* Always render the skeleton */}
+      <div className="flex flex-col gap-3 animate-pulse">
+        <div className="h-10 w-1/3 rounded-lg bg-zinc-800" />
+        {Array.from({ length: 10 }).map((_, i) => (
+          <div key={i} className="flex items-center gap-3">
+            <div className="h-8 w-8 rounded-full bg-zinc-800" />
+            <div className="h-8 flex-1 rounded-lg bg-zinc-800" />
+            <div className="h-8 w-16 rounded-lg bg-zinc-800" />
+            <div className="h-8 w-20 rounded-lg bg-zinc-800" />
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
