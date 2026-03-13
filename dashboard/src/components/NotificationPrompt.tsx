@@ -10,28 +10,38 @@ async function subscribeToPush(): Promise<void> {
   }
   try {
     const reg = await navigator.serviceWorker.ready;
+
+    // Fetch VAPID public key from the push service (public read-only endpoint)
     const res = await fetch(`${PUSH_SERVICE_URL}/vapid-public-key`);
     if (!res.ok) throw new Error("Failed to fetch VAPID key");
     const { publicKey } = await res.json();
+
+    // If already subscribed, re-register to keep the server in sync
     const existing = await reg.pushManager.getSubscription();
     if (existing) {
-      await fetch(`${PUSH_SERVICE_URL}/subscribe`, {
+      await fetch("/api/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(existing),
       });
       return;
     }
+
+    // Create a new push subscription with the server's VAPID key
     const subscription = await reg.pushManager.subscribe({
       userVisibleOnly: true,
       applicationServerKey: publicKey,
     });
-    await fetch(`${PUSH_SERVICE_URL}/subscribe`, {
+
+    // POST via the Next.js proxy — keeps the Railway push-service URL out of
+    // the browser's network log and respects the same-origin policy
+    const regRes = await fetch("/api/subscribe", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(subscription),
     });
-    console.log("Push subscription registered");
+    if (!regRes.ok) throw new Error(`Subscribe failed: ${regRes.status}`);
+    console.log("Push subscription registered successfully");
   } catch (err) {
     console.error("Push subscription failed:", err);
   }

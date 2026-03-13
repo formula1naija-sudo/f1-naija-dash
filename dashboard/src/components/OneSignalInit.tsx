@@ -18,7 +18,9 @@ interface OneSignalType {
 export default function OneSignalInit() {
   useEffect(() => {
     const appId = process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID;
-    if (!appId) return;
+    // Also reject the placeholder so the SDK isn't loaded with a fake ID
+    // (would generate console errors and wasted network requests)
+    if (!appId || appId === "your_onesignal_app_id_here") return;
 
     // Prevent double-load in React Strict Mode / hot reload
     if (document.querySelector('script[src*="OneSignalSDK.page.js"]')) return;

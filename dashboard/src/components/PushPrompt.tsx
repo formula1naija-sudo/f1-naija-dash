@@ -16,6 +16,9 @@ export default function PushPrompt() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
+    // Only activate if OneSignal has a real (non-placeholder) app ID configured
+    const appId = process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID;
+    if (!appId || appId === "your_onesignal_app_id_here") return;
     if (localStorage.getItem("pushPromptDismissed")) return;
     const timer = setTimeout(() => {
       const optedIn = window.OneSignal?.User?.PushSubscription?.optedIn;

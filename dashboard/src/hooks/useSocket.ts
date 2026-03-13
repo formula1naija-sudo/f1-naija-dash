@@ -13,20 +13,42 @@ export const useSocket = ({ handleInitial, handleUpdate }: Props) => {
 	const [connected, setConnected] = useState<boolean>(false);
 
 	useEffect(() => {
-		const sse = new EventSource(`${env.NEXT_PUBLIC_LIVE_URL}/api/realtime`);
+		let sse: EventSource;
 
-		sse.onerror = () => setConnected(false);
-		sse.onopen = () => setConnected(true);
+		function openSSE() {
+			// Close any stale connection before creating a fresh one
+			sse?.close();
 
-		sse.addEventListener("initial", (message) => {
-			handleInitial(JSON.parse(message.data));
-		});
+			sse = new EventSource(`${env.NEXT_PUBLIC_LIVE_URL}/api/realtime`);
 
-		sse.addEventListener("update", (message) => {
-			handleUpdate(JSON.parse(message.data));
-		});
+			sse.onerror = () => setConnected(false);
+			sse.onopen  = () => setConnected(true);
 
-		return () => sse.close();
+			sse.addEventListener("initial", (message) => {
+				handleInitial(JSON.parse(message.data));
+			});
+
+			sse.addEventListener("update", (message) => {
+				handleUpdate(JSON.parse(message.data));
+			});
+		}
+
+		openSSE();
+
+		// Mobile browsers (especially iOS) kill SSE connections in background tabs.
+		// Force-reconnect the moment the tab becomes visible so users always see
+		// fresh live data without needing to reload the page manually.
+		const onVisibilityChange = () => {
+			if (document.visibilityState === "visible" && sse.readyState === EventSource.CLOSED) {
+				openSSE();
+			}
+		};
+		document.addEventListener("visibilitychange", onVisibilityChange);
+
+		return () => {
+			document.removeEventListener("visibilitychange", onVisibilityChange);
+			sse?.close();
+		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
