@@ -1,8 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-
 import type { MessageInitial, MessageUpdate } from "@/types/message.type";
-
-import { env } from "@/env";
 
 type Props = {
 	handleInitial: (data: MessageInitial) => void;
@@ -18,11 +15,11 @@ export const useSocket = ({ handleInitial, handleUpdate }: Props) => {
 	const openSSE = useCallback(() => {
 		sseRef.current?.close();
 
-		const sse = new EventSource(`${env.NEXT_PUBLIC_LIVE_URL}/api/realtime`);
+		const sse = new EventSource('/api/realtime');
 		sseRef.current = sse;
 
 		sse.onerror = () => setConnected(false);
-		sse.onopen  = () => setConnected(true);
+		sse.onopen = () => setConnected(true);
 
 		sse.addEventListener("initial", (message) => {
 			handleInitial(JSON.parse(message.data));
@@ -31,7 +28,7 @@ export const useSocket = ({ handleInitial, handleUpdate }: Props) => {
 		sse.addEventListener("update", (message) => {
 			handleUpdate(JSON.parse(message.data));
 		});
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	useEffect(() => {
@@ -48,6 +45,7 @@ export const useSocket = ({ handleInitial, handleUpdate }: Props) => {
 				openSSE();
 			}
 		};
+
 		document.addEventListener("visibilitychange", onVisibilityChange);
 
 		return () => {
