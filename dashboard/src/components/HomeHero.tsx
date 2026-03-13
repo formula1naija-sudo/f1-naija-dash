@@ -36,7 +36,7 @@ export default function HomeHero() {
 
       <section style={{
         background: "#04060e", position: "relative", overflow: "hidden",
-        padding: "clamp(48px,8vw,96px) 0 clamp(56px,9vw,108px)",
+        padding: "clamp(28px,6vw,96px) 0 clamp(36px,7vw,108px)",
       }}>
         {/* bg grid */}
         <div style={{ position: "absolute", inset: 0, pointerEvents: "none",
@@ -59,7 +59,7 @@ export default function HomeHero() {
         <div className="relative z-10 flex flex-col px-6 lg:px-12" style={{ maxWidth: 640 }}>
 
           {/* eyebrow */}
-          <div className="hero-fade-1 mb-5 flex items-center gap-2">
+          <div className="hero-fade-1 mb-4 flex items-center gap-2">
             <div style={{ width: 20, height: 1, background: "#00d484", flexShrink: 0 }} />
             <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: "#00d484" }}>
               Formula 1 · Season 2026
@@ -67,26 +67,26 @@ export default function HomeHero() {
           </div>
 
           {/* logo */}
-          <div className="hero-fade-1 mb-6">
+          <div className="hero-fade-1 mb-4">
             <Image
               src="/tag-logo.png" alt="F1 Naija"
               width={260} height={260}
-              style={{ objectFit: "contain", filter: "drop-shadow(0 0 20px rgba(0,212,132,0.35))" }}
+              style={{ objectFit: "contain", width: "min(200px, 48vw)", height: "auto", filter: "drop-shadow(0 0 20px rgba(0,212,132,0.35))" }}
               priority
             />
           </div>
 
           {/* title */}
-          <div style={{ lineHeight: .9, marginBottom: 28 }}>
+          <div style={{ lineHeight: .9, marginBottom: 20 }}>
             <div style={{ overflow: "hidden", display: "block" }}>
               <div className="hero-title-1" style={{
-                fontSize: "clamp(64px,7.5vw,112px)", fontWeight: 900,
+                fontSize: "clamp(56px,7.5vw,112px)", fontWeight: 900,
                 letterSpacing: "-.035em", lineHeight: .92, color: "var(--f1-text)",
               }}>F1</div>
             </div>
             <div style={{ overflow: "hidden", display: "block" }}>
               <div className="hero-title-2" style={{
-                fontSize: "clamp(64px,7.5vw,112px)", fontWeight: 900,
+                fontSize: "clamp(56px,7.5vw,112px)", fontWeight: 900,
                 letterSpacing: "-.035em", lineHeight: .92,
                 background: "linear-gradient(120deg,#00d484 0%,#00f0a0 40%,#f5a724 100%)",
                 WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
@@ -95,13 +95,13 @@ export default function HomeHero() {
           </div>
 
           {/* tagline */}
-          <p className="hero-fade-2" style={{ fontSize: 15, lineHeight: 1.7, color: "var(--f1-muted)", maxWidth: 420, marginBottom: 32 }}>
+          <p className="hero-fade-2" style={{ fontSize: 15, lineHeight: 1.7, color: "var(--f1-muted)", maxWidth: 420, marginBottom: 24 }}>
             Nigeria&apos;s #1 Formula 1 platform. Live timing, race data, and community — built for{" "}
             <strong style={{ color: "var(--f1-text)", fontWeight: 600 }}>Naija fans everywhere.</strong>
           </p>
 
           {/* CTAs */}
-          <div className="hero-fade-2" style={{ display: "flex", gap: 12, marginBottom: 44, flexWrap: "wrap" }}>
+          <div className="hero-fade-2" style={{ display: "flex", gap: 12, marginBottom: 28, flexWrap: "wrap" }}>
             <Link href="/dashboard" style={{
               display: "inline-flex", alignItems: "center", gap: 7,
               padding: "12px 26px", borderRadius: 7, fontSize: 13, fontWeight: 700,
