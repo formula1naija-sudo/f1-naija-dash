@@ -2,6 +2,7 @@
 
 import { type ReactNode, useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import Footer from "@/components/Footer";
 
@@ -222,17 +223,14 @@ export default function Layout({ children }: Props) {
         <Link
           href="/"
           style={{
-            textDecoration: "none", display: "flex", alignItems: "center", gap: 6,
+            textDecoration: "none", display: "flex", alignItems: "center",
             minHeight: 44, paddingRight: 8,
           }}
           aria-label="F1 Naija home"
         >
-          <span style={{ fontSize: 15, fontWeight: 900, letterSpacing: "-.02em", color: "var(--f1-text)" }}>
-            F1
-          </span>
-          <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "#00d484" }}>
-            · Naija
-          </span>
+          <Image src="/tag-logo.png" alt="F1 Naija" width={36} height={36}
+            style={{ objectFit: "contain", filter: "drop-shadow(0 0 6px rgba(0,212,132,0.3))" }}
+          />
         </Link>
 
         {/* Hamburger */}
@@ -278,14 +276,13 @@ export default function Layout({ children }: Props) {
           {/* Drawer header */}
           <div style={{
             display: "flex", alignItems: "center", justifyContent: "space-between",
-            padding: "14px 16px 14px 24px",
+            padding: "10px 16px 10px 20px",
             borderBottom: "1px solid var(--f1-border-mid)",
             flexShrink: 0,
           }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-              <span style={{ fontSize: 16, fontWeight: 900, letterSpacing: "-.02em", color: "var(--f1-text)" }}>F1</span>
-              <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "#00d484" }}>· Naija</span>
-            </div>
+            <Image src="/tag-logo.png" alt="F1 Naija" width={44} height={44}
+              style={{ objectFit: "contain", filter: "drop-shadow(0 0 8px rgba(0,212,132,0.3))" }}
+            />
             <button
               className="hbtn"
               onClick={() => setOpen(false)}
