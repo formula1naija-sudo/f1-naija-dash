@@ -2,6 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const webpush = require('web-push');
 const { EventSource } = require('eventsource');
+const fs = require('fs');
+const path = require('path');
 
 const app = express();
 app.use(cors());
@@ -29,10 +31,38 @@ if (!VAPID_PUBLIC_KEY || !VAPID_PRIVATE_KEY) {
 
 webpush.setVapidDetails(VAPID_EMAIL, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY);
 
-// In-memory subscription store: endpoint -> subscription
-const subscriptions = new Map();
-let lastState       = null;
-let readyToNotify   = false; // true after warmup
+// ── Persistent subscription store ────────────────────────────────────────────
+// Subscriptions are written to disk so Railway restarts don't wipe them.
+// Each subscription is keyed by its endpoint URL.
+const SUBS_FILE = path.join(__dirname, 'subscriptions.json');
+
+function loadSubscriptions() {
+  try {
+    if (fs.existsSync(SUBS_FILE)) {
+      const data = JSON.parse(fs.readFileSync(SUBS_FILE, 'utf8'));
+      console.log('Loaded ' + Object.keys(data).length + ' subscriptions from disk');
+      return new Map(Object.entries(data));
+    }
+  } catch (e) {
+    console.error('Failed to load subscriptions from disk:', e.message);
+  }
+  return new Map();
+}
+
+function saveSubscriptions() {
+  try {
+    const obj = Object.fromEntries(subscriptions);
+    fs.writeFileSync(SUBS_FILE, JSON.stringify(obj, null, 2), 'utf8');
+  } catch (e) {
+    console.error('Failed to save subscriptions to disk:', e.message);
+  }
+}
+
+// Load persisted subscriptions on startup
+const subscriptions = loadSubscriptions();
+
+let lastState     = null;
+let readyToNotify = false; // true after warmup
 
 // Detect push-worthy events by diffing prevState vs newState.
 // Field names MUST match the PascalCase keys used by the f1-dash SSE API
@@ -41,45 +71,37 @@ function detectEvents(prevState, newState) {
   const notifications = [];
   if (!prevState || !newState) return notifications;
 
-  // ── Track status ──────────────────────────────────────────────────────────
+  // ── Track status ─────────────────────────────────────────────────────────────
   // TrackStatus.Status: "1"=Clear "2"=Yellow "4"=SafetyCar "5"=Red "6"=VSC "7"=VSCEnding
   const prevTrack = prevState.TrackStatus && prevState.TrackStatus.Status;
   const newTrack  = newState.TrackStatus  && newState.TrackStatus.Status;
   if (prevTrack !== newTrack && newTrack) {
     const statusMap = {
-      '1': { title: '🟢 Track Clear',   body: 'Track is clear — green flag!' },
-      '2': { title: '🟡 Yellow Flag',   body: 'Yellow flag conditions on track.' },
-      '4': { title: '🚗 Safety Car',    body: 'Safety car deployed on track.' },
-      '5': { title: '🔴 Red Flag',      body: 'Session red flagged!' },
-      '6': { title: '🟡 VSC',           body: 'Virtual Safety Car (VSC) deployed.' },
-      '7': { title: '🟡 VSC Ending',    body: 'Virtual Safety Car period ending.' },
+      '1': { title: '🟢 Track Clear',  body: 'Track is clear — green flag!' },
+      '2': { title: '🟡 Yellow Flag',  body: 'Yellow flag conditions on track.' },
+      '4': { title: '🚗 Safety Car',   body: 'Safety car deployed on track.' },
+      '5': { title: '🔴 Red Flag',     body: 'Session red flagged!' },
+      '6': { title: '🟡 VSC',         body: 'Virtual Safety Car (VSC) deployed.' },
+      '7': { title: '🟡 VSC Ending',  body: 'Virtual Safety Car period ending.' },
     };
     const msg = statusMap[newTrack];
     if (msg) notifications.push({ ...msg, url: '/dashboard' });
   }
 
-  // ── Session status ────────────────────────────────────────────────────────
+  // ── Session status ────────────────────────────────────────────────────────────
   // SessionStatus.Status: "Started" | "Finished" | "Finalised" | "Ends"
   const prevSession = prevState.SessionStatus && prevState.SessionStatus.Status;
   const newSession  = newState.SessionStatus  && newState.SessionStatus.Status;
   if (prevSession !== newSession && newSession) {
     const sessionName = (newState.SessionInfo && newState.SessionInfo.Name) || 'Session';
     if (newSession === 'Started') {
-      notifications.push({
-        title: '🏁 Session Started',
-        body:  sessionName + ' is underway!',
-        url:   '/dashboard',
-      });
+      notifications.push({ title: '🏁 Session Started', body: sessionName + ' is underway!', url: '/dashboard' });
     } else if (newSession === 'Finished' || newSession === 'Finalised') {
-      notifications.push({
-        title: '🏁 Session Ended',
-        body:  sessionName + ' has ended.',
-        url:   '/dashboard',
-      });
+      notifications.push({ title: '🏁 Session Ended', body: sessionName + ' has ended.', url: '/dashboard' });
     }
   }
 
-  // ── Rain / weather ────────────────────────────────────────────────────────
+  // ── Rain / weather ────────────────────────────────────────────────────────────
   // WeatherData.Rainfall is a STRING "0" or "1", NOT a boolean
   const prevRain = prevState.WeatherData && prevState.WeatherData.Rainfall === '1';
   const newRain  = newState.WeatherData  && newState.WeatherData.Rainfall  === '1';
@@ -89,7 +111,7 @@ function detectEvents(prevState, newState) {
     notifications.push({ title: '☀️ Rain Stopped', body: 'Rain has stopped at the circuit.', url: '/dashboard' });
   }
 
-  // ── Race control messages ─────────────────────────────────────────────────
+  // ── Race control messages ─────────────────────────────────────────────────────
   // More reliable than TrackStatus for SC/VSC/Red Flag alerts
   const prevMsgs = (prevState.RaceControlMessages && prevState.RaceControlMessages.Messages) || [];
   const newMsgs  = (newState.RaceControlMessages  && newState.RaceControlMessages.Messages)  || [];
@@ -111,9 +133,10 @@ function detectEvents(prevState, newState) {
 
 async function sendNotifications(notifications) {
   if (notifications.length === 0) return;
-  const payload = JSON.stringify(notifications[0]);
+  const payload     = JSON.stringify(notifications[0]);
   const pushOptions = { TTL: PUSH_TTL_SECONDS };
-  const dead = [];
+  const dead        = [];
+
   for (const [endpoint, subscription] of subscriptions.entries()) {
     try {
       await webpush.sendNotification(subscription, payload, pushOptions);
@@ -125,9 +148,13 @@ async function sendNotifications(notifications) {
       }
     }
   }
-  for (const endpoint of dead) {
-    subscriptions.delete(endpoint);
-    console.log('Removed expired subscription:', endpoint);
+
+  if (dead.length > 0) {
+    for (const endpoint of dead) {
+      subscriptions.delete(endpoint);
+      console.log('Removed expired subscription:', endpoint);
+    }
+    saveSubscriptions(); // persist the removals
   }
 }
 
@@ -180,8 +207,7 @@ function connectToRealtime() {
   };
 }
 
-// ── REST endpoints ────────────────────────────────────────────────────────────
-
+// ── REST endpoints ────────────────────────────────────────────────────────────────
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', subscriptions: subscriptions.size, connected: lastState !== null, readyToNotify });
 });
@@ -196,6 +222,7 @@ app.post('/subscribe', (req, res) => {
     return res.status(400).json({ error: 'Invalid subscription' });
   }
   subscriptions.set(subscription.endpoint, subscription);
+  saveSubscriptions(); // persist immediately
   console.log('New subscription registered. Total:', subscriptions.size);
   res.status(201).json({ message: 'Subscribed successfully' });
 });
@@ -206,22 +233,22 @@ app.delete('/subscribe', (req, res) => {
     return res.status(400).json({ error: 'Missing endpoint' });
   }
   subscriptions.delete(endpoint);
+  saveSubscriptions(); // persist immediately
   console.log('Subscription removed. Total:', subscriptions.size);
   res.json({ message: 'Unsubscribed successfully' });
 });
 
-// ── Tweet cache ───────────────────────────────────────────────────────────────
-
-let tweetCache = { tweets: [], fetchedAt: 0 };
+// ── Tweet cache ───────────────────────────────────────────────────────────────────
+let tweetCache       = { tweets: [], fetchedAt: 0 };
 const TWEET_CACHE_MS = 30 * 60 * 1000; // 30 minutes
 
 function parseTweetsFromHtml(html) {
-  const tweets = [];
-  const itemRe = /<li[^>]+data-tweet-id="(\d+)"[^>]*>([\s\S]*?)<\/li>/g;
+  const tweets  = [];
+  const itemRe  = /<li[^>]+data-tweet-id="(\d+)"[^>]*>([\s\S]*?)<\/li>/g;
   let m;
   while ((m = itemRe.exec(html)) !== null) {
-    const id    = m[1];
-    const inner = m[2];
+    const id        = m[1];
+    const inner     = m[2];
     const textMatch = /<p[^>]*class="[^"]*timeline-Tweet-text[^"]*"[^>]*>([\s\S]*?)<\/p>/.exec(inner);
     const rawText   = textMatch
       ? textMatch[1].replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&#39;/g, "'").replace(/&quot;/g, '"').trim()
@@ -237,7 +264,7 @@ async function fetchTweetsFromCDN() {
   const cdnUrl = 'https://cdn.syndication.twimg.com/timeline/profile?screen_name=f1_naija&count=20&lang=en&callback=f1nCallback';
   try {
     console.log('Trying CDN JSONP: timeline/profile');
-    const res = await fetch(cdnUrl, {
+    const res  = await fetch(cdnUrl, {
       headers: {
         'User-Agent':      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
         'Accept':          'text/javascript, application/javascript, */*',
@@ -262,12 +289,14 @@ async function fetchTweetsFromCDN() {
     } else {
       console.log('CDN JSONP: empty body (cloud IP may be blocked)');
     }
-  } catch (e) { console.log('CDN JSONP error: ' + e.message); }
+  } catch (e) {
+    console.log('CDN JSONP error: ' + e.message);
+  }
 
   const synUrl = 'https://syndication.twitter.com/srv/timeline-profile/screen-name/f1_naija?lang=en';
   try {
     console.log('Trying syndication.twitter.com');
-    const res = await fetch(synUrl, {
+    const res  = await fetch(synUrl, {
       headers: {
         'User-Agent':      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
         'Accept':          'text/html,application/xhtml+xml,*/*',
@@ -281,7 +310,10 @@ async function fetchTweetsFromCDN() {
       const tweets = parseTweetsFromHtml(body);
       if (tweets.length > 0) { console.log('Syndication: got ' + tweets.length + ' tweets'); return tweets; }
     }
-  } catch (e) { console.log('Syndication error: ' + e.message); }
+  } catch (e) {
+    console.log('Syndication error: ' + e.message);
+  }
+
   return null;
 }
 
@@ -309,17 +341,19 @@ async function fetchTweetsFromNitter() {
       let match;
       while ((match = itemRegex.exec(xml)) !== null) {
         const itemXml = match[1];
-        const linkM = itemXml.match(/<link>(.*?)<\/link>/);
-        const dateM = itemXml.match(/<pubDate>(.*?)<\/pubDate>/);
-        const descM = itemXml.match(/<description><!\[CDATA\[([\s\S]*?)\]\]><\/description>/);
-        const idM   = linkM && linkM[1].match(/\/status\/(\d+)/);
+        const linkM   = itemXml.match(/<link>(.*?)<\/link>/);
+        const dateM   = itemXml.match(/<pubDate>(.*?)<\/pubDate>/);
+        const descM   = itemXml.match(/<description><!\[CDATA\[([\s\S]*?)\]\]><\/description>/);
+        const idM     = linkM && linkM[1].match(/\/status\/(\d+)/);
         if (!idM) continue;
         const text = (descM ? descM[1] : '')
           .replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&nbsp;/g, ' ').trim();
         items.push({ id: idM[1], text, created_at: new Date(dateM ? dateM[1] : '').toISOString() });
       }
       if (items.length > 0) { console.log('Nitter ' + instance + ': fetched ' + items.length + ' tweets'); return items; }
-    } catch (e) { console.log('Nitter ' + instance + ' failed: ' + e.message); }
+    } catch (e) {
+      console.log('Nitter ' + instance + ' failed: ' + e.message);
+    }
   }
   return null;
 }
@@ -338,8 +372,7 @@ app.get('/tweets', async (req, res) => {
   }
 });
 
-// ── Start ─────────────────────────────────────────────────────────────────────
-
+// ── Start ─────────────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
   console.log('Push service running on port ' + PORT);
   connectToRealtime();
