@@ -61,6 +61,134 @@ const subscriptions = loadSubscriptions();
 let lastState     = null;
 let readyToNotify = false;
 
+// ââ Helper: randomly pick one item from an array ââââââââââââââââââââââââââââââ
+function pick(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+// ââ Message variation pools âââââââââââââââââââââââââââââââââââââââââââââââââââ
+const VARIATIONS = {
+  trackClear: [
+    { title: 'ð¢ Track Clear',       body: 'Green flag â racing resumed!' },
+    { title: 'ð¢ Green Flag!',        body: 'Track is clear, full racing speed!' },
+    { title: 'ð¢ Racing Resumes',     body: "We're back to full racing conditions!" },
+    { title: 'ð¢ Go Go Go!',          body: 'Green flag out â drivers pushing now.' },
+  ],
+  yellowFlag: [
+    { title: 'ð¡ Yellow Flag',        body: 'Yellow flag conditions on track â no overtaking.' },
+    { title: 'ð¡ Caution Out',        body: 'Yellows shown â something happening on track.' },
+    { title: 'ð¡ Yellow Flag Zone',   body: 'Drivers must slow â yellow flag sector active.' },
+  ],
+  safetyCar: [
+    { title: 'ð Safety Car',         body: 'Safety car deployed on track.' },
+    { title: 'ð SC Out!',            body: "Safety car's out â field bunching up." },
+    { title: 'ð Safety Car Deployed', body: 'Neutralised! Safety car leads the field.' },
+    { title: 'ð Safety Car',         body: 'SC deployed â strategy window opening for teams.' },
+  ],
+  redFlag: [
+    { title: 'ð´ Red Flag!',          body: 'Session has been red flagged.' },
+    { title: 'ð´ RED FLAG!',          body: 'Session stopped â red flag shown!' },
+    { title: 'ð´ Session Suspended',  body: 'Red flag! Session has been suspended.' },
+    { title: 'ð´ Red Flag!',          body: 'Action halted â stewards have red flagged the session.' },
+  ],
+  vsc: [
+    { title: 'â ï¸ Virtual Safety Car', body: 'VSC deployed â no overtaking.' },
+    { title: 'â ï¸ VSC',                body: 'Virtual Safety Car! Drivers must slow down.' },
+    { title: 'â ï¸ VSC Out',            body: 'VSC period in effect â gaps being maintained.' },
+  ],
+  vscEnding: [
+    { title: 'â ï¸ VSC Ending',         body: 'VSC period ending â prepare to push!' },
+    { title: 'â ï¸ VSC Almost Over',    body: 'VSC ending soon â drivers ready to attack!' },
+    { title: 'â ï¸ VSC Ending',         body: "VSC about to be withdrawn â it's on!" },
+  ],
+  sessionStarted: (sessionName, gpName) => [
+    { title: 'ð ' + sessionName + ' â LIVE',  body: sessionName + ' at ' + gpName + ' is underway!' },
+    { title: 'ð ' + sessionName + ' Starts!', body: "We're live! " + sessionName + ' at ' + gpName + ' has begun.' },
+    { title: 'ð¦ Lights Out!',                 body: sessionName + ' is GO at ' + gpName + '!' },
+    { title: 'ð SESSION LIVE',                body: gpName + ' ' + sessionName + ' â action underway now!' },
+  ],
+  qualiPole: (pole, top3, sessionName, gpName) => [
+    {
+      title: 'ð ' + sessionName + ' Results',
+      body:  pole + ' takes Pole Position!' + (top3 ? ' Top 3: ' + top3 : ''),
+    },
+    {
+      title: 'ð¥ POLE! ' + pole,
+      body:  pole + ' starts from P1 at ' + gpName + '!' + (top3 ? ' Top 3: ' + top3 : ''),
+    },
+    {
+      title: 'ð Qualifying Done',
+      body:  pole + " nabs pole! It's " + (top3 || pole) + ' for ' + gpName + '.',
+    },
+    {
+      title: 'â±ï¸ Pole: ' + pole,
+      body:  pole + ' is on pole for ' + gpName + '!' + (top3 ? ' Full top 3: ' + top3 : ''),
+    },
+  ],
+  qualiNoData: (gpName) => [
+    { title: 'ð Qualifying Complete', body: gpName + ' qualifying done â check the results!' },
+    { title: 'â Qualifying Over',     body: gpName + ' qualifying wrapped up.' },
+  ],
+  raceWinner: (winner, gpName) => [
+    { title: 'ð Race Result â ' + gpName,    body: winner + ' wins ' + gpName + '!' },
+    { title: 'ð¥ ' + winner + ' WINS!',       body: winner + ' takes victory at ' + gpName + '!' },
+    { title: 'ð ' + gpName + ' Result',      body: winner + " crosses the line first â " + gpName + " winner!" },
+    { title: 'ð WINNER: ' + winner,          body: winner + ' wins the ' + gpName + '! What a race.' },
+  ],
+  raceNoData: (gpName) => [
+    { title: 'ð Race Complete',              body: gpName + ' is done â check the final standings!' },
+    { title: 'â ' + gpName + ' Finished',    body: 'Race over at ' + gpName + '.' },
+  ],
+  sprintWinner: (winner) => [
+    { title: 'ðï¸ Sprint Result',             body: winner + ' wins the Sprint!' },
+    { title: 'ð¥ Sprint: ' + winner,         body: winner + ' takes the Sprint victory!' },
+    { title: 'ðï¸ Sprint Done',               body: winner + " claims the Sprint win â that's P1!" },
+  ],
+  sprintNoData: () => [
+    { title: 'ðï¸ Sprint Finished',           body: 'Sprint race is done!' },
+  ],
+  practiceComplete: (fastest, sessionName, gpName) => [
+    { title: 'â ' + sessionName + ' Complete', body: fastest + ' leads the times at ' + gpName + '.' },
+    { title: 'ð§ ' + sessionName + ' Done',    body: fastest + ' fastest in ' + sessionName + ' at ' + gpName + '.' },
+    { title: 'â ' + sessionName,              body: gpName + ' ' + sessionName + ' wrapped â ' + fastest + ' P1.' },
+    { title: 'ð§ Practice Wrap',              body: fastest + ' sets the pace in ' + sessionName + ' at ' + gpName + '.' },
+  ],
+  practiceNoData: (sessionName, gpName) => [
+    { title: 'â ' + sessionName + ' Done',    body: gpName + ' ' + sessionName + ' complete.' },
+    { title: 'ð§ ' + sessionName + ' Finished', body: 'All done for ' + sessionName + ' at ' + gpName + '.' },
+  ],
+  rainStart: [
+    { title: 'ð§ï¸ Rain!',            body: 'It has started raining at the circuit â tyre change incoming?' },
+    { title: 'ð§ï¸ WET CONDITIONS',   body: "Rain's falling at the track â expect strategy chaos!" },
+    { title: 'ð§ï¸ It\'s Raining!',  body: 'Weather change at the circuit â could shuffle the order!' },
+    { title: 'ð§ï¸ Rain Alert',       body: 'Wet weather arriving â watch for inter or wet tyres.' },
+  ],
+  rainStop: [
+    { title: 'âï¸ Rain Stopped',      body: 'Track drying â conditions improving.' },
+    { title: 'âï¸ Drying Out',        body: 'Rain has stopped â track should improve quickly.' },
+    { title: 'âï¸ Clearing Up',       body: 'No more rain â dry conditions returning to the circuit.' },
+    { title: 'âï¸ Rain Gone',         body: 'Weather clearing up â slicks incoming soon?' },
+  ],
+  preSession: (emoji, sName, circuit, minsOut) => [
+    {
+      title: emoji + ' ' + sName + ' in ~10 mins',
+      body:  sName + ' at ' + circuit + ' starts in around ' + minsOut + ' minutes â open the app!',
+    },
+    {
+      title: emoji + ' ' + sName + ' Soon!',
+      body:  'About ' + minsOut + ' minutes until ' + sName + ' at ' + circuit + '. Get ready!',
+    },
+    {
+      title: emoji + ' Almost Time â ' + sName,
+      body:  sName + ' at ' + circuit + ' kicking off in ~' + minsOut + ' mins. Don\'t miss it!',
+    },
+    {
+      title: emoji + ' ' + minsOut + ' Mins to ' + sName,
+      body:  circuit + ' ' + sName + ' is nearly here â tap to follow live!',
+    },
+  ],
+};
+
 // ââ Helper: get P1 driver display name from state ââââââââââââââââââââââââââââ
 function getP1Driver(state) {
   const timingLines = state.TimingData && state.TimingData.Lines;
@@ -116,16 +244,16 @@ function detectEvents(prevState, newState) {
   const prevTrack = prevState.TrackStatus && prevState.TrackStatus.Status;
   const newTrack  = newState.TrackStatus  && newState.TrackStatus.Status;
   if (prevTrack !== newTrack && newTrack) {
-    const statusMap = {
-      '1': { title: 'ð¢ Track Clear',       body: 'Green flag â racing resumed!' },
-      '2': { title: 'ð¡ Yellow Flag',        body: 'Yellow flag conditions on track.' },
-      '4': { title: 'ð,Safety Car',        body: 'Safety car deployed on track.' },
-      '5': { title: 'ð´ Red Flag!',          body: 'Session has been red flagged.' },
-      '6': { title: 'â ï¸ Virtual Safety Car', body: 'VSC deployed â no overtaking.' },
-      '7': { title: 'â ï¸ VSC Ending',         body: 'VSC period ending â prepare to push!' },
+    const pools = {
+      '1': VARIATIONS.trackClear,
+      '2': VARIATIONS.yellowFlag,
+      '4': VARIATIONS.safetyCar,
+      '5': VARIATIONS.redFlag,
+      '6': VARIATIONS.vsc,
+      '7': VARIATIONS.vscEnding,
     };
-    const msg = statusMap[newTrack];
-    if (msg) notifications.push({ ...msg, url: '/dashboard' });
+    const pool = pools[newTrack];
+    if (pool) notifications.push({ ...pich(pool), url: '/dashboard' });
   }
 
   // ââ Session status ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
@@ -135,46 +263,49 @@ function detectEvents(prevState, newState) {
   if (prevSession !== newSession && newSession) {
     if (newSession === 'Started') {
       notifications.push({
-        title: 'ð ' + sessionName + ' â LIVE',
-        body:  sessionName + ' at ' + gpName + ' is underway',
-        url:   '/dashboard',
+        ...pick(VARIATIONS.sessionStarted(sessionName, gpName)),
+        url: '/dashboard',
       });
     } else if (newSession === 'Finished' || newSession === 'Finalised') {
-      // Build a meaningful summary based on session type
       const isQualifying = /qualifying/i.test(sessionType);
       const isRace       = /^race$/i.test(sessionType) || /^sprint$/i.test(sessionType);
       const isSprint     = /sprint/i.test(sessionType);
       const isPractice   = /practice/i.test(sessionType);
 
       if (isQualifying) {
-        const pole   = getP1Driver(newState);
-        const top3   = getQualiTop3(newState);
-        notifications.push({
-          title: 'ð ' + sessionName + ' Results',
-          body:  pole
-            ? (pole + ' takes Pole Position!' + (top3 ? ' Top 3: ' + top3 : ''))
-            : (gpName + ' qualifying complete'),
-          url: '/dashboard',
-        });
-      } else if (isRace || isSprint) {
+        const pole = getP1Driver(newState);
+        const top3 = getQualiTop3(newState);
+        const chosen = pole
+          ? pick(VARIATIONS.qualiPole(pole, top3, sessionName, gpName))
+          : pick(VARIATIONS.qualiNoData(gpName));
+        notifications.push({ ...chosen, url: '/dashboard' });
+
+      } else if (isSprint) {
         const winner = getP1Driver(newState);
-        notifications.push({
-          title: isSprint ? 'ðï¸ Sprint Result' : 'ð Race Result â ' + gpName,
-          body:  winner ? (winner + ' wins ' + (isSprint ? 'the Sprint!' : gpName + '!')) : (gpName + ' complete'),
-          url:   '/dashboard',
-        });
+        const chosen = winner
+          ? pick(VARIATIONS.sprintWinner(winner))
+          : pick(VARIATIONS.sprintNoData());
+        notifications.push({ ...chosen, url: '/dashboard' });
+
+      } else if (isRace) {
+        const winner = getP1Driver(newState);
+        const chosen = winner
+          ? pick(VARIATIONS.raceWinner(winner, gpName))
+          : pick(VARIATIONS.raceNoData(gpName));
+        notifications.push({ ...chosen, url: '/dashboard' });
+
       } else if (isPractice) {
         const fastest = getP1Driver(newState);
-        notifications.push({
-          title: 'â ' + sessionName + ' Complete',
-          body:  fastest ? (fastest + ' leads the times at ' + gpName) : (gpName + ' ' + sessionName + ' finished'),
-          url:   '/dashboard',
-        });
+        const chosen = fastest
+          ? pick(VARIATIONS.practiceComplete(fastest, sessionName, gpName))
+          : pick(VARIATIONS.practiceNoData(sessionName, gpName));
+        notifications.push({ ...chosen, url: '/dashboard' });
+
       } else {
         notifications.push({
           title: 'â ' + sessionName + ' Finished',
-          body: gpName + ' â ' + sessionName + ' complete',
-          url:  '/dashboard',
+          body:  gpName + ' â ' + sessionName + ' complete',
+          url:   '/dashboard',
         });
       }
     }
@@ -184,9 +315,9 @@ function detectEvents(prevState, newState) {
   const prevRain = prevState.WeatherData && prevState.WeatherData.Rainfall === '1';
   const newRain  = newState.WeatherData  && newState.WeatherData.Rainfall  === '1';
   if (!prevRain && newRain) {
-    notifications.push({ title: 'ðÏï¸ Rain!', body: 'It has started raining at the circuit â tyre change incoming?', url: '/dashboard' });
+    notifications.push({ ...pick(VARIATIONS.rainStart), url: '/dashboard' });
   } else if (prevRain && !newRain) {
-    notifications.push({ title: 'âï¸ Rain Stopped', body: 'Track drying â conditions improving.', url: '/dashboard' });
+    notifications.push({ ...pick(VARIATIONS.rainStop), url: '/dashboard' });
   }
 
   // ââ Race control messages âââââââââââââââââââââââââââââââââââââââââââââââââ
@@ -197,9 +328,9 @@ function detectEvents(prevState, newState) {
     const msg    = (latest && latest.Message) ? latest.Message : '';
     if (latest) {
       if (latest.Flag === 'RED') {
-        notifications.push({ title: 'ð´ Red Flag!', body: msg.substring(0, 100) || 'Session red flagged.', url: '/dashboard' });
+        notifications.push({ ...pick(VARIATIONS.redFlag), body: msg.substring(0, 100) || pick(VARIATIONS.redFlag).body, url: '/dashboard' });
       } else if (latest.Category === 'SafetyCar') {
-        notifications.push({ title: 'ð Race Control', body: msg.substring(0, 100) || 'Safety Car event.', url: '/dashboard' });
+        notifications.push({ ...pick(VARIATIONS.safetyCar), body: msg.substring(0, 100) || pick(VARIATIONS.safetyCar).body, url: '/dashboard' });
       } else if (latest.Flag === 'CHEQUERED') {
         notifications.push({ title: 'ð Chequered Flag', body: msg.substring(0, 100) || 'Race finished!', url: '/dashboard' });
       } else if (/penalty|investigation|under investigation/i.test(msg)) {
@@ -211,7 +342,7 @@ function detectEvents(prevState, newState) {
   return notifications;
 }
 
-async function sendNotifications(notifications) {
+arync function sendNotifications(notifications) {
   if (notifications.length === 0) return;
   const payload     = JSON.stringify(notifications[0]);
   const pushOptions = { TTL: PUSH_TTL_SECONDS };
@@ -243,7 +374,7 @@ async function sendNotifications(notifications) {
 // Fires a push reminder once per session_key so it never double-fires.
 const announcedSessions = new Set();
 
-async function checkUpcomingSessions() {
+arync function checkUpcomingSessions() {
   if (subscriptions.size === 0) return;
   try {
     const now     = new Date();
@@ -264,24 +395,21 @@ async function checkUpcomingSessions() {
 
       announcedSessions.add(key);
 
-      const sN[Re   = session.session_name || 'Session';       // e.g. "Race", "Qualifying", "Practice 1"
+      const sName   = session.session_name || 'Session';       // e.g. "Race", "Qualifying", "Practice 1"
       const circuit = session.circuit_short_name || session.country_name || 'the circuit';
       const minsOut = Math.round((new Date(session.date_start) - now) / 60000);
 
       const sessionEmoji = {
         'Race':        'ð',
-        'Qualifying':  '>â±ï¸',
+        'Qualifying':  'â±ï¸',
         'Sprint':      'ðï¸',
         'Practice 1':  'ð§',
         'Practice 2':  'ð§',
         'Practice 3':  'ð§',
       }[sName] || 'ð';
 
-      await sendNotifications([{
-        title: sessionEmoji + ' ' + sName + ' in ~10 mins',
-        body:  sName + ' at ' + circuit + ' starts in around ' + minsOut + ' minutes â open the app!',
-        url:   '/dashboard',
-      }]);
+      const chosen = pick(VARIATIONS.preSession(sessionEmoji, sName, circuit, minsOut));
+      await sendNotifications([{ ...chosen, url: '/dashboard' }]);
 
       console.log('Pre-session reminder sent for', sName, 'at', circuit);
     }
@@ -396,7 +524,7 @@ function parseTweetsFromHtml(html) {
   return tweets;
 }
 
-acync function fetchTweetsFromCDN() {
+async function fetchTweetsFromCDN() {
   const cdnUrl = 'https://cdn.syndication.twimg.com/timeline/profile?screen_name=f1_naija&count=20&lang=en&callback=f1nCallback';
   try {
     const res  = await fetch(cdnUrl, {
@@ -510,11 +638,14 @@ app.get('/test-push', async (req, res) => {
   if (subscriptions.size === 0) {
     return res.status(200).json({ sent: 0, message: 'No subscribers registered yet.' });
   }
-  await sendNotifications([{
-    title: 'ðï¸ F1 Naija Test',
-    body:  'Push notifications are working! Background delivery confirmed.',
-    url:   '/dashboard',
-  }]);
+  // Pick a random test message so even the test feels fresh
+  const testMessages = [
+    { title: 'ðï¸ F1 Naija Test',    body: 'Push notifications working! Background delivery confirmed.' },
+    { title: 'ð Notifications Live', body: "You're all set â F1 Naija will alert you when it matters." },
+    { title: 'â Push Test OK',       body: 'Background push is working perfectly. See you on race day!' },
+    { title: 'ð¦ Systems Go!',        body: 'F1 Naija push notifications are active and ready.' },
+  ];
+  await sendNotifications([{ ...picj(testMessages), url: '/dashboard' }]);
   res.json({ sent: subscriptions.size, message: 'Test push sent to ' + subscriptions.size + ' subscriber(s)' });
 });
 
