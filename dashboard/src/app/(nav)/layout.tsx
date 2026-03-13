@@ -6,6 +6,41 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import Footer from "@/components/Footer";
 
+// ── Theme toggle ────────────────────────────────────────────
+type Theme = "dark" | "light" | "system";
+const THEME_KEY = "f1-naija-theme";
+
+function getIsDark(theme: Theme) {
+  if (theme === "system" && typeof window !== "undefined")
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  return theme !== "light";
+}
+
+function applyTheme(theme: Theme) {
+  const dark = getIsDark(theme);
+  document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
+}
+
+function useTheme() {
+  const [theme, setThemeState] = useState<Theme>("dark");
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    const saved = (localStorage.getItem(THEME_KEY) as Theme) ?? "dark";
+    setThemeState(saved);
+    applyTheme(saved);
+    setMounted(true);
+  }, []);
+
+  const setTheme = (t: Theme) => {
+    setThemeState(t);
+    localStorage.setItem(THEME_KEY, t);
+    applyTheme(t);
+  };
+
+  return { theme, setTheme, mounted, isDark: mounted ? getIsDark(theme) : true };
+}
+
 type Props = { children: ReactNode };
 
 /** Returns true when the current time falls inside any scheduled session. */
@@ -132,9 +167,10 @@ function HamburgerIcon({ open }: { open: boolean }) {
 
 // ── Layout ─────────────────────────────────────────────────
 export default function Layout({ children }: Props) {
-  const pathname       = usePathname();
+  const pathname        = usePathname();
   const [open, setOpen] = useState(false);
-  const isLive         = useIsLiveSession();
+  const isLive          = useIsLiveSession();
+  const { theme, setTheme, mounted, isDark } = useTheme();
 
   // Lock body scroll while drawer is open
   useEffect(() => {
@@ -266,16 +302,43 @@ export default function Layout({ children }: Props) {
           />
         </Link>
 
-        {/* Hamburger */}
-        <button
-          className="hbtn"
-          onClick={() => setOpen(o => !o)}
-          aria-label={open ? "Close navigation menu" : "Open navigation menu"}
-          aria-expanded={open}
-          aria-controls="nav-drawer"
-        >
-          <HamburgerIcon open={open} />
-        </button>
+        <div style={{ display: "flex", alignItems: "center", gap: 2 }}>
+          {/* Theme toggle */}
+          {mounted && (
+            <button
+              className="hbtn"
+              onClick={() => setTheme(isDark ? "light" : "dark")}
+              aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+              title={isDark ? "Light mode" : "Dark mode"}
+            >
+              {isDark ? (
+                /* Sun */
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="4"/>
+                  <line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/>
+                  <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                  <line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/>
+                  <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                </svg>
+              ) : (
+                /* Moon */
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/>
+                </svg>
+              )}
+            </button>
+          )}
+          {/* Hamburger */}
+          <button
+            className="hbtn"
+            onClick={() => setOpen(o => !o)}
+            aria-label={open ? "Close navigation menu" : "Open navigation menu"}
+            aria-expanded={open}
+            aria-controls="nav-drawer"
+          >
+            <HamburgerIcon open={open} />
+          </button>
+        </div>
       </nav>
 
       {/* ── MAIN CONTENT ─────────────────────────────────────── */}
@@ -372,11 +435,66 @@ export default function Layout({ children }: Props) {
             </div>
           ))}
 
+          {/* Theme switcher — Twitter style */}
+          {mounted && (
+            <div style={{
+              padding: "14px 20px 16px",
+              borderTop: "1px solid var(--f1-border-soft)",
+              flexShrink: 0,
+            }}>
+              <div style={{ fontSize: 9, fontWeight: 800, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--f1-muted)", marginBottom: 10 }}>
+                Appearance
+              </div>
+              <div style={{
+                display: "flex", gap: 6,
+                background: "var(--f1-panel)", border: "1px solid var(--f1-border)",
+                borderRadius: 12, padding: 4,
+              }}>
+                {(["dark", "light", "system"] as Theme[]).map(t => (
+                  <button
+                    key={t}
+                    onClick={() => setTheme(t)}
+                    style={{
+                      flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 5,
+                      padding: "8px 0", borderRadius: 8, border: "none", cursor: "pointer",
+                      fontFamily: "inherit", fontSize: 11, fontWeight: 700, letterSpacing: ".04em",
+                      transition: "background .15s, color .15s",
+                      background: theme === t ? (t === "light" ? "#f3f4f7" : "#1a1f2e") : "transparent",
+                      color: theme === t ? (t === "light" ? "#0f172a" : "#edf2ff") : "var(--f1-muted)",
+                      boxShadow: theme === t ? "0 1px 4px rgba(0,0,0,.25)" : "none",
+                    }}
+                  >
+                    {t === "dark" && (
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/>
+                      </svg>
+                    )}
+                    {t === "light" && (
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="12" r="4"/>
+                        <line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                        <line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                      </svg>
+                    )}
+                    {t === "system" && (
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+                      </svg>
+                    )}
+                    {t.charAt(0).toUpperCase() + t.slice(1)}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Social links */}
           <div style={{
             padding: "16px 20px 28px",
             borderTop: "1px solid var(--f1-border-soft)",
-            marginTop: "auto", flexShrink: 0,
+            flexShrink: 0,
           }}>
             <div style={{ fontSize: 9, fontWeight: 800, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--f1-muted)", marginBottom: 10 }}>
               Follow us
