@@ -9,11 +9,17 @@ type Fns = {
 };
 
 export const useStores = (): Fns => {
-	const dataStore = useDataStore();
+	// Select only the stable action functions — NOT the full store object.
+	// Subscribing to the whole store (useDataStore()) would cause DashboardLayout
+	// to re-render on every SSE tick (5×/sec). Actions are stable Zustand refs
+	// and never change, so these selectors never trigger a re-render.
+	const setState    = useDataStore((s) => s.setState);
+	const setPositions = useDataStore((s) => s.setPositions);
+	const setCarsData  = useDataStore((s) => s.setCarsData);
 
 	return {
-		updateState: (v) => dataStore.setState(v),
-		updatePosition: (v) => dataStore.setPositions(v),
-		updateCarData: (v) => dataStore.setCarsData(v),
+		updateState:    setState,
+		updatePosition: setPositions,
+		updateCarData:  setCarsData,
 	};
 };

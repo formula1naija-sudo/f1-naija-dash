@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, startTransition } from "react";
 
 import type { CarData, CarsData, Position, Positions, State } from "@/types/state.type";
 import type { MessageInitial, MessageUpdate } from "@/types/message.type";
@@ -108,59 +108,56 @@ export const useDataEngine = ({ updateState, updatePosition, updateCarData }: Pr
 	const handleCurrentState = () => {
 		const delay = delayRef.current;
 
-		if (delay === 0) {
-			const newStateFrame: Record<string, State[keyof State]> = {};
+		// ── Step 1: collect the next data frame from buffers (pure reads, no React) ──
+		const newStateFrame: Record<string, State[keyof State]> = {};
+		let newCarFrame: CarsData | null = null;
+		let newPosFrame: Positions | null = null;
 
+		if (delay === 0) {
 			Object.keys(buffers).forEach((key) => {
 				const buffer = buffers[key as keyof typeof buffers];
 				const latest = buffer.latest() as State[keyof State];
 				if (latest) newStateFrame[key] = latest;
 			});
 
-			updateState(newStateFrame);
-
-			const carFrame = carBuffer.latest();
-			if (carFrame) updateCarData(carFrame);
-
-			const posFrame = posBuffer.latest();
-			if (posFrame) updatePosition(posFrame);
+			newCarFrame = carBuffer.latest();
+			newPosFrame = posBuffer.latest();
 		} else {
 			const delayedTimestamp = Date.now() - delay * 1000;
-			const newStateFrame: Record<string, State[keyof State]> = {};
 
 			Object.keys(buffers).forEach((key) => {
 				const buffer = buffers[key as keyof typeof buffers];
 				const delayed = buffer.delayed(delayedTimestamp) as State[keyof State];
-
 				if (delayed) newStateFrame[key] = delayed;
-
 				setTimeout(() => buffer.cleanup(delayedTimestamp), 0);
 			});
 
-			updateState(newStateFrame);
+			newCarFrame = carBuffer.delayed(delayedTimestamp);
+			if (newCarFrame) setTimeout(() => carBuffer.cleanup(delayedTimestamp), 0);
 
-			const carFrame = carBuffer.delayed(delayedTimestamp);
-			if (carFrame) {
-				updateCarData(carFrame);
-				setTimeout(() => carBuffer.cleanup(delayedTimestamp), 0);
-			}
-
-			const posFrame = posBuffer.delayed(delayedTimestamp);
-			if (posFrame) {
-				updatePosition(posFrame);
-				setTimeout(() => posBuffer.cleanup(delayedTimestamp), 0);
-			}
+			newPosFrame = posBuffer.delayed(delayedTimestamp);
+			if (newPosFrame) setTimeout(() => posBuffer.cleanup(delayedTimestamp), 0);
 		}
 
+		// ── Step 2: push to React as a background transition ─────────────────────────
+		// startTransition marks these 200ms data ticks as non-urgent. React keeps the
+		// current UI visible while preparing the next render in the background, which
+		// eliminates visible flicker and lets user interactions (scroll, tap) stay
+		// responsive even while live data is streaming in.
+		startTransition(() => {
+			updateState(newStateFrame);
+			if (newCarFrame) updateCarData(newCarFrame);
+			if (newPosFrame) updatePosition(newPosFrame);
+		});
+
+		// ── Step 3: update maxDelay synchronously (it's UI metadata, not bulk data) ──
 		// Filter out 0-delay buffers (no timed data yet), then find the minimum.
 		// Without the empty-array guard, Math.min(...[]) returns Infinity, which
 		// would make the delay display show "∞" until the first timed frames arrive.
 		const delayValues = Object.values(buffers)
 			.map((buffer) => buffer.maxDelay())
-			.filter((delay) => delay > 0);
-		const maxDelay = delayValues.length > 0 ? Math.min(...delayValues) : 0;
-
-		setMaxDelay(maxDelay);
+			.filter((d) => d > 0);
+		setMaxDelay(delayValues.length > 0 ? Math.min(...delayValues) : 0);
 	};
 
 	useEffect(() => {
