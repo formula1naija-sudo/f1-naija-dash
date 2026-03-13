@@ -5,7 +5,6 @@ import { useDataStore } from "@/stores/useDataStore";
 
 import NumberDiff from "@/components/NumberDiff";
 import WATClock from "@/components/WATClock";
-import NaijaWatch from "@/components/NaijaWatch";
 import Image from "next/image";
 
 export default function Standings() {
@@ -181,11 +180,7 @@ export default function Standings() {
 				</div>
 			)}
 
-			{/* ── NAIJA WATCH ── */}
-			<div style={{ borderTop: "1px solid var(--f1-border-soft)", flexShrink: 0 }}>
-				<NaijaWatch />
 			</div>
-		</div>
 	);
 }
 
