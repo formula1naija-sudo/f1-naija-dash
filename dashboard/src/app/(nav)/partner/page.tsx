@@ -228,32 +228,6 @@ export default function PartnerPage() {
             </div>
           </div>
 
-          {/* Rate card CTA */}
-          <div style={{
-            background: "rgba(245,167,36,.05)", border: "1px solid rgba(245,167,36,.18)",
-            borderRadius: 12, padding: "18px 20px",
-            display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 14,
-          }}>
-            <div>
-              <div style={{ fontSize: 14, fontWeight: 800, color: "var(--f1-text)", marginBottom: 4 }}>
-                Want our rate card?
-              </div>
-              <p style={{ fontSize: 12, color: "var(--f1-muted)", margin: 0, lineHeight: 1.5 }}>
-                We&apos;ll send our full sponsorship rate card within 24 hours.
-              </p>
-            </div>
-            <a
-              href="mailto:ads@f1naija.com?subject=Rate%20Card%20Request&body=Hi%2C%20please%20send%20me%20the%20F1%20Naija%20rate%20card.%0A%0AName%3A%20%0ABrand%3A%20"
-              style={{
-                display: "inline-flex", alignItems: "center", gap: 7,
-                padding: "11px 22px", minHeight: 44, borderRadius: 7, fontSize: 13, fontWeight: 700,
-                background: "rgba(245,167,36,.15)", border: "1px solid rgba(245,167,36,.3)",
-                color: "#f5a724", textDecoration: "none", whiteSpace: "nowrap",
-              }}
-            >
-              Request Rate Card →
-            </a>
-          </div>
         </section>
 
         {/* ── CONTACT FORM ── */}
