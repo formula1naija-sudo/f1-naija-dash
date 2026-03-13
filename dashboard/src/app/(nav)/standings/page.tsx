@@ -272,7 +272,7 @@ export default function StandingsPage() {
               );
             })()}
 
-            <div style={{ display: "grid", gridTemplateColumns: "2.5rem 4px 1fr auto auto", gap: "0 12px", padding: "0 12px 8px", fontSize: 9, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "#52525b" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "2.5rem 4px 1fr auto auto", gap: "0 12px", padding: "0 12px 8px", fontSize: 9, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--f1-muted)" }}>
               <span>Pos</span><span /><span>Driver</span>
               <span style={{ textAlign: "right" }}>Pts</span>
               <span style={{ textAlign: "right" }}>W</span>
@@ -296,7 +296,7 @@ export default function StandingsPage() {
                       cursor: "pointer",
                     }}>
                       <div style={{ position: "absolute", top: 0, left: 0, height: "100%", width: `${barPct}%`, background: teamColor, opacity: .06, transition: "width .8s ease" }} />
-                      <div style={{ position: "relative", zIndex: 1, fontSize: 13, fontWeight: 800, textAlign: "center", color: pos === 1 ? "#f5a724" : pos === 2 ? "#c0c8d8" : pos === 3 ? "#cd7f32" : "#52525b" }}>{d.position}</div>
+                      <div style={{ position: "relative", zIndex: 1, fontSize: 13, fontWeight: 800, textAlign: "center", color: pos === 1 ? "#f5a724" : pos === 2 ? "#c0c8d8" : pos === 3 ? "#cd7f32" : "var(--f1-muted)" }}>{d.position}</div>
                       <div style={{ position: "relative", zIndex: 1, height: 24, width: 4, borderRadius: 2, background: teamColor, flexShrink: 0 }} />
                       <div style={{ position: "relative", zIndex: 1, minWidth: 0 }}>
                         <div style={{ fontSize: 11, color: "var(--f1-muted)", lineHeight: 1 }}>{d.Driver.givenName}</div>
@@ -348,7 +348,7 @@ export default function StandingsPage() {
               );
             })()}
 
-            <div style={{ display: "grid", gridTemplateColumns: "2.5rem 4px 1fr auto auto", gap: "0 12px", padding: "0 12px 8px", fontSize: 9, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "#52525b" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "2.5rem 4px 1fr auto auto", gap: "0 12px", padding: "0 12px 8px", fontSize: 9, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--f1-muted)" }}>
               <span>Pos</span><span /><span>Constructor</span>
               <span style={{ textAlign: "right" }}>Pts</span>
               <span style={{ textAlign: "right" }}>W</span>
@@ -370,7 +370,7 @@ export default function StandingsPage() {
                       cursor: "pointer",
                     }}>
                       <div style={{ position: "absolute", top: 0, left: 0, height: "100%", width: `${barPct}%`, background: teamColor, opacity: .06 }} />
-                      <div style={{ position: "relative", zIndex: 1, fontSize: 13, fontWeight: 800, textAlign: "center", color: pos === 1 ? "#f5a724" : pos === 2 ? "#c0c8d8" : pos === 3 ? "#cd7f32" : "#52525b" }}>{c.position}</div>
+                      <div style={{ position: "relative", zIndex: 1, fontSize: 13, fontWeight: 800, textAlign: "center", color: pos === 1 ? "#f5a724" : pos === 2 ? "#c0c8d8" : pos === 3 ? "#cd7f32" : "var(--f1-muted)" }}>{c.position}</div>
                       <div style={{ position: "relative", zIndex: 1, height: 24, width: 4, borderRadius: 2, background: teamColor, flexShrink: 0 }} />
                       <div style={{ position: "relative", zIndex: 1, minWidth: 0 }}>
                         <div style={{ fontSize: 14, fontWeight: 800, letterSpacing: "-.01em", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{c.Constructor.name}</div>

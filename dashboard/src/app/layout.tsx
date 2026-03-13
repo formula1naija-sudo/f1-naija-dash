@@ -42,6 +42,16 @@ export default function RootLayout({ children }: Props) {
         )}
       </head>
       <body className="bg-zinc-950">
+        {/* ── Theme flash prevention — runs before first paint ── */}
+        <script dangerouslySetInnerHTML={{ __html: `
+(function(){
+  try {
+    var t = localStorage.getItem('f1-naija-theme') || 'dark';
+    var dark = t === 'dark' || (t === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+  } catch(e){}
+})();
+        `}} />
         <OledModeProvider>{children}</OledModeProvider>
         <script
           dangerouslySetInnerHTML={{

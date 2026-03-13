@@ -82,7 +82,7 @@ function NewsCard({ item, featured = false }: { item: NewsItem; featured?: boole
             fontSize: 10, fontWeight: 700, padding: "3px 10px", borderRadius: 20,
             background: src.bg, color: src.text, letterSpacing: ".04em", whiteSpace: "nowrap",
           }}>{item.source}</span>
-          <span style={{ fontSize: 10, color: "#52525b", whiteSpace: "nowrap" }}>{timeAgo(item.pubDate)}</span>
+          <span style={{ fontSize: 10, color: "var(--f1-muted)", whiteSpace: "nowrap" }}>{timeAgo(item.pubDate)}</span>
         </div>
         <h3 style={{
           fontSize: featured ? "clamp(15px,2.5vw,18px)" : 13,
@@ -408,7 +408,7 @@ export default function NewsPage() {
             <div style={{ flex: 1, minWidth: 200 }}>
               <div style={{ fontSize: 14, fontWeight: 800, color: "var(--f1-text)" }}>{profile.name}</div>
               <div style={{ fontSize: 11, color: "var(--f1-muted)", marginBottom: 8 }}>@{profile.screen_name}</div>
-              <p style={{ fontSize: 12, color: "#8090b0", lineHeight: 1.6, margin: "0 0 10px" }}>{profile.description}</p>
+              <p style={{ fontSize: 12, color: "var(--f1-muted)", lineHeight: 1.6, margin: "0 0 10px" }}>{profile.description}</p>
               <div style={{ display: "flex", gap: 16, fontSize: 12, color: "var(--f1-muted)" }}>
                 <span><strong style={{ color: "var(--f1-text)" }}>{fmt(profile.followers)}</strong> followers</span>
                 <span><strong style={{ color: "var(--f1-text)" }}>{fmt(profile.tweets)}</strong> posts</span>
@@ -508,7 +508,7 @@ export default function NewsPage() {
                   width: "100%", marginTop: 6,
                   padding: "10px", borderRadius: 10, fontSize: 11,
                   border: "1px solid rgba(255,255,255,.05)",
-                  background: "transparent", color: "#52525b",
+                  background: "transparent", color: "var(--f1-muted)",
                   cursor: "pointer",
                   minHeight: 44, WebkitTapHighlightColor: "transparent",
                 }}

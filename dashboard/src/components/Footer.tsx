@@ -85,7 +85,7 @@ export default function Footer() {
         {/* Legal */}
         <p style={{
           maxWidth: 480, fontSize: 11,
-          lineHeight: 1.7, color: "#3f3f46",
+          lineHeight: 1.7, color: "var(--f1-muted)",
         }}>
           Unofficial fan project — not affiliated with Formula One Licensing B.V., the FIA, or any F1 team.
           F1, FORMULA ONE and GRAND PRIX are registered trademarks of Formula One Licensing B.V.
