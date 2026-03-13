@@ -21,6 +21,7 @@ import TrackInfo from '@/components/TrackInfo';
 import DelayInput from '@/components/DelayInput';
 import DelayTimer from '@/components/DelayTimer';
 import ConnectionStatus from '@/components/ConnectionStatus';
+import ThemeToggle from '@/components/ThemeToggle';
 // Non-critical components: lazy-loaded to keep first-paint bundle lean
 const WhatsAppShare  = dynamic(() => import('@/components/WhatsAppShare'),  { ssr: false });
 const Watermark      = dynamic(() => import('@/components/Watermark'),      { ssr: false });
@@ -152,6 +153,7 @@ export default function DashboardLayout({ children }: Props) {
           </div>
         </motion.div>
       </div>
+      <ThemeToggle />
     </>
   );
 }
