@@ -50,8 +50,6 @@ const NAV_GROUPS = [
     title: "Community",
     links: [
       { href: "/community",  label: "Community",  icon: "🇳🇬" },
-      { href: "/fantasy",    label: "Fantasy",    icon: "🔮" },
-      { href: "/start-here", label: "Start Here", icon: "👋" },
     ],
   },
   {
