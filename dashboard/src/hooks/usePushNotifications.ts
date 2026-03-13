@@ -77,6 +77,7 @@ export function usePushNotifications() {
 
   // Keep favourite list accessible inside the effect without triggering re-runs
   const favRef = useRef<string[]>(favoriteDrivers);
+  const mountedAt = useRef(Date.now());
   // Clear stale/old notifications from OS notification center on mount
   useEffect(() => {
     if ("serviceWorker" in navigator) {
@@ -104,6 +105,8 @@ export function usePushNotifications() {
     } = liveData;
 
     // ── First run: silently snapshot state, fire no notifications ────────
+    // Suppress notifications during initial data hydration window (prevents flood on app open)
+    if (Date.now() - mountedAt.current < 4000) return;
     if (!p.initialized) {
       p.trackStatus    = TrackStatus?.Status ?? null;
       p.sessionName    = SessionInfo?.Name ?? null;
