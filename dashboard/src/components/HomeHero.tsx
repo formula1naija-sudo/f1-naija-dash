@@ -59,22 +59,25 @@ export default function HomeHero() {
           /* placeholder area — will be replaced with driver collage */
           width: clamp(160px, 32vw, 420px);
         }
-        /* mobile: stack — text first, logo below but smaller */
+        /* mobile: logo floats top-right as an accent, text flows normally */
         @media (max-width: 600px) {
           .hero-inner {
-            flex-direction: column-reverse;
+            position: relative;
+            flex-direction: column;
             align-items: flex-start;
             gap: 0;
-            padding-bottom: clamp(24px,5vw,60px);
+            padding: clamp(18px,5vw,32px) clamp(16px,4vw,24px) clamp(20px,5vw,32px);
           }
           .hero-visual {
-            width: 100%;
-            justify-content: flex-end;
-            padding-right: 16px;
-            margin-bottom: -10px;
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: auto;
+            padding-right: 0;
+            margin-bottom: 0;
           }
           .hero-visual img {
-            width: clamp(100px, 36vw, 160px) !important;
+            width: clamp(64px, 20vw, 96px) !important;
           }
         }
       `}</style>
