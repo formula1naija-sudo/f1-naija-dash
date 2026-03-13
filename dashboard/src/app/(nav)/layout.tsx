@@ -213,7 +213,7 @@ export default function Layout({ children }: Props) {
           flex-shrink: 0;
         }
         .hbtn:hover  { background: rgba(255,255,255,.06); }
-        .hbtn:active { background: rgba(255,255,255,.12); }
+        .hbtn:active { background: var(--f1-border); }
 
         /* ── Backdrop ── */
         .drawer-backdrop {
@@ -253,7 +253,7 @@ export default function Layout({ children }: Props) {
           white-space: nowrap; flex-shrink: 0;
         }
         .dlink:hover  { background: rgba(255,255,255,.04); }
-        .dlink:active { background: rgba(255,255,255,.09); }
+        .dlink:active { background: var(--f1-border-soft); }
         .dlink.active { color: #00d484; background: rgba(0,212,132,.07); }
 
         .drawer-section-title {
