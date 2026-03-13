@@ -21,7 +21,7 @@ export default function PlayControls({ id, className, playing, loading = false, 
 	return (
 		<div
 			id={id}
-			className={clsx("flex h-8 w-8 cursor-pointer items-center justify-center", className)}
+			className={clsx("flex h-8 w-8 cursor-pointer items-center justify-center text-zinc-400", className)}
 			onClick={onClick}
 		>
 			<AnimatePresence>
@@ -38,7 +38,7 @@ export default function PlayControls({ id, className, playing, loading = false, 
 					>
 						<motion.path
 							d="M12 6.26795C13.3333 7.03775 13.3333 8.96225 12 9.73205L3 14.9282C1.66667 15.698 0 14.7358 0 13.1962L0 2.80385C0 1.26425 1.66667 0.301996 3 1.0718L12 6.26795Z"
-							fill="white"
+							fill="currentColor"
 						/>
 					</motion.svg>
 				)}
@@ -54,8 +54,8 @@ export default function PlayControls({ id, className, playing, loading = false, 
 						fill="none"
 						xmlns="http://www.w3.org/2000/svg"
 					>
-						<motion.rect x="7" width="3" height="14" rx="1.5" fill="white" />
-						<motion.rect width="3" height="14" rx="1.5" fill="white" />
+						<motion.rect x="7" width="3" height="14" rx="1.5" fill="currentColor" />
+						<motion.rect width="3" height="14" rx="1.5" fill="currentColor" />
 					</motion.svg>
 				)}
 
@@ -67,11 +67,17 @@ export default function PlayControls({ id, className, playing, loading = false, 
 						width="24"
 						height="24"
 						viewBox="0 0 24 24"
-						fill="#fff"
+						fill="currentColor"
 						xmlns="http://www.w3.org/2000/svg"
 					>
 						<circle className="pulse-loading-spinner" cx="12" cy="12" r="0" />
-						<circle className="pulse-loading-spinner" style={{ animationDelay: ".6s" }} cx="12" cy="12" r="0" />
+						<circle
+							className="pulse-loading-spinner"
+							style={{ animationDelay: ".6s" }}
+							cx="12"
+							cy="12"
+							r="0"
+						/>
 					</motion.svg>
 				)}
 			</AnimatePresence>
