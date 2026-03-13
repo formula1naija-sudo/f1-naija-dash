@@ -66,10 +66,27 @@ export default function NotificationPrompt() {
     // Guard: iOS Safari < 16.4 has no Notification API — accessing it throws ReferenceError
     const hasNotification = typeof Notification !== "undefined";
 
-    // Already granted — subscribe silently (re-registers if needed)
+    // Already granted — subscribe silently on mount (re-registers if needed)
     if (hasNotification && Notification.permission === "granted" && PUSH_SERVICE_URL) {
       subscribeToPush();
     }
+
+    // iOS (and sometimes Android) can invalidate VAPID subscriptions when the PWA
+    // is force-quit, the device restarts, or the OS cleans up background workers.
+    // Re-subscribing on every visibility-change ensures the push service always
+    // holds a valid endpoint for this device, so notifications keep arriving after
+    // the user returns to the app from the home screen or app switcher.
+    const onVisible = () => {
+      if (
+        document.visibilityState === "visible" &&
+        hasNotification &&
+        Notification.permission === "granted" &&
+        PUSH_SERVICE_URL
+      ) {
+        subscribeToPush();
+      }
+    };
+    document.addEventListener("visibilitychange", onVisible);
 
     const delay = isIos && !isStandalone ? 3000 : 5000;
     const timer = setTimeout(() => {
@@ -78,7 +95,11 @@ export default function NotificationPrompt() {
         setShow(true);
       }
     }, delay);
-    return () => clearTimeout(timer);
+
+    return () => {
+      clearTimeout(timer);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
   }, [isIos, isStandalone]);
 
   const handleRequestPermission = async () => {

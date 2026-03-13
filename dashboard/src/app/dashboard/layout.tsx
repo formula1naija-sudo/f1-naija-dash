@@ -29,20 +29,35 @@ const PushPrompt     = dynamic(() => import('@/components/PushPrompt'),     { ss
 
 type NextRace = { name: string; countryName: string; start: string };
 
-function useNextRace() {
-  const [nextRace, setNextRace] = useState<NextRace | null>(null);
+type ScheduleResult = { nextRace: NextRace | null; isInRaceWeekend: boolean };
+
+function useNextRace(): ScheduleResult {
+  const [result, setResult] = useState<ScheduleResult>({ nextRace: null, isInRaceWeekend: false });
   useEffect(() => {
     fetch('/api/schedule')
       .then(r => r.ok ? r.json() : null)
       .then((rounds: Array<{ countryName: string; name: string; start: string; end: string }> | null) => {
         if (!rounds) return;
         const now = Date.now();
+
+        // Are we currently inside a race weekend?
+        // A weekend spans from the first session (round.start) to the last session (round.end).
+        // We stay in "weekend mode" until the whole round ends — not just until a session ends —
+        // so the live timing screen stays visible between sessions (e.g. after qualifying,
+        // before the race). Only after the entire weekend finishes do we show "No live session".
+        const inWeekend = rounds.some(
+          r => new Date(r.start).getTime() <= now && new Date(r.end).getTime() >= now
+        );
+
         const next = rounds.find(r => new Date(r.end).getTime() > now);
-        if (next) setNextRace({ name: next.name, countryName: next.countryName, start: next.start });
+        setResult({
+          isInRaceWeekend: inWeekend,
+          nextRace: next ? { name: next.name, countryName: next.countryName, start: next.start } : null,
+        });
       })
       .catch(() => null);
   }, []);
-  return nextRace;
+  return result;
 }
 
 function useCountdown(targetDate: string | null) {
@@ -84,14 +99,19 @@ export default function DashboardLayout({ children }: Props) {
   useWakeLock();
   usePushNotifications(); // single notification hub — covers all events
   // Run immediately — not lazy-loaded, fires on every WebSocket update
-  const ended         = useDataStore(({ state }) => state?.SessionStatus?.Status === 'Ends');
+  const ended           = useDataStore(({ state }) => state?.SessionStatus?.Status === 'Ends');
   // Show the no-session state when the WebSocket has loaded data but no session is active.
   // 'Started' = live session running; everything else means nothing to watch right now.
   const sessionStatus   = useDataStore(({ state }) => state?.SessionStatus?.Status);
   const dataLoaded      = useDataStore(({ state }) => state !== undefined);
   const noActiveSession = connected && dataLoaded && sessionStatus !== 'Started';
   const alwaysShow      = ALWAYS_SHOW_ROUTES.some(r => pathname.startsWith(r));
-  const showNoSession   = !alwaysShow && (noActiveSession || (syncing && !ended));
+  // Fetch schedule once — gives us both countdown data and weekend status.
+  // During a race weekend, we keep the live timing screen visible even between
+  // sessions (e.g. after FP3, before Qualifying). Only after the entire weekend
+  // ends do we show "No live session — e don finish".
+  const { nextRace, isInRaceWeekend } = useNextRace();
+  const showNoSession   = !alwaysShow && !isInRaceWeekend && (noActiveSession || (syncing && !ended));
 
   return (
     <>
@@ -128,7 +148,7 @@ export default function DashboardLayout({ children }: Props) {
             }
             style={{ borderColor: 'var(--f1-border)' }}
           >
-            <NoSessionState />
+            <NoSessionState nextRace={nextRace} />
           </div>
         </motion.div>
       </div>
@@ -141,8 +161,7 @@ const HOW_TO_WATCH = [
   { provider: 'F1 TV', channel: 'f1tv.formula1.com',       href: 'https://f1tv.formula1.com' },
 ];
 
-function NoSessionState() {
-  const nextRace = useNextRace();
+function NoSessionState({ nextRace }: { nextRace: NextRace | null }) {
   const countdown = useCountdown(nextRace?.start ?? null);
 
   return (
