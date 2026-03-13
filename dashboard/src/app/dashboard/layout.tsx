@@ -211,7 +211,7 @@ function NoSessionState({ nextRace }: { nextRace: NextRace | null }) {
 
       {/* How to watch in Nigeria */}
       <div style={{
-        background: 'rgba(255,255,255,.03)', border: '1px solid rgba(255,255,255,.07)',
+        background: 'var(--f1-panel)', border: '1px solid var(--f1-border)',
         borderRadius: 12, padding: '16px 20px', marginBottom: 20, textAlign: 'left',
       }}>
         <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase', color: 'var(--f1-muted)', marginBottom: 12 }}>
@@ -238,7 +238,7 @@ function NoSessionState({ nextRace }: { nextRace: NextRace | null }) {
           style={{
             display: 'inline-flex', alignItems: 'center', gap: 6,
             padding: '11px 20px', borderRadius: 8, fontSize: 13, fontWeight: 700,
-            background: 'rgba(255,255,255,.05)', border: '1px solid rgba(255,255,255,.1)',
+            background: 'var(--f1-panel)', border: '1px solid var(--f1-border)',
             color: 'var(--f1-text)', textDecoration: 'none', letterSpacing: '.02em',
           }}
         >
@@ -433,14 +433,14 @@ function DesktopStaticBar({ show }: { show: boolean }) {
           style={{
             display: "flex", alignItems: "center", gap: 4,
             padding: "4px 10px", borderRadius: 6, height: 30,
-            background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.09)",
+            background: "var(--f1-panel)", border: "1px solid var(--f1-border)",
             fontSize: 11, fontWeight: 700, color: "var(--f1-muted)",
             textDecoration: "none", letterSpacing: ".02em", flexShrink: 0,
             transition: "border-color .15s, color .15s",
           }}
           aria-label="Dashboard help"
-          onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,.2)"; e.currentTarget.style.color = "var(--f1-text)"; }}
-          onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,.09)"; e.currentTarget.style.color = "var(--f1-muted)"; }}
+          onMouseEnter={e => { e.currentTarget.style.borderColor = "var(--f1-border-mid)"; e.currentTarget.style.color = "var(--f1-text)"; }}
+          onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--f1-border)"; e.currentTarget.style.color = "var(--f1-muted)"; }}
         >
           ❓ Help
         </Link>
