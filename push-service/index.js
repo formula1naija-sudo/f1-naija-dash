@@ -239,11 +239,86 @@ function detectEvents(prevState, newState) {
   const gpName      = (newState.SessionInfo && newState.SessionInfo.Meeting && newState.SessionInfo.Meeting.Name)
                       || sessionName;
 
+  // ── Session status (evaluated first — guards below depend on it) ──────────
+  const prevSession = prevState.SessionStatus && prevState.SessionStatus.Status;
+  const newSession  = newState.SessionStatus  && newState.SessionStatus.Status;
+  // "Session is over" in the new snapshot — used to suppress misleading track alerts
+  const sessionIsOver       = newSession === 'Finished' || newSession === 'Finalised';
+  const sessionJustFinished = prevSession !== newSession && sessionIsOver;
+
+  if (prevSession !== newSession && newSession === 'Started') {
+    notifications.push({
+      ...pick(VARIATIONS.sessionStarted(sessionName, gpName)),
+      url: '/dashboard',
+    });
+  }
+
+  if (sessionJustFinished) {
+    const isQualifying = /qualifying/i.test(sessionType);
+    const isRace       = /^race$/i.test(sessionType);
+    const isSprint     = /sprint/i.test(sessionType);
+    const isPractice   = /practice/i.test(sessionType);
+    // Did the session end while track was still red-flagged?
+    const trackAtEnd   = newState.TrackStatus && newState.TrackStatus.Status;
+    const endedRedFlag = trackAtEnd === '5';
+
+    if (isQualifying) {
+      const pole = getP1Driver(newState);
+      const top3 = getQualiTop3(newState);
+      const chosen = pole
+        ? pick(VARIATIONS.qualiPole(pole, top3, sessionName, gpName))
+        : pick(VARIATIONS.qualiNoData(gpName));
+      notifications.push({ ...chosen, url: '/dashboard' });
+
+    } else if (isSprint) {
+      const winner = getP1Driver(newState);
+      const chosen = winner
+        ? pick(VARIATIONS.sprintWinner(winner))
+        : pick(VARIATIONS.sprintNoData());
+      notifications.push({ ...chosen, url: '/dashboard' });
+
+    } else if (isRace) {
+      if (endedRedFlag) {
+        // Race called off under red flag — winner decided on last completed lap
+        const winner = getP1Driver(newState);
+        notifications.push({
+          title: '🔴🏁 Race Called — Red Flag',
+          body:  winner
+            ? winner + ' wins ' + gpName + ' (race ended under red flag)'
+            : gpName + ' race stopped by red flag — results to follow.',
+          url: '/dashboard',
+        });
+      } else {
+        const winner = getP1Driver(newState);
+        const chosen = winner
+          ? pick(VARIATIONS.raceWinner(winner, gpName))
+          : pick(VARIATIONS.raceNoData(gpName));
+        notifications.push({ ...chosen, url: '/dashboard' });
+      }
+
+    } else if (isPractice) {
+      const fastest = getP1Driver(newState);
+      const chosen = fastest
+        ? pick(VARIATIONS.practiceComplete(fastest, sessionName, gpName))
+        : pick(VARIATIONS.practiceNoData(sessionName, gpName));
+      notifications.push({ ...chosen, url: '/dashboard' });
+
+    } else {
+      notifications.push({
+        title: '✅ ' + sessionName + ' Finished',
+        body:  gpName + ' — ' + sessionName + ' complete',
+        url:   '/dashboard',
+      });
+    }
+  }
+
   // ── Track status ──────────────────────────────────────────────────────────
   // TrackStatus.Status: "1"=Clear "2"=Yellow "4"=SafetyCar "5"=Red "6"=VSC "7"=VSCEnding
+  // GUARD: never fire a track alert once the session is over — the track going
+  // back to Clear after a red-flag finish must NOT read "🟢 Green flag, racing resumed!"
   const prevTrack = prevState.TrackStatus && prevState.TrackStatus.Status;
   const newTrack  = newState.TrackStatus  && newState.TrackStatus.Status;
-  if (prevTrack !== newTrack && newTrack) {
+  if (prevTrack !== newTrack && newTrack && !sessionIsOver) {
     const pools = {
       '1': VARIATIONS.trackClear,
       '2': VARIATIONS.yellowFlag,
@@ -254,61 +329,6 @@ function detectEvents(prevState, newState) {
     };
     const pool = pools[newTrack];
     if (pool) notifications.push({ ...pick(pool), url: '/dashboard' });
-  }
-
-  // ── Session status ────────────────────────────────────────────────────────
-  const prevSession = prevState.SessionStatus && prevState.SessionStatus.Status;
-  const newSession  = newState.SessionStatus  && newState.SessionStatus.Status;
-
-  if (prevSession !== newSession && newSession) {
-    if (newSession === 'Started') {
-      notifications.push({
-        ...pick(VARIATIONS.sessionStarted(sessionName, gpName)),
-        url: '/dashboard',
-      });
-    } else if (newSession === 'Finished' || newSession === 'Finalised') {
-      const isQualifying = /qualifying/i.test(sessionType);
-      const isRace       = /^race$/i.test(sessionType) || /^sprint$/i.test(sessionType);
-      const isSprint     = /sprint/i.test(sessionType);
-      const isPractice   = /practice/i.test(sessionType);
-
-      if (isQualifying) {
-        const pole = getP1Driver(newState);
-        const top3 = getQualiTop3(newState);
-        const chosen = pole
-          ? pick(VARIATIONS.qualiPole(pole, top3, sessionName, gpName))
-          : pick(VARIATIONS.qualiNoData(gpName));
-        notifications.push({ ...chosen, url: '/dashboard' });
-
-      } else if (isSprint) {
-        const winner = getP1Driver(newState);
-        const chosen = winner
-          ? pick(VARIATIONS.sprintWinner(winner))
-          : pick(VARIATIONS.sprintNoData());
-        notifications.push({ ...chosen, url: '/dashboard' });
-
-      } else if (isRace) {
-        const winner = getP1Driver(newState);
-        const chosen = winner
-          ? pick(VARIATIONS.raceWinner(winner, gpName))
-          : pick(VARIATIONS.raceNoData(gpName));
-        notifications.push({ ...chosen, url: '/dashboard' });
-
-      } else if (isPractice) {
-        const fastest = getP1Driver(newState);
-        const chosen = fastest
-          ? pick(VARIATIONS.practiceComplete(fastest, sessionName, gpName))
-          : pick(VARIATIONS.practiceNoData(sessionName, gpName));
-        notifications.push({ ...chosen, url: '/dashboard' });
-
-      } else {
-        notifications.push({
-          title: '✅ ' + sessionName + ' Finished',
-          body:  gpName + ' — ' + sessionName + ' complete',
-          url:   '/dashboard',
-        });
-      }
-    }
   }
 
   // ── Rain / weather ────────────────────────────────────────────────────────
@@ -328,11 +348,25 @@ function detectEvents(prevState, newState) {
     const msg    = (latest && latest.Message) ? latest.Message : '';
     if (latest) {
       if (latest.Flag === 'RED') {
-        notifications.push({ ...pick(VARIATIONS.redFlag), body: msg.substring(0, 100) || pick(VARIATIONS.redFlag).body, url: '/dashboard' });
+        // Skip if session already ended — the session-end handler covers it
+        if (!sessionIsOver) {
+          notifications.push({ ...pick(VARIATIONS.redFlag), body: msg.substring(0, 100) || pick(VARIATIONS.redFlag).body, url: '/dashboard' });
+        }
       } else if (latest.Category === 'SafetyCar') {
-        notifications.push({ ...pick(VARIATIONS.safetyCar), body: msg.substring(0, 100) || pick(VARIATIONS.safetyCar).body, url: '/dashboard' });
+        if (!sessionIsOver) {
+          notifications.push({ ...pick(VARIATIONS.safetyCar), body: msg.substring(0, 100) || pick(VARIATIONS.safetyCar).body, url: '/dashboard' });
+        }
       } else if (latest.Flag === 'CHEQUERED') {
-        notifications.push({ title: '🏁 Chequered Flag', body: msg.substring(0, 100) || 'Race finished!', url: '/dashboard' });
+        // Chequered flag = race over. Only send this if the session-end handler
+        // didn't already fire a race-result notification in this same diff.
+        const isRaceType = /^race$/i.test(sessionType) || /^sprint$/i.test(sessionType);
+        if (!sessionJustFinished || !isRaceType) {
+          notifications.push({
+            title: '🏁 Chequered Flag!',
+            body:  'Race is over — chequered flag flies at ' + gpName + '!',
+            url:   '/dashboard',
+          });
+        }
       } else if (/penalty|investigation|under investigation/i.test(msg)) {
         notifications.push({ title: '📋 Race Control', body: msg.substring(0, 100), url: '/dashboard' });
       }
