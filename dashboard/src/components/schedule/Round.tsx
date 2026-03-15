@@ -255,20 +255,32 @@ export default function Round({ round, nextName }: Props) {
                   <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
                     <div style={{
                       width: 6, height: 6, borderRadius: "50%",
-                      background: accent.dot, flexShrink: 0,
+                      background: isDone ? "#3f3f46" : accent.dot, flexShrink: 0,
                     }} />
-                    <span style={{ fontSize: 11, fontWeight: 600, color: accent.label }}>
+                    <span style={{
+                      fontSize: 11, fontWeight: 600,
+                      color: isDone ? "#3f3f46" : accent.label,
+                      textDecoration: isDone ? "line-through" : "none",
+                    }}>
                       {session.kind}
                     </span>
+                    {isDone && (
+                      <span style={{
+                        fontSize: 8, fontWeight: 700,
+                        textTransform: "uppercase", letterSpacing: ".06em",
+                        color: "#52525b", background: "rgba(255,255,255,.04)",
+                        borderRadius: 3, padding: "1px 5px",
+                      }}>done</span>
+                    )}
                   </div>
                   <span style={{
                     fontSize: 11,
-                    color: isDone ? "#52525b" : "var(--f1-muted)",
+                    color: isDone ? "#3f3f46" : "var(--f1-muted)",
                     textDecoration: isDone ? "line-through" : "none",
                     whiteSpace: "nowrap",
                   }}>
                     {formatTime(session.start, timezone)}{" "}
-                    <span style={{ color: "#52525b" }}>{tzAbbr}</span>
+                    <span style={{ color: isDone ? "#3f3f46" : "#52525b" }}>{tzAbbr}</span>
                   </span>
                 </div>
               );

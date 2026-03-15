@@ -297,20 +297,37 @@ export default function RaceCountdown() {
             <div className="flex flex-col gap-1.5">
               {nextRace.sessions.map((session, i) => {
                 const isRace = session.kind === "Race" || session.kind === "Sprint";
+                const isDone = new Date(session.end).getTime() < Date.now();
                 return (
                   <div
                     key={i}
                     className={
                       "flex items-center justify-between rounded-lg px-3.5 py-2 text-sm " +
-                      (isRace
+                      (isDone
+                        ? "border border-white/[0.04] bg-white/[0.015]"
+                        : isRace
                         ? "border border-emerald-700/30 bg-emerald-900/15"
                         : "border border-white/5 bg-white/[0.03]")
                     }
+                    style={{ opacity: isDone ? 0.45 : 1 }}
                   >
-                    <span className={"min-w-[52px] text-xs font-bold " + (isRace ? "text-emerald-400" : "text-zinc-200")}>
-                      {getSessionLabel(session.kind)}
-                    </span>
-                    <span className={"font-mono text-xs " + (isRace ? "text-emerald-400" : "text-zinc-400")}>
+                    <div className="flex items-center gap-2">
+                      <span className={
+                        "min-w-[52px] text-xs font-bold " +
+                        (isDone ? "text-zinc-600 line-through" : isRace ? "text-emerald-400" : "text-zinc-200")
+                      }>
+                        {getSessionLabel(session.kind)}
+                      </span>
+                      {isDone && (
+                        <span className="text-[9px] font-bold uppercase tracking-widest text-zinc-700 bg-white/[0.04] rounded px-1.5 py-0.5">
+                          done
+                        </span>
+                      )}
+                    </div>
+                    <span className={
+                      "font-mono text-xs " +
+                      (isDone ? "text-zinc-700 line-through" : isRace ? "text-emerald-400" : "text-zinc-400")
+                    }>
                       {formatTZ(session.start, timezone)}
                     </span>
                   </div>
