@@ -45,7 +45,7 @@ const teamColors: Record<string, string> = {
   cadillac: "#C8AA32",
 };
 
-const positionMedals: Record<string, string> = { "1": "ð¥", "2": "ð¥", "3": "ð¥" };
+const positionMedals: Record<string, string> = { "1": "🥇", "2": "🥈", "3": "🥉" };
 
 const categoryColor: Record<string, string> = {
   "Race Weekend": "#e10600",
@@ -54,7 +54,7 @@ const categoryColor: Record<string, string> = {
   "General": "#00d484",
 };
 
-// ââ Helpers âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── Helpers ───────────────────────────────────────────────────────────────
 
 function formatLapTime(secs: number): string {
   const m = Math.floor(secs / 60);
@@ -252,7 +252,7 @@ async function loadLastEvent(): Promise<LastEventData | null> {
   }
 }
 
-// ââ Page component ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── Page component ────────────────────────────────────────────────────────
 
 export default function Home() {
   const [news, setNews] = useState<NewsItem[]>([]);
@@ -281,15 +281,15 @@ export default function Home() {
         minHeight: "100vh",
       }}
     >
-      {/* ââ HERO âââââââââââââââââââââââââââââââââââââââââââ */}
+      {/* ── HERO ─────────────────────────────────────────── */}
       <HomeHero />
 
-      {/* ââ RACE COUNTDOWN âââââââââââââââââââââââââââââââââ */}
+      {/* ── RACE COUNTDOWN ───────────────────────────────── */}
       <div style={{ borderBottom: "1px solid rgba(255,255,255,.06)" }}>
         <RaceCountdown />
       </div>
 
-      {/* ââ LATEST NEWS ââââââââââââââââââââââââââââââââââââ */}
+      {/* ── LATEST NEWS ──────────────────────────────────── */}
       {news.length > 0 && (
         <section
           aria-label="Latest F1 news"
@@ -422,7 +422,7 @@ export default function Home() {
                     flexShrink: 0,
                   }}
                 >
-                  â
+                  ↗
                 </div>
               </a>
             ))}
@@ -430,7 +430,7 @@ export default function Home() {
         </section>
       )}
 
-      {/* ââ LAST EVENT âââââââââââââââââââââââââââââââââââââ */}
+      {/* ── LAST EVENT ───────────────────────────────────── */}
       {lastEvent && (
         <section
           aria-label="Last event result"
@@ -492,7 +492,7 @@ export default function Home() {
                 }}
               >
                 {lastEvent.circuit}
-                {lastEvent.circuit && lastEvent.date ? " Â· " : ""}
+                {lastEvent.circuit && lastEvent.date ? " · " : ""}
                 {lastEvent.date
                   ? new Date(
                       lastEvent.date + "T12:00:00",
@@ -516,7 +516,7 @@ export default function Home() {
                 gap: 4,
               }}
             >
-              Full results â
+              Full results →
             </Link>
           </div>
           <div
@@ -585,7 +585,7 @@ export default function Home() {
         </section>
       )}
 
-      {/* ââ COMMUNITY ââââââââââââââââââââââââââââââââââââââ */}
+      {/* ── COMMUNITY ────────────────────────────────────── */}
       <section
         aria-label="Join the community"
         style={{
@@ -637,7 +637,7 @@ export default function Home() {
               lineHeight: 1.6,
             }}
           >
-            Oya, join the gang â the biggest Nigerian F1 community online.
+            Oya, join the gang — the biggest Nigerian F1 community online.
           </p>
         </div>
         <div
@@ -659,7 +659,7 @@ export default function Home() {
               gap: 10,
             }}
           >
-            <div style={{ fontSize: 28 }}>ð</div>
+            <div style={{ fontSize: 28 }}>🏆</div>
             <div
               style={{ fontSize: 15, fontWeight: 800, color: "var(--f1-text)" }}
             >
@@ -674,7 +674,7 @@ export default function Home() {
                 flex: 1,
               }}
             >
-              200+ players and counting â pick your drivers, manage your team,
+              200+ players and counting — pick your drivers, manage your team,
               and top the F1 Naija leaderboard.
             </p>
             <a
@@ -698,7 +698,7 @@ export default function Home() {
                 alignSelf: "flex-start",
               }}
             >
-              Join the League â
+              Join the League →
             </a>
           </div>
 
@@ -714,7 +714,7 @@ export default function Home() {
               gap: 10,
             }}
           >
-            <div style={{ fontSize: 28 }}>ðï¸</div>
+            <div style={{ fontSize: 28 }}>🎙️</div>
             <div
               style={{ fontSize: 15, fontWeight: 800, color: "var(--f1-text)" }}
             >
@@ -729,7 +729,7 @@ export default function Home() {
                 flex: 1,
               }}
             >
-              Catch our live race reactions on X Spaces â raw takes, qualifying
+              Catch our live race reactions on X Spaces — raw takes, qualifying
               analysis, and post-race debates.
             </p>
             <a
@@ -753,7 +753,7 @@ export default function Home() {
                 alignSelf: "flex-start",
               }}
             >
-              Follow @f1_naija â
+              Follow @f1_naija →
             </a>
           </div>
 
@@ -769,7 +769,7 @@ export default function Home() {
               gap: 10,
             }}
           >
-            <div style={{ fontSize: 28 }}>ð§µ</div>
+            <div style={{ fontSize: 28 }}>🧵</div>
             <div
               style={{ fontSize: 15, fontWeight: 800, color: "var(--f1-text)" }}
             >
@@ -784,7 +784,7 @@ export default function Home() {
                 flex: 1,
               }}
             >
-              Live race commentary and reactions on X and Threads â follow along
+              Live race commentary and reactions on X and Threads — follow along
               every race weekend.
             </p>
             <Link
@@ -806,13 +806,13 @@ export default function Home() {
                 alignSelf: "flex-start",
               }}
             >
-              View Community â
+              View Community →
             </Link>
           </div>
         </div>
       </section>
 
-      {/* ââ FOOTER CTA âââââââââââââââââââââââââââââââââââââ */}
+      {/* ── FOOTER CTA ───────────────────────────────────── */}
       <section
         aria-label="Get started with F1 Naija"
         style={{
@@ -861,7 +861,7 @@ export default function Home() {
               textDecoration: "none",
             }}
           >
-            Read our story â
+            Read our story →
           </Link>
         </div>
         <div
@@ -920,7 +920,7 @@ export default function Home() {
               gap: 4,
             }}
           >
-            Join the community â
+            Join the community →
           </Link>
         </div>
       </section>
@@ -931,25 +931,25 @@ export default function Home() {
 const SOCIAL_LINKS = [
   {
     href: "https://x.com/f1_naija",
-    icon: "ð",
-    label: "X (Twitter) Â· 6.6K followers",
+    icon: "𝕏",
+    label: "X (Twitter) · 6.6K followers",
     handle: "@f1_naija",
   },
   {
     href: "https://www.instagram.com/f1_naija/",
-    icon: "ð¸",
-    label: "Instagram Â· 5.3K followers",
+    icon: "📸",
+    label: "Instagram · 5.3K followers",
     handle: "@f1_naija",
   },
   {
     href: "https://www.threads.com/@f1_naija",
-    icon: "ð§µ",
-    label: "Threads Â· 3K followers",
+    icon: "🧵",
+    label: "Threads · 3K followers",
     handle: "@f1_naija",
   },
   {
     href: "https://www.tiktok.com/@f1.naija",
-    icon: "ðµ",
+    icon: "🎵",
     label: "TikTok",
     handle: "@f1.naija",
   },
