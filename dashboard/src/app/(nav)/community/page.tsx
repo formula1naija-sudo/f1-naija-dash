@@ -376,31 +376,6 @@ export default function CommunityPage() {
               <CTAButton href="/fantasy" label="View Fantasy Page →" variant="primary" />
             </div>
           </SectionCard>
-
-          {/* Watch Parties */}
-          <SectionCard>
-            <EyebrowLabel text="Watch Parties" />
-            <h2 style={{ fontSize: "clamp(22px,3vw,30px)", fontWeight: 900, letterSpacing: "-.02em", lineHeight: 1, margin: "0 0 12px" }}>
-              Race Day,<br />
-              <span style={{ color: "#00d484" }}>Together.</span>
-            </h2>
-            <p style={{ fontSize: 13, color: "var(--f1-muted)", lineHeight: 1.7, margin: "0 0 24px" }}>
-              Nothing beats watching lights out with the community. F1 Naija watch parties bring
-              the grid to life — in Lagos and beyond. Follow us on Instagram to stay updated on
-              the next event near you.
-            </p>
-            <div style={{
-              padding: "10px 14px", borderRadius: 8,
-              background: "rgba(255,255,255,.03)",
-              border: "1px solid rgba(255,255,255,.06)",
-              fontSize: 11, color: "var(--f1-muted)", marginBottom: 20,
-              display: "flex", alignItems: "center", gap: 8,
-            }}>
-              <span>📍</span>
-              <span>No upcoming events listed right now — check back before race weekend.</span>
-            </div>
-            <CTAButton href="https://www.instagram.com/f1_naija/" label="Follow for Updates" variant="ghost" />
-          </SectionCard>
         </div>
       </section>
 
@@ -420,31 +395,6 @@ export default function CommunityPage() {
           gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))",
           gap: 14,
         }}>
-
-          {/* WhatsApp */}
-          <div style={{
-            padding: "22px 20px", borderRadius: 12,
-            background: "var(--f1-card)",
-            border: "1px solid rgba(255,255,255,.07)",
-            transition: "border-color .18s",
-          }}
-            onMouseEnter={e => { if (!window.matchMedia("(hover:hover)").matches) return; e.currentTarget.style.borderColor = "rgba(37,211,102,.3)"; }}
-            onMouseLeave={e => { if (!window.matchMedia("(hover:hover)").matches) return; e.currentTarget.style.borderColor = "rgba(255,255,255,.07)"; }}
-          >
-            <div style={{ fontSize: 28, marginBottom: 10 }}>💬</div>
-            <div style={{ fontSize: 14, fontWeight: 800, marginBottom: 6 }}>WhatsApp Community</div>
-            <p style={{ fontSize: 12, color: "var(--f1-muted)", lineHeight: 1.6, margin: "0 0 16px" }}>
-              A dedicated space for race-day chaos, transfers, hot takes, and everything in between.
-            </p>
-            <span style={{
-              display: "inline-flex", alignItems: "center",
-              padding: "8px 16px", borderRadius: 8, fontSize: 12, fontWeight: 700,
-              background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.1)",
-              color: "var(--f1-muted)", letterSpacing: ".04em",
-            }}>
-              Coming Soon
-            </span>
-          </div>
 
           {/* X Spaces */}
           <div style={{
