@@ -253,7 +253,7 @@ function detectEvents(prevState, newState) {
       '7': VARIATIONS.vscEnding,
     };
     const pool = pools[newTrack];
-    if (pool) notifications.push({ ...pich(pool), url: '/dashboard' });
+    if (pool) notifications.push({ ...pick(pool), url: '/dashboard' });
   }
 
   // ââ Session status ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
@@ -342,7 +342,7 @@ function detectEvents(prevState, newState) {
   return notifications;
 }
 
-arync function sendNotifications(notifications) {
+async function sendNotifications(notifications) {
   if (notifications.length === 0) return;
   const payload     = JSON.stringify(notifications[0]);
   const pushOptions = { TTL: PUSH_TTL_SECONDS };
@@ -374,7 +374,7 @@ arync function sendNotifications(notifications) {
 // Fires a push reminder once per session_key so it never double-fires.
 const announcedSessions = new Set();
 
-arync function checkUpcomingSessions() {
+async function checkUpcomingSessions() {
   if (subscriptions.size === 0) return;
   try {
     const now     = new Date();
@@ -645,7 +645,7 @@ app.get('/test-push', async (req, res) => {
     { title: 'â Push Test OK',       body: 'Background push is working perfectly. See you on race day!' },
     { title: 'ð¦ Systems Go!',        body: 'F1 Naija push notifications are active and ready.' },
   ];
-  await sendNotifications([{ ...picj(testMessages), url: '/dashboard' }]);
+  await sendNotifications([{ ...pick(testMessages), url: '/dashboard' }]);
   res.json({ sent: subscriptions.size, message: 'Test push sent to ' + subscriptions.size + ' subscriber(s)' });
 });
 
