@@ -316,7 +316,7 @@ export default function TeamProfilePage() {
 
         {/* ── PROFILE ── */}
         {TEAM_PROFILES[constructorId ?? ""] && (() => {
-          const p = TEAM_PROFILES[constructorId!];
+          const p = TEAM_PROFILES[constructorId ?? ""];
           return (
             <div className="p-fade" style={{
               background: `linear-gradient(135deg,${color}08,transparent)`,

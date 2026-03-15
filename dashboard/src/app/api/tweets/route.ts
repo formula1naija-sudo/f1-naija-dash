@@ -26,7 +26,9 @@ async function fetchFromTwitterSearch(): Promise<Array<{ id: string; text: strin
     }
 
     const data = await res.json();
-    return (data.data as Array<{ id: string; text: string; created_at: string }>) ?? null;
+    // Validate that data.data is actually an array before casting
+    if (!Array.isArray(data?.data)) return null;
+    return data.data as Array<{ id: string; text: string; created_at: string }>;
   } catch (err) {
     console.error("Twitter search fetch error:", err);
     return null;

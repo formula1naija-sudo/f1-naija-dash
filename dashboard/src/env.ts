@@ -6,10 +6,14 @@ const server = z.object({
 	TRACKING_ID: z.string().optional(),
 	TRACKING_URL: z.string().includes("http").optional(),
 	DISABLE_IFRAME: z.string().optional(),
+	// Optional — push notifications won't work without it but the app still boots
+	TWITTER_BEARER_TOKEN: z.string().optional(),
 });
 
 const client = z.object({
 	NEXT_PUBLIC_LIVE_URL: z.string().optional(),
+	// Optional — push notifications won't work without it but the app still boots
+	NEXT_PUBLIC_PUSH_SERVICE_URL: z.string().optional(),
 });
 
 const processEnv = {
@@ -18,7 +22,9 @@ const processEnv = {
 	TRACKING_ID: process.env.TRACKING_ID,
 	TRACKING_URL: process.env.TRACKING_URL,
 	DISABLE_IFRAME: process.env.DISABLE_IFRAME,
+	TWITTER_BEARER_TOKEN: process.env.TWITTER_BEARER_TOKEN,
 	NEXT_PUBLIC_LIVE_URL: process.env.NEXT_PUBLIC_LIVE_URL,
+	NEXT_PUBLIC_PUSH_SERVICE_URL: process.env.NEXT_PUBLIC_PUSH_SERVICE_URL,
 };
 
 // Don't touch the part below

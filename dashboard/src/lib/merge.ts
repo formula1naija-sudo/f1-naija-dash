@@ -13,10 +13,6 @@ export const merge = (base: unknown, update: unknown): unknown => {
 		return result;
 	}
 
-	// if (Array.isArray(base) && Array.isArray(update)) {
-	// 	return base.concat(update);
-	// }
-
 	if (Array.isArray(base) && isObject(update)) {
 		const result = [...base];
 

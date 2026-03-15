@@ -10,8 +10,16 @@ export const useSocket = ({ handleInitial, handleUpdate }: Props) => {
 	const [connected, setConnected] = useState<boolean>(false);
 	const sseRef = useRef<EventSource | null>(null);
 
+	// Keep callback refs in sync so openSSE always calls the latest version
+	// without needing to recreate the EventSource on every render.
+	const handleInitialRef = useRef(handleInitial);
+	const handleUpdateRef = useRef(handleUpdate);
+	useEffect(() => { handleInitialRef.current = handleInitial; }, [handleInitial]);
+	useEffect(() => { handleUpdateRef.current = handleUpdate; }, [handleUpdate]);
+
 	// openSSE is stable across renders — used both inside the effect and
 	// exposed as `reconnect` so the UI can trigger a manual retry.
+	// Reads callbacks through refs, so the empty dep array is safe (no stale closures).
 	const openSSE = useCallback(() => {
 		sseRef.current?.close();
 
@@ -22,13 +30,12 @@ export const useSocket = ({ handleInitial, handleUpdate }: Props) => {
 		sse.onopen = () => setConnected(true);
 
 		sse.addEventListener("initial", (message) => {
-			handleInitial(JSON.parse(message.data));
+			handleInitialRef.current(JSON.parse(message.data));
 		});
 
 		sse.addEventListener("update", (message) => {
-			handleUpdate(JSON.parse(message.data));
+			handleUpdateRef.current(JSON.parse(message.data));
 		});
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	useEffect(() => {

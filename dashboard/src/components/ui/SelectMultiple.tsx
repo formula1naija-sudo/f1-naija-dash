@@ -33,7 +33,10 @@ export default function SelectMultiple<T>({ placeholder, options, selected, setS
 						"w-full rounded-lg border-none bg-zinc-900 py-1.5 pr-8 pl-3 text-sm/6 text-white",
 						"focus:outline-hidden data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-zinc-700",
 					)}
-					displayValue={(option: Option<T> | null) => option?.label ?? ""}
+					// In multi-select mode headlessUI passes the full value array, not a single Option.
+				// The input is used as a search/filter box, so we always show the query text
+				// (controlled via onChange) rather than trying to render selected values here.
+				displayValue={() => query}
 					onChange={(event) => setQuery(event.target.value)}
 				/>
 				<ComboboxButton className="group absolute inset-y-0 right-0 px-2.5">

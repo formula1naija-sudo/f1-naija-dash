@@ -15,9 +15,12 @@
 export const toTrackTime = (utc: string, offset: string): string => {
 	const date = new Date(utc);
 
-	const [hours, minutes, seconds]: (number | undefined)[] = offset.split(":").map((unit) => parseInt(unit));
+	const parts = offset.split(":").map((unit) => parseInt(unit, 10));
+	const [hours, minutes, seconds] = parts;
 
-	if (!hours || !minutes || !seconds) return date.toISOString();
+	// Guard: must have 3 parts and none can be NaN.
+	// NOTE: do NOT use !hours here — zero is a valid offset component (e.g. UTC+0:30:00).
+	if (parts.length < 3 || parts.some((n) => Number.isNaN(n))) return date.toISOString();
 
 	date.setUTCHours(date.getUTCHours() + hours);
 	date.setUTCMinutes(date.getUTCMinutes() + minutes);
